@@ -1,5 +1,6 @@
 namespace AlloyAct_Pro
 {
+    delegate double Geo_Model(string k, string A, string B, string Geomodel);
     internal static class Program
     {
         /// <summary>

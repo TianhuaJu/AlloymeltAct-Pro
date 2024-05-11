@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPOI.SS.Formula.Functions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,14 +8,138 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static NPOI.HSSF.Util.HSSFColor;
 
 namespace AlloyAct_Pro
 {
-    public partial class ActivityInteractionCoefficient : Form
+    public partial class ActivityInteractionCoefficientFm : Form
     {
-        public ActivityInteractionCoefficient()
+        public ActivityInteractionCoefficientFm()
         {
             InitializeComponent();
+        }
+
+
+
+
+
+        private void Solid_checkBox1_Click_1(object sender, EventArgs e)
+        {
+            Solid_checkBox1.Checked = true;
+            liquid_checkBox1.Checked = false;
+        }
+
+        private void liquid_checkBox1_Click(object sender, EventArgs e)
+        {
+            Solid_checkBox1.Checked = false;
+            liquid_checkBox1.Checked = true;
+        }
+
+        int row = 0;
+        private void Cal_btn_Click(object sender, EventArgs e)
+        {
+            string k = k_comboBox1.Text.Trim();
+            bool t1;
+            double Tem;
+
+            t1 = double.TryParse(T_comboBox4.Text, out Tem);
+            if (!t1) { Tem = 1873.0; }
+            (string phase, bool entropy, double Tem) info = (getState(), false, Tem);
+            if (k == string.Empty)
+            {
+                k = "Fe";
+            }
+            string i, j;
+            i = i_comboBox2.Text.Trim();
+            j = j_comboBox3.Text.Trim();
+
+            display(k, i, j);//显示各元素的Miedema参数
+
+            filldata_dgV(k, i, j, info, ref row);
+
+        }
+        private void display(string k, string i, string j)
+        {
+            Element Ei = new Element(i);
+            Element Ej = new Element(j);
+            Element Ek = new Element(k);
+
+            iphi.Text = Ei.Phi.ToString();
+            inws.Text = Ei.N_WS.ToString();
+            iV.Text = Ei.V.ToString();
+
+
+            jphi.Text = Ej.Phi.ToString();
+            jnws.Text = Ej.N_WS.ToString();
+            jV.Text = Ej.V.ToString();
+
+            kphi.Text = Ek.Phi.ToString();
+            knws.Text = Ek.N_WS.ToString();
+            kV.Text = Ek.V.ToString();
+
+        }
+        private string getState()
+        {
+            if (Solid_checkBox1.Checked)
+            {
+                return "solid";
+            }
+            else
+            {
+                return "liquid";
+            }
+
+        }
+
+
+        private void filldata_dgV(string k, string i, string j, (string state, bool entropy, double Tem) info, ref int row)
+        {
+            double Tem = info.Tem;
+            bool t = true;
+            if (k != string.Empty && i != string.Empty && j != string.Empty)
+            {
+                Element solv = null, solui = null, soluj = null;
+                solv = new Element(k);
+                solui = new Element(i);
+                soluj = new Element(j);
+                Ternary_melts wagner_ = null;
+                wagner_ = new Ternary_melts(Tem, info.state, info.entropy);
+
+                Binary_model miedemal = null;
+                miedemal = new Binary_model();
+                miedemal.setState(info.state);
+                miedemal.setTemperature(info.Tem);
+                miedemal.setEntropy(info.entropy);
+
+                double sij = 0, eij, sij_UEM1 = 0, sij_UEM2 = 0, s1 = 0, s2 = 0;
+                string flag = "";
+
+                sij_UEM1 = wagner_.Activity_Interact_Coefficient_Model(solv, solui, soluj, miedemal.UEM1, "UEM1");
+                sij_UEM2 = wagner_.Activity_Interact_Coefficient_Model(solv, solui, soluj, miedemal.UEM2, "UEM2-Adv");
+
+
+
+                Melt m1 = new Melt(k, i, j, Tem);
+
+                row = +dataGridView1.Rows.Add();
+                dataGridView1["compositions", row].Value = k + "-" + i + "-" + j;
+                dataGridView1["CalculatedResult", row].Value = sij_UEM2;
+
+                //dataGridView1["entropy", row].Value = getEntropy() ? "Y" : "N";
+                dataGridView1["ExperimentalValue", row].Value = m1.sji;
+                dataGridView1["state", row].Value = getState();
+                dataGridView1["Temperature", row].Value = info.Tem;
+
+                dataGridView1.Update();
+
+                m1 = null;
+                solv = null;
+                solui = null;
+                soluj = null;
+                System.GC.Collect();
+
+            }
+
         }
     }
 }

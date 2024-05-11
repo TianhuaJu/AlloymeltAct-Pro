@@ -1,6 +1,6 @@
 ﻿namespace AlloyAct_Pro
 {
-    partial class ActivityCoefficient
+    partial class ActivityCoefficientFm
     {
         /// <summary>
         /// Required designer variable.
@@ -61,13 +61,13 @@
             dataGridView1.Size = new Size(880, 326);
             dataGridView1.TabIndex = 0;
             // 
-            // ActivityCoefficient
+            // ActivityCoefficientFm
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(880, 623);
             Controls.Add(splitContainer1);
-            Name = "ActivityCoefficient";
+            Name = "ActivityCoefficientFm";
             Text = "Activity Coefficients";
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();

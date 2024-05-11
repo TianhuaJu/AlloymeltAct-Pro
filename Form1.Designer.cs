@@ -68,6 +68,7 @@
             ActivityCoeff.TabIndex = 1;
             ActivityCoeff.Text = "活度系数";
             ActivityCoeff.UseVisualStyleBackColor = false;
+            ActivityCoeff.Click += ActivityCoeff_Click;
             // 
             // Activity
             // 
@@ -80,6 +81,7 @@
             Activity.TabIndex = 3;
             Activity.Text = "活度";
             Activity.UseVisualStyleBackColor = false;
+            Activity.Click += Activity_Click;
             // 
             // InteractionCoeff
             // 
@@ -92,6 +94,7 @@
             InteractionCoeff.TabIndex = 2;
             InteractionCoeff.Text = "活度相互作用系数";
             InteractionCoeff.UseVisualStyleBackColor = false;
+            InteractionCoeff.Click += InteractionCoeff_Click;
             // 
             // Form1
             // 

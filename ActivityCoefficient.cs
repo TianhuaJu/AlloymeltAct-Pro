@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace AlloyAct_Pro
 {
-    public partial class ActivityCoefficient : Form
+    public partial class ActivityCoefficientFm : Form
     {
-        public ActivityCoefficient()
+        public ActivityCoefficientFm()
         {
             InitializeComponent();
         }

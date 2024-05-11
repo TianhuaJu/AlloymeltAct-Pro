@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace AlloyAct_Pro
 {
-    public partial class Activity : Form
+    public partial class ActivityFm : Form
     {
-        public Activity()
+        public ActivityFm()
         {
             InitializeComponent();
         }

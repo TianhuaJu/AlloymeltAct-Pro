@@ -44,7 +44,7 @@ namespace AlloyAct_Pro
 
             t1 = double.TryParse(T_comboBox4.Text, out Tem);
             if (!t1) { Tem = 1873.0; }
-            (string phase, bool entropy, double Tem) info = (getState(), false, Tem);
+
             if (k == string.Empty)
             {
                 k = "Fe";
@@ -54,7 +54,7 @@ namespace AlloyAct_Pro
             j = j_comboBox3.Text.Trim();
 
             display(k, i, j);//显示各元素的Miedema参数
-
+            (string phase, bool entropy, double Tem) info = (getState(), entropy_Judge(k, i, j), Tem);
             filldata_dgV(k, i, j, info, ref row);
 
         }
@@ -111,7 +111,7 @@ namespace AlloyAct_Pro
                 miedemal.setTemperature(info.Tem);
                 miedemal.setEntropy(info.entropy);
 
-                double sij = 0, eij, sij_UEM1 = 0, sij_UEM2 = 0, s1 = 0, s2 = 0;
+                double sij_UEM1 = 0, sij_UEM2 = 0, sij_exp;
                 string flag = "";
 
                 sij_UEM1 = wagner_.Activity_Interact_Coefficient_Model(solv, solui, soluj, miedemal.UEM1, "UEM1");
@@ -120,13 +120,21 @@ namespace AlloyAct_Pro
 
 
                 Melt m1 = new Melt(k, i, j, Tem);
+                if (info.state == "liquid")
+                {
+                    sij_exp = m1.sji;
+                }
+                else
+                {
+                    sij_exp = double.NaN;
+                }
 
                 row = +dataGridView1.Rows.Add();
                 dataGridView1["compositions", row].Value = k + "-" + i + "-" + j;
                 dataGridView1["CalculatedResult", row].Value = sij_UEM2;
 
-                //dataGridView1["entropy", row].Value = getEntropy() ? "Y" : "N";
-                dataGridView1["ExperimentalValue", row].Value = m1.sji;
+
+                dataGridView1["ExperimentalValue", row].Value = sij_exp;
                 dataGridView1["state", row].Value = getState();
                 dataGridView1["Temperature", row].Value = info.Tem;
 
@@ -140,6 +148,24 @@ namespace AlloyAct_Pro
 
             }
 
+        }
+
+        private bool entropy_Judge(string k, string i, string j)
+        {
+            List<string> s = new List<string>() { k, i, j };
+            if (s.Contains("C") || s.Contains("Si") || s.Contains("B"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myFunctions.saveToExcel(dataGridView1);
         }
     }
 }

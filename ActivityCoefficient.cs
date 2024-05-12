@@ -16,5 +16,10 @@ namespace AlloyAct_Pro
         {
             InitializeComponent();
         }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }

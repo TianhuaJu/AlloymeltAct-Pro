@@ -106,6 +106,7 @@ namespace AlloyAct_Pro
             this.solui = Solui;
             this.soluj = Soluj;
             this._tem = T;
+
             DataCenter.query_first_order_wagnerIntp(this);
             DataCenter.query_lnYi0(this);
             //DataCenter.query_second_order_wagnerIntp(this);

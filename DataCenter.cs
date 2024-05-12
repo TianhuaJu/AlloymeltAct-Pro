@@ -15,7 +15,7 @@ namespace AlloyAct_Pro
 
 
         
-        static string Miedemadata =  "Miedema1980";
+        static string Miedemadata = "MiedemaParameter";
         
         public static void Database(string database)
         {
@@ -28,7 +28,7 @@ namespace AlloyAct_Pro
         public static  void get_MiedemaData(Element E1)
         {
 
-            string dbpath = "Data Source =" + "data\\BasicData.db";
+            string dbpath = "Data Source =" + "data\\DataBase.db";
             string cmdTXT = "SELECT phi,nws,V,u,alpha_beta,hybirdvalue,isTrans,dHtrans,mass,Tm,name,Tb FROM " + Miedemadata + " WHERE Symbol ='" + E1.Name + "'";
             SQLiteConnection conn = new SQLiteConnection(dbpath);
             conn.Open();
@@ -77,7 +77,7 @@ namespace AlloyAct_Pro
         {
 
             SQLiteConnection liteConnection = null;
-            string dbpath = "Data Source =" + "data\\myDB.db";//数据库中存储的eji或sji,默认是包含温度的字符串，y = a/T+b
+            string dbpath = "Data Source =" + "data\\DataBase.db";//数据库中存储的eji或sji,默认是包含温度的字符串，y = a/T+b
             string cmd1 = "SELECT eji,Rank,sji,T,reference FROM first_order WHERE solv = '" + melt.Based + "' and solui = '" + melt.solui + "' and soluj='" + melt.soluj + "'";
             string cmd2 = "SELECT eji,Rank,sji,T,reference FROM first_order WHERE solv = '" + melt.Based + "' and solui = '" + melt.soluj + "' and soluj='" + melt.solui + "'";
             liteConnection = new SQLiteConnection(dbpath);
@@ -194,7 +194,7 @@ namespace AlloyAct_Pro
         public static void query_lnYi0(Melt melt)
         {
             SQLiteConnection liteConnection = null;
-            string dbpath = "Data Source =" + "data\\myDB.db";
+            string dbpath = "Data Source =" + "data\\DataBase.db";
             string cmdTXT = "SELECT lnYi0,Yi0,T FROM lnY0 WHERE solv ='"+melt.Based+"'and solui ='"+melt.solui+"'";
 
             liteConnection = new SQLiteConnection(dbpath);

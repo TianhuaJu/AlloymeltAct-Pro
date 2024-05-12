@@ -721,13 +721,14 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(112, 24);
+            saveToolStripMenuItem.Size = new Size(180, 24);
             saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(112, 24);
+            exitToolStripMenuItem.Size = new Size(180, 24);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // unitConverstionToolStripMenuItem

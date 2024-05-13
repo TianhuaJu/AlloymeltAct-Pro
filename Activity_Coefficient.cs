@@ -163,7 +163,7 @@ namespace AlloyAct_Pro
         /// <param name="compositions">不包含集体元素的熔体组成的字典</param>
         /// <param name="Tem">温度</param>
         /// <param name="lnYi">无限稀活度系数的对数</param>
-        public double activity_Coefficient_Wagner(string solvent, string solute_i,  Geo_Model geo_Model,string GeoModel,(string state, bool excessetropy,bool cp, double T) info)
+        public double activity_Coefficient_Wagner(string solvent, string solute_i,  Geo_Model geo_Model,string GeoModel,(string state, double T) info)
         {
 
             double lnY0 = 0.0,lnYi;
@@ -176,16 +176,17 @@ namespace AlloyAct_Pro
                 /**判断需求活度系数的溶质是否包含在组成内，如果包含，执行下列计算 */
 
 
-                Ternary_melts inacoef = new Ternary_melts(info.T,info.state,info.excessetropy);
+                Ternary_melts inacoef = new Ternary_melts(info.T,info.state);
               
                 lnY0 = inacoef.lnY0(solv, solu_i);
                 foreach (string elementSymbol in this.melts_dict.Keys)
                 {
 
-                    Element solu_j = new Element(elementSymbol);
-                    Binary_model miedemal = new Binary_model();
+                   
+                   
                     if (elementSymbol != solvent)
-                    {
+                    { 
+                        Element solu_j = new Element(elementSymbol);
                         double x = this.melts_dict[elementSymbol];
                         
                         acf += this.melts_dict[elementSymbol] * inacoef.Activity_Interact_Coefficient_Model(solv, solu_i, solu_j,geo_Model, GeoModel);
@@ -221,23 +222,20 @@ namespace AlloyAct_Pro
         /// <param name="geo_Model">计算相互作用系数时使用的几何模型</param>
         /// <param name="GeoModel">几何模型的名称</param>
         /// <returns></returns>
-        public double activity_coefficient_Pelton(string composition, string i, string k, double T,Geo_Model geo_Model,string GeoModel,bool isEntropy = true,string phase_state = "liquid")
+        public double activity_coefficient_Pelton(Dictionary<string,double> comp_dict, string solute_i, string matrix, double T,Geo_Model geo_Model,string GeoModel,string phase_state = "liquid")
         {
-            set_CompositionDict(composition);
-            Element solv = new Element(k);
-            Element solui = new Element(i);
+            
+            Element solv = new Element(matrix);
+            Element solui = new Element(solute_i);
             double lnYi_0 = 0, lnYi = 0;
-            Ternary_melts melts = new Ternary_melts(T,phase_state,isEntropy);
+            Ternary_melts melts = new Ternary_melts(T,phase_state);
             lnYi_0 = melts.lnY0(solv, solui);
-            if (GeoModel == "T-K")
-            {
-                GeoModel = "Ding";
-            }
+            
 
-            if (this.melts_dict.ContainsKey(solv.Name) && this.melts_dict.ContainsKey(solui.Name))
+            if (comp_dict.ContainsKey(solv.Name) && comp_dict.ContainsKey(solui.Name))
             {
                 double sum_xsij = 0,sum_xskj = 0;
-                foreach (var item in this.melts_dict)
+                foreach (var item in comp_dict)
                 {
                     if (item.Key != solv.Name)
                     {
@@ -247,24 +245,24 @@ namespace AlloyAct_Pro
                     }
                 }
               
-                for (int p = 0; p < this.melts_dict.Count; p++)
+                for (int p = 0; p < comp_dict.Count; p++)
                 {
                     //计算∑xj*xi*ɛ^j_i
-                    for (int q = p; q < this.melts_dict.Count; q++)
+                    for (int q = p; q < comp_dict.Count; q++)
                     {
                         
                         string m, n;
-                        m = this.melts_dict.ElementAt(p).Key;
-                        n = this.melts_dict.ElementAt(q).Key;
+                        m = comp_dict.ElementAt(p).Key;
+                        n = comp_dict.ElementAt(q).Key;
                         if (m != solv.Name && n != solv.Name)
                         {
                             double xm, xn;
-                            xm = this.melts_dict.ElementAt(p).Value;
-                            xn = this.melts_dict.ElementAt(q).Value;
-                            double sji = melts.Activity_Interact_Coefficient_Model(solv, new Element(m), new Element(n), geo_Model, GeoModel);
+                            xm = comp_dict.ElementAt(p).Value;
+                            xn = comp_dict.ElementAt(q).Value;
+                            double Smn = melts.Activity_Interact_Coefficient_Model(solv, new Element(m), new Element(n), geo_Model, GeoModel);
 
 
-                            sum_xskj += xm * xn * sji;
+                            sum_xskj += xm * xn * Smn;
                         }
                         
                         

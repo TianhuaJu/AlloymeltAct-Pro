@@ -28,7 +28,7 @@ namespace AlloyAct_Pro
 
 
 
-            Wagner_acf = activity_.activity_Coefficient_Wagner(matrix, solutei, geo_Model, GeoModel, (state, Tem));
+            Wagner_acf = activity_.activity_Coefficient_Wagner(comp_dict, matrix, solutei, geo_Model, GeoModel, (state, Tem));
 
             Pelton_acf = activity_.activity_coefficient_Pelton(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
 
@@ -50,7 +50,7 @@ namespace AlloyAct_Pro
             dataGridView1["activityCoefficient", row].Value = Pelton_acf;
 
             dataGridView1["k_name", row].Value = matrix;
-
+            dataGridView1.Update();
 
         }
 

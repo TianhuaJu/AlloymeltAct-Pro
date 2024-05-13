@@ -160,10 +160,9 @@ namespace AlloyAct_Pro
         /// </summary>
         /// <param name="solvent">基体或溶剂</param>
         /// <param name="solute_i">待计算活度系数的组元</param>
-        /// <param name="compositions">不包含集体元素的熔体组成的字典</param>
+        /// <param name="comp_dict">合金熔体的组成</param>
         /// <param name="Tem">温度</param>
-        /// <param name="lnYi">无限稀活度系数的对数</param>
-        public double activity_Coefficient_Wagner(string solvent, string solute_i,  Geo_Model geo_Model,string GeoModel,(string state, double T) info)
+        public double activity_Coefficient_Wagner(Dictionary<string, double> comp_dict, string solvent, string solute_i,  Geo_Model geo_Model,string GeoModel,(string state, double T) info)
         {
 
             double lnY0 = 0.0,lnYi;
@@ -171,7 +170,7 @@ namespace AlloyAct_Pro
             Element solv = new Element(solvent);
             Element solu_i = new Element(solute_i);
             double acf = 0.0;
-            if (this.melts_dict.ContainsKey(solute_i))
+            if (comp_dict.ContainsKey(solute_i))
             {
                 /**判断需求活度系数的溶质是否包含在组成内，如果包含，执行下列计算 */
 
@@ -215,9 +214,9 @@ namespace AlloyAct_Pro
         /// <summary>
         /// 在Wagner稀溶液模型基础上添加修正项
         /// </summary>
-        /// <param name="composition"></param>
-        /// <param name="i">溶质</param>
-        /// <param name="k">基体元素</param>
+        /// <param name="comp_dict">合金熔体的组成 </param>
+        /// <param name="solute_i">溶质</param>
+        /// <param name="matrix">基体元素</param>
         /// <param name="T">熔体温度</param>
         /// <param name="geo_Model">计算相互作用系数时使用的几何模型</param>
         /// <param name="GeoModel">几何模型的名称</param>
@@ -228,8 +227,8 @@ namespace AlloyAct_Pro
             Element solv = new Element(matrix);
             Element solui = new Element(solute_i);
             double lnYi_0 = 0, lnYi = 0;
-            Ternary_melts melts = new Ternary_melts(T,phase_state);
-            lnYi_0 = melts.lnY0(solv, solui);
+            Ternary_melts ternary_melts = new Ternary_melts(T,phase_state);
+            lnYi_0 = ternary_melts.lnY0(solv, solui);
             
 
             if (comp_dict.ContainsKey(solv.Name) && comp_dict.ContainsKey(solui.Name))
@@ -240,7 +239,7 @@ namespace AlloyAct_Pro
                     if (item.Key != solv.Name)
                     {
                         //计算∑xjɛ^j_i
-                        double sji = melts.Activity_Interact_Coefficient_Model(solv, solui, new Element(item.Key), geo_Model, GeoModel);
+                        double sji = ternary_melts.Activity_Interact_Coefficient_Model(solv, solui, new Element(item.Key), geo_Model, GeoModel);
                         sum_xsij += sji * item.Value;
                     }
                 }
@@ -259,7 +258,7 @@ namespace AlloyAct_Pro
                             double xm, xn;
                             xm = comp_dict.ElementAt(p).Value;
                             xn = comp_dict.ElementAt(q).Value;
-                            double Smn = melts.Activity_Interact_Coefficient_Model(solv, new Element(m), new Element(n), geo_Model, GeoModel);
+                            double Smn = ternary_melts.Activity_Interact_Coefficient_Model(solv, new Element(m), new Element(n), geo_Model, GeoModel);
 
 
                             sum_xskj += xm * xn * Smn;

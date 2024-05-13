@@ -7,6 +7,7 @@ namespace AlloyAct_Pro
         ActivityFm actFm = new ActivityFm();
         ActivityCoefficientFm coefficientFm = new ActivityCoefficientFm();
         ActivityInteractionCoefficientFm ActivityInteractionCoefficientFm = new ActivityInteractionCoefficientFm();
+        ActivityCoefficientAtInfiniteDilution activityCoefficientAtInfiniteDilution = new ActivityCoefficientAtInfiniteDilution();
         public Form1()
         {
             InitializeComponent();
@@ -77,6 +78,27 @@ namespace AlloyAct_Pro
                     ActivityInteractionCoefficientFm.WindowState = FormWindowState.Normal;
                 }
             }
+        }
+
+        private void ActivityCoefficientAtInfinitely_Click(object sender, EventArgs e)
+        {
+            if (activityCoefficientAtInfiniteDilution.IsDisposed)
+            {
+                ActivityCoefficientAtInfiniteDilution activityCoefficientAtInfiniteDilution = new ActivityCoefficientAtInfiniteDilution();
+                activityCoefficientAtInfiniteDilution.Show();
+            }
+            else
+            {
+                if (!activityCoefficientAtInfiniteDilution.Visible)
+                {
+                    activityCoefficientAtInfiniteDilution.Show();
+                }
+                else if (activityCoefficientAtInfiniteDilution.WindowState == FormWindowState.Minimized)
+                {
+                    activityCoefficientAtInfiniteDilution.WindowState = FormWindowState.Normal;
+                }
+            }
+
         }
     }
 }

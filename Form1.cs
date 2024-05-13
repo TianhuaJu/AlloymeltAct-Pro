@@ -6,7 +6,7 @@ namespace AlloyAct_Pro
     {
         ActivityFm actFm = new ActivityFm();
         ActivityCoefficientFm coefficientFm = new ActivityCoefficientFm();
-        ActivityInteractionCoefficientFm ActivityInteractionCoefficientFm = new ActivityInteractionCoefficientFm(); 
+        ActivityInteractionCoefficientFm ActivityInteractionCoefficientFm = new ActivityInteractionCoefficientFm();
         public Form1()
         {
             InitializeComponent();

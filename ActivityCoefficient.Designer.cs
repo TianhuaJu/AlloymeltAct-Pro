@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             splitContainer1 = new SplitContainer();
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel1 = new TableLayoutPanel();
@@ -146,7 +146,7 @@
             groupBox5.Location = new Point(744, 6);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(124, 69);
-            groupBox5.TabIndex = 4;
+            groupBox5.TabIndex = 5;
             groupBox5.TabStop = false;
             groupBox5.Text = "State";
             // 
@@ -202,7 +202,7 @@
             compositions.Location = new Point(137, 6);
             compositions.Name = "compositions";
             compositions.Size = new Size(336, 69);
-            compositions.TabIndex = 0;
+            compositions.TabIndex = 2;
             compositions.TabStop = false;
             compositions.Text = "合金元素组成(AxByCz...)";
             // 
@@ -225,7 +225,7 @@
             Temp_groupBox4.Location = new Point(613, 6);
             Temp_groupBox4.Name = "Temp_groupBox4";
             Temp_groupBox4.Size = new Size(122, 69);
-            Temp_groupBox4.TabIndex = 3;
+            Temp_groupBox4.TabIndex = 4;
             Temp_groupBox4.TabStop = false;
             Temp_groupBox4.Text = "温度(K)";
             // 
@@ -248,14 +248,13 @@
             i_groupBox3.Location = new Point(482, 6);
             i_groupBox3.Name = "i_groupBox3";
             i_groupBox3.Size = new Size(122, 69);
-            i_groupBox3.TabIndex = 2;
+            i_groupBox3.TabIndex = 3;
             i_groupBox3.TabStop = false;
             i_groupBox3.Text = "溶质(i)";
             // 
             // i_comboBox3
             // 
             i_comboBox3.Dock = DockStyle.Fill;
-            i_comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             i_comboBox3.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             i_comboBox3.FormattingEnabled = true;
             i_comboBox3.Location = new Point(3, 25);
@@ -382,14 +381,14 @@
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Sunken;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { k_name, Melt_composition, solute_i, activityCoefficient, Tem, state, remark });
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
-            dataGridViewCellStyle4.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
@@ -415,9 +414,9 @@
             // 
             // activityCoefficient
             // 
-            dataGridViewCellStyle3.Format = "N2";
-            dataGridViewCellStyle3.NullValue = null;
-            activityCoefficient.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Format = "N2";
+            dataGridViewCellStyle1.NullValue = null;
+            activityCoefficient.DefaultCellStyle = dataGridViewCellStyle1;
             activityCoefficient.HeaderText = "lnγ_i";
             activityCoefficient.Name = "activityCoefficient";
             // 

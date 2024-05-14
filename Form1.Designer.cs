@@ -41,14 +41,13 @@
             tableLayoutPanel1.BackColor = Color.FromArgb(128, 255, 255);
             tableLayoutPanel1.BackgroundImage = Properties.Resources.R;
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
-            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.4F));
             tableLayoutPanel1.Controls.Add(Activity, 0, 0);
             tableLayoutPanel1.Controls.Add(ActivityCoeff, 1, 0);
             tableLayoutPanel1.Controls.Add(InteractionCoeff, 1, 1);
-            tableLayoutPanel1.Controls.Add(ActivityCoefficientAtInfinitely, 2, 0);
+            tableLayoutPanel1.Controls.Add(ActivityCoefficientAtInfinitely, 0, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
@@ -56,18 +55,18 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(692, 558);
+            tableLayoutPanel1.Size = new Size(633, 611);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // Activity
             // 
-            Activity.BackColor = SystemColors.ButtonFace;
+            Activity.BackColor = Color.FromArgb(128, 255, 255);
             Activity.Dock = DockStyle.Fill;
             Activity.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             Activity.Location = new Point(6, 7);
             Activity.Margin = new Padding(3, 4, 3, 4);
             Activity.Name = "Activity";
-            Activity.Size = new Size(220, 266);
+            Activity.Size = new Size(306, 293);
             Activity.TabIndex = 3;
             Activity.Text = "活度";
             Activity.UseVisualStyleBackColor = false;
@@ -78,10 +77,10 @@
             ActivityCoeff.BackColor = Color.Cyan;
             ActivityCoeff.Dock = DockStyle.Fill;
             ActivityCoeff.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            ActivityCoeff.Location = new Point(235, 7);
+            ActivityCoeff.Location = new Point(321, 7);
             ActivityCoeff.Margin = new Padding(3, 4, 3, 4);
             ActivityCoeff.Name = "ActivityCoeff";
-            ActivityCoeff.Size = new Size(220, 266);
+            ActivityCoeff.Size = new Size(306, 293);
             ActivityCoeff.TabIndex = 1;
             ActivityCoeff.Text = "活度系数";
             ActivityCoeff.UseVisualStyleBackColor = false;
@@ -89,13 +88,13 @@
             // 
             // InteractionCoeff
             // 
-            InteractionCoeff.BackColor = Color.Cyan;
+            InteractionCoeff.BackColor = Color.MediumSpringGreen;
             InteractionCoeff.Dock = DockStyle.Fill;
             InteractionCoeff.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            InteractionCoeff.Location = new Point(235, 284);
+            InteractionCoeff.Location = new Point(321, 311);
             InteractionCoeff.Margin = new Padding(3, 4, 3, 4);
             InteractionCoeff.Name = "InteractionCoeff";
-            InteractionCoeff.Size = new Size(220, 267);
+            InteractionCoeff.Size = new Size(306, 293);
             InteractionCoeff.TabIndex = 2;
             InteractionCoeff.Text = "活度相互作用系数";
             InteractionCoeff.UseVisualStyleBackColor = false;
@@ -107,10 +106,10 @@
             ActivityCoefficientAtInfinitely.Dock = DockStyle.Fill;
             ActivityCoefficientAtInfinitely.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             ActivityCoefficientAtInfinitely.ForeColor = SystemColors.ActiveCaptionText;
-            ActivityCoefficientAtInfinitely.Location = new Point(464, 7);
+            ActivityCoefficientAtInfinitely.Location = new Point(6, 311);
             ActivityCoefficientAtInfinitely.Margin = new Padding(3, 4, 3, 4);
             ActivityCoefficientAtInfinitely.Name = "ActivityCoefficientAtInfinitely";
-            ActivityCoefficientAtInfinitely.Size = new Size(222, 266);
+            ActivityCoefficientAtInfinitely.Size = new Size(306, 293);
             ActivityCoefficientAtInfinitely.TabIndex = 4;
             ActivityCoefficientAtInfinitely.Text = "无限稀活度系数";
             ActivityCoefficientAtInfinitely.UseVisualStyleBackColor = false;
@@ -120,12 +119,12 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(692, 558);
+            ClientSize = new Size(633, 611);
             Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
-            Text = "AlloymeltActivity Pro";
+            Text = "Alloy melt Activity Calculator Pro";
             tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }

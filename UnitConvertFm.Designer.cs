@@ -223,7 +223,7 @@
             weight_radioButton1.Size = new Size(253, 53);
             weight_radioButton1.TabIndex = 0;
             weight_radioButton1.TabStop = true;
-            weight_radioButton1.Text = "Weight Percent (w%[i])";
+            weight_radioButton1.Text = "Weight Percent (wt%)";
             weight_radioButton1.UseVisualStyleBackColor = true;
             weight_radioButton1.Click += weight_radioButton1_Click;
             // 

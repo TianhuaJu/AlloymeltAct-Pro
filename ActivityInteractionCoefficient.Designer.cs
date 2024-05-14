@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             splitContainer1 = new SplitContainer();
@@ -85,6 +86,7 @@
             exitToolStripMenuItem = new ToolStripMenuItem();
             unitConverstionToolStripMenuItem = new ToolStripMenuItem();
             unitConversionToolStripMenuItem = new ToolStripMenuItem();
+            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -667,6 +669,7 @@
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(914, 455);
             dataGridView1.TabIndex = 0;
+            toolTip1.SetToolTip(dataGridView1, "实验值仅供参考，多数实验值来自JSPS推荐值。");
             // 
             // compositions
             // 
@@ -848,5 +851,6 @@
         private DataGridViewTextBoxColumn state;
         private DataGridViewTextBoxColumn Remark;
         private ToolStripMenuItem unitConversionToolStripMenuItem;
+        private ToolTip toolTip1;
     }
 }

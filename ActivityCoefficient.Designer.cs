@@ -57,6 +57,7 @@
             settingToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
+            toolTip1 = new ToolTip(components);
             k_name = new DataGridViewTextBoxColumn();
             Melt_composition = new DataGridViewTextBoxColumn();
             solute_i = new DataGridViewTextBoxColumn();
@@ -64,7 +65,6 @@
             Tem = new DataGridViewTextBoxColumn();
             state = new DataGridViewTextBoxColumn();
             remark = new DataGridViewTextBoxColumn();
-            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -178,6 +178,7 @@
             checkBox1.Size = new Size(48, 29);
             checkBox1.TabIndex = 0;
             checkBox1.Text = "L";
+            toolTip1.SetToolTip(checkBox1, "液态");
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.Click += checkBox1_Click;
             // 
@@ -191,6 +192,7 @@
             checkBox2.Size = new Size(49, 29);
             checkBox2.TabIndex = 1;
             checkBox2.Text = "S";
+            toolTip1.SetToolTip(checkBox2, "固态");
             checkBox2.UseVisualStyleBackColor = true;
             checkBox2.Click += checkBox2_Click;
             // 
@@ -205,6 +207,7 @@
             compositions.TabIndex = 2;
             compositions.TabStop = false;
             compositions.Text = "合金元素组成(AxByCz...)";
+            toolTip1.SetToolTip(compositions, "不包含基体元素的合金组成，");
             // 
             // alloy_comboBox1
             // 
@@ -353,14 +356,14 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 24);
+            saveToolStripMenuItem.Size = new Size(112, 24);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 24);
+            exitToolStripMenuItem.Size = new Size(112, 24);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // graphicToolStripMenuItem
@@ -412,6 +415,7 @@
             // 
             // Melt_composition
             // 
+            Melt_composition.FillWeight = 300F;
             Melt_composition.HeaderText = "组成";
             Melt_composition.MinimumWidth = 6;
             Melt_composition.Name = "Melt_composition";

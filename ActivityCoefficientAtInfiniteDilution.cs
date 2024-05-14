@@ -119,5 +119,18 @@ namespace AlloyAct_Pro
                 return "solid";
             }
         }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myFunctions.saveToExcel(dataGridView1);
+        }
+
+        private void Reset_btn_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Rows.Clear();
+            k_combox.Text = string.Empty;
+            i_combox.Text = string.Empty;
+            T_combox.Text = string.Empty;
+        }
     }
 }

@@ -78,7 +78,7 @@
             // 
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.Location = new Point(0, 0);
-            splitContainer1.Margin = new Padding(2, 3, 2, 3);
+            splitContainer1.Margin = new Padding(3, 4, 3, 4);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Orientation = Orientation.Horizontal;
             // 
@@ -90,9 +90,8 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(635, 419);
-            splitContainer1.SplitterDistance = 187;
-            splitContainer1.SplitterWidth = 3;
+            splitContainer1.Size = new Size(816, 493);
+            splitContainer1.SplitterDistance = 220;
             splitContainer1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -114,14 +113,14 @@
             tableLayoutPanel2.Controls.Add(calc_btn, 1, 2);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel1, 3, 1);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(0, 25);
-            tableLayoutPanel2.Margin = new Padding(2, 3, 2, 3);
+            tableLayoutPanel2.Location = new Point(0, 28);
+            tableLayoutPanel2.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 3;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 26.9430046F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 43.5233154F));
-            tableLayoutPanel2.Size = new Size(635, 162);
+            tableLayoutPanel2.Size = new Size(816, 192);
             tableLayoutPanel2.TabIndex = 2;
             // 
             // label4
@@ -130,10 +129,9 @@
             label4.AutoSize = true;
             label4.BackColor = Color.LightSeaGreen;
             label4.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            label4.Location = new Point(479, 22);
-            label4.Margin = new Padding(2, 0, 2, 0);
+            label4.Location = new Point(615, 31);
             label4.Name = "label4";
-            label4.Size = new Size(151, 25);
+            label4.Size = new Size(195, 25);
             label4.TabIndex = 9;
             label4.Text = "State";
             label4.TextAlign = ContentAlignment.MiddleCenter;
@@ -143,23 +141,24 @@
             T_combox.Dock = DockStyle.Fill;
             T_combox.Font = new Font("Microsoft YaHei UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
             T_combox.FormattingEnabled = true;
-            T_combox.Location = new Point(321, 53);
-            T_combox.Margin = new Padding(2, 3, 2, 3);
+            T_combox.Location = new Point(412, 63);
+            T_combox.Margin = new Padding(3, 4, 3, 4);
             T_combox.Name = "T_combox";
-            T_combox.Size = new Size(151, 35);
+            T_combox.Size = new Size(194, 35);
             T_combox.TabIndex = 7;
             // 
             // Reset_btn
             // 
             Reset_btn.Dock = DockStyle.Fill;
             Reset_btn.Font = new Font("楷体", 15F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            Reset_btn.Location = new Point(321, 96);
-            Reset_btn.Margin = new Padding(2, 3, 2, 3);
+            Reset_btn.Location = new Point(412, 114);
+            Reset_btn.Margin = new Padding(3, 4, 3, 4);
             Reset_btn.Name = "Reset_btn";
-            Reset_btn.Size = new Size(151, 60);
+            Reset_btn.Size = new Size(194, 71);
             Reset_btn.TabIndex = 1;
             Reset_btn.Text = "清除";
             Reset_btn.UseVisualStyleBackColor = true;
+            Reset_btn.Click += Reset_btn_Click;
             // 
             // label3
             // 
@@ -167,10 +166,9 @@
             label3.AutoSize = true;
             label3.BackColor = Color.LightSeaGreen;
             label3.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            label3.Location = new Point(321, 22);
-            label3.Margin = new Padding(2, 0, 2, 0);
+            label3.Location = new Point(412, 31);
             label3.Name = "label3";
-            label3.Size = new Size(151, 25);
+            label3.Size = new Size(194, 25);
             label3.TabIndex = 4;
             label3.Text = "温度(K)";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -181,10 +179,9 @@
             label1.AutoSize = true;
             label1.BackColor = Color.LightSeaGreen;
             label1.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            label1.Location = new Point(5, 22);
-            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Location = new Point(6, 31);
             label1.Name = "label1";
-            label1.Size = new Size(151, 25);
+            label1.Size = new Size(194, 25);
             label1.TabIndex = 2;
             label1.Text = "基体(k)";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -194,10 +191,10 @@
             i_combox.Dock = DockStyle.Fill;
             i_combox.Font = new Font("Microsoft YaHei UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
             i_combox.FormattingEnabled = true;
-            i_combox.Location = new Point(163, 53);
-            i_combox.Margin = new Padding(2, 3, 2, 3);
+            i_combox.Location = new Point(209, 63);
+            i_combox.Margin = new Padding(3, 4, 3, 4);
             i_combox.Name = "i_combox";
-            i_combox.Size = new Size(151, 35);
+            i_combox.Size = new Size(194, 35);
             i_combox.TabIndex = 6;
             // 
             // label2
@@ -206,10 +203,9 @@
             label2.AutoSize = true;
             label2.BackColor = Color.LightSeaGreen;
             label2.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            label2.Location = new Point(163, 22);
-            label2.Margin = new Padding(2, 0, 2, 0);
+            label2.Location = new Point(209, 31);
             label2.Name = "label2";
-            label2.Size = new Size(151, 25);
+            label2.Size = new Size(194, 25);
             label2.TabIndex = 3;
             label2.Text = "溶质(i)";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -219,20 +215,20 @@
             k_combox.Dock = DockStyle.Fill;
             k_combox.Font = new Font("Microsoft YaHei UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
             k_combox.FormattingEnabled = true;
-            k_combox.Location = new Point(5, 53);
-            k_combox.Margin = new Padding(2, 3, 2, 3);
+            k_combox.Location = new Point(6, 63);
+            k_combox.Margin = new Padding(3, 4, 3, 4);
             k_combox.Name = "k_combox";
-            k_combox.Size = new Size(151, 35);
+            k_combox.Size = new Size(194, 35);
             k_combox.TabIndex = 5;
             // 
             // calc_btn
             // 
             calc_btn.Dock = DockStyle.Fill;
             calc_btn.Font = new Font("楷体", 15F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            calc_btn.Location = new Point(163, 96);
-            calc_btn.Margin = new Padding(2, 3, 2, 3);
+            calc_btn.Location = new Point(209, 114);
+            calc_btn.Margin = new Padding(3, 4, 3, 4);
             calc_btn.Name = "calc_btn";
-            calc_btn.Size = new Size(151, 60);
+            calc_btn.Size = new Size(194, 71);
             calc_btn.TabIndex = 8;
             calc_btn.Text = "计算";
             calc_btn.UseVisualStyleBackColor = true;
@@ -247,12 +243,12 @@
             tableLayoutPanel1.Controls.Add(L_checkBox, 0, 0);
             tableLayoutPanel1.Controls.Add(S_checkBox, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(479, 53);
-            tableLayoutPanel1.Margin = new Padding(2, 3, 2, 3);
+            tableLayoutPanel1.Location = new Point(615, 63);
+            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(151, 34);
+            tableLayoutPanel1.Size = new Size(195, 40);
             tableLayoutPanel1.TabIndex = 10;
             // 
             // L_checkBox
@@ -262,10 +258,10 @@
             L_checkBox.CheckState = CheckState.Checked;
             L_checkBox.Dock = DockStyle.Fill;
             L_checkBox.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            L_checkBox.Location = new Point(5, 6);
-            L_checkBox.Margin = new Padding(2, 3, 2, 3);
+            L_checkBox.Location = new Point(6, 7);
+            L_checkBox.Margin = new Padding(3, 4, 3, 4);
             L_checkBox.Name = "L_checkBox";
-            L_checkBox.Size = new Size(67, 22);
+            L_checkBox.Size = new Size(87, 26);
             L_checkBox.TabIndex = 0;
             L_checkBox.Text = "L";
             L_checkBox.UseVisualStyleBackColor = true;
@@ -276,10 +272,10 @@
             S_checkBox.AutoSize = true;
             S_checkBox.Dock = DockStyle.Fill;
             S_checkBox.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            S_checkBox.Location = new Point(79, 6);
-            S_checkBox.Margin = new Padding(2, 3, 2, 3);
+            S_checkBox.Location = new Point(102, 7);
+            S_checkBox.Margin = new Padding(3, 4, 3, 4);
             S_checkBox.Name = "S_checkBox";
-            S_checkBox.Size = new Size(67, 22);
+            S_checkBox.Size = new Size(87, 26);
             S_checkBox.TabIndex = 1;
             S_checkBox.Text = "S";
             S_checkBox.UseVisualStyleBackColor = true;
@@ -291,8 +287,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { optionToolStripMenuItem, settingToolStripMenuItem, helpToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(5, 2, 0, 2);
-            menuStrip1.Size = new Size(635, 25);
+            menuStrip1.Size = new Size(816, 28);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -300,27 +295,28 @@
             // 
             optionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem });
             optionToolStripMenuItem.Name = "optionToolStripMenuItem";
-            optionToolStripMenuItem.Size = new Size(60, 21);
+            optionToolStripMenuItem.Size = new Size(72, 24);
             optionToolStripMenuItem.Text = "Option";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(103, 22);
+            saveToolStripMenuItem.Size = new Size(112, 24);
             saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // settingToolStripMenuItem
             // 
             settingToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { phaseStateToolStripMenuItem });
             settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            settingToolStripMenuItem.Size = new Size(60, 21);
+            settingToolStripMenuItem.Size = new Size(74, 24);
             settingToolStripMenuItem.Text = "Setting";
             // 
             // phaseStateToolStripMenuItem
             // 
             phaseStateToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { liquidToolStripMenuItem, solidToolStripMenuItem });
             phaseStateToolStripMenuItem.Name = "phaseStateToolStripMenuItem";
-            phaseStateToolStripMenuItem.Size = new Size(139, 22);
+            phaseStateToolStripMenuItem.Size = new Size(158, 24);
             phaseStateToolStripMenuItem.Text = "PhaseState";
             // 
             // liquidToolStripMenuItem
@@ -328,21 +324,21 @@
             liquidToolStripMenuItem.Checked = true;
             liquidToolStripMenuItem.CheckState = CheckState.Checked;
             liquidToolStripMenuItem.Name = "liquidToolStripMenuItem";
-            liquidToolStripMenuItem.Size = new Size(111, 22);
+            liquidToolStripMenuItem.Size = new Size(123, 24);
             liquidToolStripMenuItem.Text = "Liquid";
             liquidToolStripMenuItem.Click += liquidToolStripMenuItem_Click;
             // 
             // solidToolStripMenuItem
             // 
             solidToolStripMenuItem.Name = "solidToolStripMenuItem";
-            solidToolStripMenuItem.Size = new Size(111, 22);
+            solidToolStripMenuItem.Size = new Size(123, 24);
             solidToolStripMenuItem.Text = "Solid";
             solidToolStripMenuItem.Click += solidToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(47, 21);
+            helpToolStripMenuItem.Size = new Size(56, 24);
             helpToolStripMenuItem.Text = "Help";
             // 
             // dataGridView1
@@ -372,12 +368,12 @@
             dataGridView1.DefaultCellStyle = dataGridViewCellStyle5;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
-            dataGridView1.Margin = new Padding(2, 3, 2, 3);
+            dataGridView1.Margin = new Padding(3, 4, 3, 4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.ScrollBars = ScrollBars.Vertical;
-            dataGridView1.Size = new Size(635, 229);
+            dataGridView1.Size = new Size(816, 269);
             dataGridView1.TabIndex = 0;
             // 
             // melts
@@ -424,14 +420,14 @@
             // 
             // ActivityCoefficientAtInfiniteDilution
             // 
-            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(635, 419);
+            ClientSize = new Size(816, 493);
             Controls.Add(splitContainer1);
             MainMenuStrip = menuStrip1;
-            Margin = new Padding(2, 3, 2, 3);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "ActivityCoefficientAtInfiniteDilution";
-            Text = "ActivityCoefficientAtInfiniteDilution";
+            Text = "Activity Coefficient At Infinite Dilution";
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);

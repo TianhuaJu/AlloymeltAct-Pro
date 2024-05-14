@@ -14,6 +14,9 @@ namespace AlloyAct_Pro
 {
     public partial class ActivityInteractionCoefficientFm : Form
     {
+        UnitConvertFm unit_conversionFm = new UnitConvertFm();
+
+
         public ActivityInteractionCoefficientFm()
         {
             InitializeComponent();
@@ -166,6 +169,42 @@ namespace AlloyAct_Pro
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             myFunctions.saveToExcel(dataGridView1);
+        }
+
+        private void Clear_btn_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Rows.Clear();
+            k_comboBox1.Text = string.Empty;
+            i_comboBox2.Text = string.Empty;
+            T_comboBox4.Text = string.Empty;
+            j_comboBox3.Text = string.Empty;
+        }
+
+        private void unitConversionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (unit_conversionFm.IsDisposed)
+            {
+                UnitConvertFm unit_conversionFm = new UnitConvertFm();
+                unit_conversionFm.Show();
+
+            }
+            else
+            {
+                if (unit_conversionFm.Visible == false)
+                {
+                    unit_conversionFm.Visible = true;
+                    unit_conversionFm.Show();
+                }
+                if (unit_conversionFm.WindowState == FormWindowState.Minimized)
+                {
+                    unit_conversionFm.WindowState = FormWindowState.Normal;
+                }
+            }
+        }
+
+        private void ActivityInteractionCoefficientFm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            unit_conversionFm.Close();
         }
     }
 }

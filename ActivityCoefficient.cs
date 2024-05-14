@@ -25,9 +25,6 @@ namespace AlloyAct_Pro
 
 
 
-
-
-
             Wagner_acf = activity_.activity_Coefficient_Wagner(comp_dict, matrix, solutei, geo_Model, GeoModel, (state, Tem));
 
             Pelton_acf = activity_.activity_coefficient_Pelton(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
@@ -37,7 +34,7 @@ namespace AlloyAct_Pro
             comp_dict.Remove(matrix);
             foreach (var item in comp_dict.Keys)
             {
-                compostion_new += item + comp_dict[item];
+                compostion_new += item + Math.Round(comp_dict[item], 3);
             }
 
             row = +dataGridView1.Rows.Add();
@@ -193,6 +190,20 @@ namespace AlloyAct_Pro
                 }
             }
 
+        }
+
+        private void reset_btn_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Rows.Clear();
+            k_comboBox2.Text = string.Empty;
+            i_comboBox3.Text = string.Empty;
+            temp_comboBox4.Text = string.Empty;
+            alloy_comboBox1.Text = string.Empty;
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myFunctions.saveToExcel(dataGridView1);
         }
     }
 }

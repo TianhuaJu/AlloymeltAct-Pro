@@ -30,7 +30,9 @@
         {
             components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             splitContainer1 = new SplitContainer();
             tableLayoutPanel1 = new TableLayoutPanel();
             Clear_btn = new Button();
@@ -74,21 +76,21 @@
             Solid_checkBox1 = new CheckBox();
             Cal_btn = new Button();
             dataGridView1 = new DataGridView();
-            menuStrip1 = new MenuStrip();
-            optionToolStripMenuItem = new ToolStripMenuItem();
-            saveToolStripMenuItem = new ToolStripMenuItem();
-            exitToolStripMenuItem = new ToolStripMenuItem();
-            unitConverstionToolStripMenuItem = new ToolStripMenuItem();
-            unitConversionToolStripMenuItem = new ToolStripMenuItem();
-            toolTip1 = new ToolTip(components);
             compositions = new DataGridViewTextBoxColumn();
             CalculatedResult = new DataGridViewTextBoxColumn();
             ExperimentalValue = new DataGridViewTextBoxColumn();
             Temperature = new DataGridViewTextBoxColumn();
             state = new DataGridViewTextBoxColumn();
             Remark = new DataGridViewTextBoxColumn();
+            menuStrip1 = new MenuStrip();
+            optionToolStripMenuItem = new ToolStripMenuItem();
+            saveToolStripMenuItem = new ToolStripMenuItem();
+            exitToolStripMenuItem = new ToolStripMenuItem();
+            unitConverstionToolStripMenuItem = new ToolStripMenuItem();
+            unitConversionToolStripMenuItem = new ToolStripMenuItem();
             settingToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
+            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -662,16 +664,70 @@
             // dataGridView1
             // 
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { compositions, CalculatedResult, ExperimentalValue, Temperature, state, Remark });
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle4;
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(914, 455);
             dataGridView1.TabIndex = 0;
             toolTip1.SetToolTip(dataGridView1, "实验值仅供参考，多数实验值来自JSPS推荐值。");
+            // 
+            // compositions
+            // 
+            compositions.HeaderText = "k-i-j";
+            compositions.MinimumWidth = 6;
+            compositions.Name = "compositions";
+            // 
+            // CalculatedResult
+            // 
+            dataGridViewCellStyle2.Format = "N3";
+            dataGridViewCellStyle2.NullValue = null;
+            CalculatedResult.DefaultCellStyle = dataGridViewCellStyle2;
+            CalculatedResult.HeaderText = "Calc.";
+            CalculatedResult.MinimumWidth = 6;
+            CalculatedResult.Name = "CalculatedResult";
+            CalculatedResult.ToolTipText = "摩尔分数表示的j对i的一阶活度相互作用系数ε_i^j";
+            // 
+            // ExperimentalValue
+            // 
+            dataGridViewCellStyle3.Format = "N3";
+            dataGridViewCellStyle3.NullValue = null;
+            ExperimentalValue.DefaultCellStyle = dataGridViewCellStyle3;
+            ExperimentalValue.HeaderText = "Exp.";
+            ExperimentalValue.MinimumWidth = 6;
+            ExperimentalValue.Name = "ExperimentalValue";
+            ExperimentalValue.ToolTipText = "实验值多数来自JSPS推荐值。注：仅供参考。";
+            // 
+            // Temperature
+            // 
+            Temperature.HeaderText = "T(K)";
+            Temperature.MinimumWidth = 6;
+            Temperature.Name = "Temperature";
+            // 
+            // state
+            // 
+            state.HeaderText = "State";
+            state.MinimumWidth = 6;
+            state.Name = "state";
+            // 
+            // Remark
+            // 
+            Remark.HeaderText = "Remark";
+            Remark.MinimumWidth = 6;
+            Remark.Name = "Remark";
             // 
             // menuStrip1
             // 
@@ -713,52 +769,9 @@
             // unitConversionToolStripMenuItem
             // 
             unitConversionToolStripMenuItem.Name = "unitConversionToolStripMenuItem";
-            unitConversionToolStripMenuItem.Size = new Size(197, 24);
-            unitConversionToolStripMenuItem.Text = "Unit_Conversion";
+            unitConversionToolStripMenuItem.Size = new Size(180, 24);
+            unitConversionToolStripMenuItem.Text = "Unit_Convert";
             unitConversionToolStripMenuItem.Click += unitConversionToolStripMenuItem_Click;
-            // 
-            // compositions
-            // 
-            compositions.HeaderText = "k-i-j";
-            compositions.MinimumWidth = 6;
-            compositions.Name = "compositions";
-            // 
-            // CalculatedResult
-            // 
-            dataGridViewCellStyle1.Format = "N3";
-            dataGridViewCellStyle1.NullValue = null;
-            CalculatedResult.DefaultCellStyle = dataGridViewCellStyle1;
-            CalculatedResult.HeaderText = "Calc.";
-            CalculatedResult.MinimumWidth = 6;
-            CalculatedResult.Name = "CalculatedResult";
-            // 
-            // ExperimentalValue
-            // 
-            dataGridViewCellStyle2.Format = "N3";
-            dataGridViewCellStyle2.NullValue = null;
-            ExperimentalValue.DefaultCellStyle = dataGridViewCellStyle2;
-            ExperimentalValue.HeaderText = "Exp.";
-            ExperimentalValue.MinimumWidth = 6;
-            ExperimentalValue.Name = "ExperimentalValue";
-            ExperimentalValue.ToolTipText = "实验值多数来自JSPS推荐值。注：仅供参考。";
-            // 
-            // Temperature
-            // 
-            Temperature.HeaderText = "T(K)";
-            Temperature.MinimumWidth = 6;
-            Temperature.Name = "Temperature";
-            // 
-            // state
-            // 
-            state.HeaderText = "State";
-            state.MinimumWidth = 6;
-            state.Name = "state";
-            // 
-            // Remark
-            // 
-            Remark.HeaderText = "Remark";
-            Remark.MinimumWidth = 6;
-            Remark.Name = "Remark";
             // 
             // settingToolStripMenuItem
             // 
@@ -771,6 +784,7 @@
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             helpToolStripMenuItem.Size = new Size(56, 24);
             helpToolStripMenuItem.Text = "Help";
+            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 
             // ActivityInteractionCoefficientFm
             // 
@@ -861,13 +875,13 @@
         private CheckBox Solid_checkBox1;
         private ToolStripMenuItem unitConversionToolStripMenuItem;
         private ToolTip toolTip1;
+        private ToolStripMenuItem settingToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
         private DataGridViewTextBoxColumn compositions;
         private DataGridViewTextBoxColumn CalculatedResult;
         private DataGridViewTextBoxColumn ExperimentalValue;
         private DataGridViewTextBoxColumn Temperature;
         private DataGridViewTextBoxColumn state;
         private DataGridViewTextBoxColumn Remark;
-        private ToolStripMenuItem settingToolStripMenuItem;
-        private ToolStripMenuItem helpToolStripMenuItem;
     }
 }

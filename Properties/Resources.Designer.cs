@@ -61,6 +61,16 @@ namespace AlloyAct_Pro.Properties {
         }
         
         /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap _1712832925000 {
+            get {
+                object obj = ResourceManager.GetObject("1712832925000", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
         internal static byte[] DataBase {
@@ -206,6 +216,66 @@ namespace AlloyAct_Pro.Properties {
         internal static System.Drawing.Bitmap sji3 {
             get {
                 object obj = ResourceManager.GetObject("sji3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Snipaste_2024_05_14_20_38_59 {
+            get {
+                object obj = ResourceManager.GetObject("Snipaste_2024-05-14_20-38-59", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Snipaste_2024_05_14_21_18_36 {
+            get {
+                object obj = ResourceManager.GetObject("Snipaste_2024-05-14_21-18-36", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Snipaste_2024_05_14_21_18_361 {
+            get {
+                object obj = ResourceManager.GetObject("Snipaste_2024-05-14_21-18-361", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Snipaste_2024_05_14_21_18_362 {
+            get {
+                object obj = ResourceManager.GetObject("Snipaste_2024-05-14_21-18-362", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Snipaste_2024_05_14_21_28_03 {
+            get {
+                object obj = ResourceManager.GetObject("Snipaste_2024-05-14_21-28-03", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Snipaste_2024_05_14_21_38_06 {
+            get {
+                object obj = ResourceManager.GetObject("Snipaste_2024-05-14_21-38-06", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

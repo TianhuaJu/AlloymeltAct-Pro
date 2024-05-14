@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MathNet.Numerics;
 using System.Text.RegularExpressions;
-
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows.Forms;
-using System.IO;
-using MathNet.Numerics.Integration;
-using MathNet.Numerics;
-using System.Linq;
 
 
 namespace AlloyAct_Pro
@@ -24,17 +15,17 @@ namespace AlloyAct_Pro
         private Element Eb { get; set; }
         private string state { get => _state; }
 
-        private double lammda { get => _lammda;  }
-        
+        private double lammda { get => _lammda; }
+
         private string _state;
-        private enum  _orderDegree  {SS,AMP,IM};
-        private double _lammda =0;
+        private enum _orderDegree { SS, AMP, IM };
+        private double _lammda = 0;
         private double T { get; set; }
         private bool isEntropy { get; set; }
 
-        public Binary_model() 
+        public Binary_model()
         {
-           
+
         }
         public Binary_model(Element A, Element B)
         {
@@ -52,7 +43,7 @@ namespace AlloyAct_Pro
             this.Ea = new Element(element_a);
             this.Eb = new Element(element_b);
         }
-        
+
         public void setState(string state)
         {
             this._state = state;
@@ -77,14 +68,14 @@ namespace AlloyAct_Pro
         public double fab(Element Ea, Element Eb, string state)
         {
             double diff;
-            
+
 
             if (Ea.isExist && Eb.isExist)
             {
                 double P_AB, RP;
                 P_AB = (Ea.isTrans_group && Eb.isTrans_group) ? P_TT : ((Ea.isTrans_group || Eb.isTrans_group) ? P_TN : P_NN);
                 RP = rp(Ea, Eb, state);
-                
+
                 diff = 2 * P_AB * (-pow(Ea.Phi - Eb.Phi, 2.0) + QtoP * pow(Ea.N_WS - Eb.N_WS, 2.0) - RP) / (1.0 / Ea.N_WS + 1.0 / Eb.N_WS);
             }
             else { diff = Double.NaN; }
@@ -92,9 +83,9 @@ namespace AlloyAct_Pro
 
 
         }
-        
-     
-     
+
+
+
 
         /// <summary>
         /// extract the information of Compound AxBy,return (A,x,B,y)
@@ -155,7 +146,7 @@ namespace AlloyAct_Pro
             double entropy_term = 0;
             if (this.isEntropy)
             {
-                double avg_Tm = 1.0/this.Ea.Tm + 1.0/this.Eb.Tm;
+                double avg_Tm = 1.0 / this.Ea.Tm + 1.0 / this.Eb.Tm;
                 if (this.state == "solid")
                 {
                     entropy_term = 1.0 / 15.1 * avg_Tm * this.T;
@@ -182,15 +173,15 @@ namespace AlloyAct_Pro
             fB = cBS * (1 + lammda * Math.Pow(cAS * cBS, 2.0));
 
             double dH_trans = 0.0;
-            
+
             dH_trans = this.Ea.dH_Trans * Xa / (Xa + Xb) + this.Eb.dH_Trans * Xb / (Xa + Xb);
-            
-            return fB * f_AB*cA*Vaa + dH_trans;
+
+            return fB * f_AB * cA * Vaa + dH_trans;
 
 
-           
+
         }
-       
+
         /// <summary>
         /// xa=1,xb=0时的O_AB
         /// </summary>
@@ -204,10 +195,9 @@ namespace AlloyAct_Pro
             setPairElement(A, B);
             double Vb = this.Eb.V * (1 + this.Eb.u * (this.Eb.Phi - this.Ea.Phi));
             double fab = this.fab(this.Ea, this.Eb, this.state);
-            double e_term = 0;
-            
-            
-          
+
+
+
             return fab * Vb + this.Eb.dH_Trans;
 
         }
@@ -224,26 +214,25 @@ namespace AlloyAct_Pro
             setPairElement(A, B);
             setState(phaseState);
             setLammda(orderDegree);
-            double dH_trans = 0;
-            double fAB = this.fab(this.Ea,this.Eb, this.state);
+            double fAB = this.fab(this.Ea, this.Eb, this.state);
             double VAa = Ea.V * (1 + this.Ea.u * (Ea.Phi - Eb.Phi));
-            
+
 
             return fAB * VAa + Ea.dH_Trans;
 
         }
-       
-        private (double V1, double V2) V_inalloy(Element Ea,Element Eb, double xa, double xb)
+
+        private (double V1, double V2) V_inalloy(Element Ea, Element Eb, double xa, double xb)
         {
             double VAa, VBa;
-          
-                double PAx, PBx;
 
-                double new_VAa, new_VBa;
+            double PAx, PBx;
+
+            double new_VAa, new_VBa;
             double ya, yb;
-            ya = xa/(xa+xb);
-            yb = xb/(xb+xb);
-                
+            ya = xa / (xa + xb);
+            yb = xb / (xb + xb);
+
             DateTime start = DateTime.Now;
             if (Ea.Name == "H" || Eb.Name == "H")
             {
@@ -270,20 +259,20 @@ namespace AlloyAct_Pro
             }
             else
             {
-                VAa = Ea.V*(1+Ea.u*ya*(Ea.Phi-Eb.Phi));
-                VBa = Eb.V*(1+Eb.u*yb*(Eb.Phi-Ea.Phi));
+                VAa = Ea.V * (1 + Ea.u * ya * (Ea.Phi - Eb.Phi));
+                VBa = Eb.V * (1 + Eb.u * yb * (Eb.Phi - Ea.Phi));
             }
 
-            
+
             return (VAa, VBa);
-            
+
 
         }
-     
-       
-       
-       
-       
+
+
+
+
+
 
         public double Elastic_AinB(string A, string B)
         {
@@ -291,14 +280,14 @@ namespace AlloyAct_Pro
             double dHe;
             setPairElement(A, B);
             double Va, Vb, alpha;
-            alpha = -6.0 * Ea.V * (1 + Ea.u * (Ea.Phi - Eb.Phi)) / (1.0/Ea.N_WS + 1.0 / Eb.N_WS);
+            alpha = -6.0 * Ea.V * (1 + Ea.u * (Ea.Phi - Eb.Phi)) / (1.0 / Ea.N_WS + 1.0 / Eb.N_WS);
             Va = pow(Ea.V, 3.0 / 2) + alpha * (Eb.Phi - Ea.Phi) / pow(Ea.N_WS, 3.0);
             Vb = pow(Eb.V, 3.0 / 2) + alpha * (Eb.Phi - Ea.Phi) / pow(Eb.N_WS, 3.0);
             dHe = 2 * Ea.Bkm * Eb.Shm * pow(Vb - Va, 2.0) / (3 * Ea.Bkm * Vb + 4 * Eb.Shm * Va);
-            return pow(10.0,-9.0)*dHe;
+            return pow(10.0, -9.0) * dHe;
         }
-        
-        
+
+
         /// <summary>
         /// 1 mole B（溶质 solute）在体积无限大的A（溶剂solv）中的溶解热
         /// </summary>
@@ -306,41 +295,41 @@ namespace AlloyAct_Pro
         /// <param name="solute">溶质</param>
         /// <param name="state">状态</param>
         /// <returns></returns>
-        public double Solution_Heat(Element solute, Element solv,  string state)
+        public double Solution_Heat(Element solute, Element solv, string state)
         {
-          
-            
-           
+
+
+
             double diff = fab(solv, solute, state);
             double Vb = solute.V * (1.0 + solute.u * (solute.Phi - solv.Phi));
             double dHtrans;
             bool b = solv.Name == "Si" || solv.Name == "Ge";
-           
-                if (state == "liquid")
+
+            if (state == "liquid")
+            {
+
+                if (b)
                 {
-                   
-                    if (b)
-                    {
-                        dHtrans = 0;
-                    }
-                    else
-                    {
-                        dHtrans = solv.dH_Trans;
-                    }
-
+                    dHtrans = 0;
                 }
-
                 else
                 {
                     dHtrans = solv.dH_Trans;
                 }
 
+            }
 
-            
-            return (Vb * diff+dHtrans)*1000;
+            else
+            {
+                dHtrans = solv.dH_Trans;
+            }
+
+
+
+            return (Vb * diff + dHtrans) * 1000;
         }
 
-       
+
 
         static Dictionary<string, double> yeta_DICT = new Dictionary<string, double>();
         /// <summary>
@@ -358,7 +347,7 @@ namespace AlloyAct_Pro
             m2.setState("liquid");
             m1.setTemperature(this.T);
             m2.setTemperature(this.T);
-                        
+
             Func<double, double> func = x => m1.binary_Model(A, B, x, 1 - x) -
                 m2.binary_Model(A, k, x, 1 - x);
 
@@ -373,7 +362,7 @@ namespace AlloyAct_Pro
                 f = Integrate.OnClosedInterval(func2, 0, 1);
                 yeta_DICT.Add(k + A + B + this.T, f);
             }
-            
+
             m1 = m2 = null;
             System.GC.Collect();
             return f;
@@ -381,8 +370,8 @@ namespace AlloyAct_Pro
 
         }
         static Dictionary<string, double> newdf_UEM2 = new Dictionary<string, double>();
-        
-     
+
+
         static Dictionary<string, double> df_UEM2 = new Dictionary<string, double>();
         public double deviation_Func(string k, string i, string j, double T)
         {
@@ -397,12 +386,12 @@ namespace AlloyAct_Pro
             mkj.setPairElement(k, j);
             mkj.setState("liquid");
             mkj.setTemperature(T);
-            Func<double, double> func_ij = x =>  mij.binary_Model(i, j, x, 1 - x)*1000 /(8.314*T)
+            Func<double, double> func_ij = x => mij.binary_Model(i, j, x, 1 - x) * 1000 / (8.314 * T)
                                                 ;
-            Func<double, double> func_kj = x =>  mkj.binary_Model(k, j, x, 1 - x) * 1000 / (8.314 * T)
+            Func<double, double> func_kj = x => mkj.binary_Model(k, j, x, 1 - x) * 1000 / (8.314 * T)
                                                    ;
             double f_ij, f_kj;
-            string cond1 = i + j + this.lammda + this.state + this.T ;
+            string cond1 = i + j + this.lammda + this.state + this.T;
             string cond2 = k + j + this.lammda + this.state + this.T;
             if (df_UEM2.Keys.Contains(cond1))
             {
@@ -424,15 +413,15 @@ namespace AlloyAct_Pro
             }
 
 
-           
-             
+
+
 
 
             mkj = mij = null;
             System.GC.Collect();
             double tem = 0;
             tem = (f_ij - f_kj) / (f_ij + f_kj);
-            return Abs(tem*1);
+            return Abs(tem * 1);
         }
         static Dictionary<string, double> df_UEM2advx = new Dictionary<string, double>();
         static Dictionary<string, double> df_UEM2advy = new Dictionary<string, double>();
@@ -444,25 +433,23 @@ namespace AlloyAct_Pro
         /// <param name="i">1-xk</param>
         /// <param name="phaseState"></param>
         /// <returns></returns>
-        public (double x, double y) get_GraphicCenter(string k, string i, string phaseState = "liquid") 
+        public (double x, double y) get_GraphicCenter(string k, string i, string phaseState = "liquid")
         {
-            Element Ei = null;
-            Element Ek = null;
             Binary_model mki = new Binary_model();
-          
+
             mki.setEntropy(true);
             mki.setPairElement(i, k);
             mki.setState("liquid");
             mki.setTemperature(T);
-            Func<double, double> func_x = x => mki.binary_Model(k, i, x, 1 - x) * 1000 ;
-            Func<double, double> xfunc_x = x => x * func_x(x) ;
-            Func<double, double> func_x2 = x => func_x(x)*func_x(x);
+            Func<double, double> func_x = x => mki.binary_Model(k, i, x, 1 - x) * 1000;
+            Func<double, double> xfunc_x = x => x * func_x(x);
+            Func<double, double> func_x2 = x => func_x(x) * func_x(x);
 
-            double x_bar ;
-            double A ;
+            double x_bar;
+            double A;
             double y;
 
-           
+
             string cond1 = i + k + this.lammda + this.state + this.T;
 
             if (df_UEM2advx.Keys.Contains(cond1))
@@ -478,14 +465,14 @@ namespace AlloyAct_Pro
                 y = Integrate.OnClosedInterval(func_x2, 0, 1);
                 df_UEM2advx.Add(cond1, x_bar);
                 df_UEM2advA.Add(cond1, A);
-                df_UEM2advy.Add(cond1 , y);
+                df_UEM2advy.Add(cond1, y);
             }
-            
+
 
             double x_ = x_bar / A;
             double y_ = y / (2.0 * A);
 
-            return (x_-0.5,y_); 
+            return (x_ - 0.5, y_);
 
         }
 
@@ -497,7 +484,7 @@ namespace AlloyAct_Pro
         /// <param name="i"></param>
         /// <param name="j"></param>
         /// <returns></returns>
-        public double get_D_ki(string k, string i, string j) 
+        public double get_D_ki(string k, string i, string j)
         {
             double xkj, xij, ykj, yij;
             (xij, yij) = get_GraphicCenter(i, j);
@@ -513,8 +500,8 @@ namespace AlloyAct_Pro
             theta21 = Math.Atan2(ykj, xkj);
             double a, b;
             a = Math.Sqrt(xij * xij + yij * yij);
-            b = Math.Sqrt(xkj*xkj + ykj*ykj);
-            double dki = Abs((Math.PI/2.0  * (theta10*theta10 - theta20*theta20) + delta_x(theta10, theta20)) /(theta10*theta10 + theta20*theta20))*Abs(a-b) /Math.Sqrt(a*a+b*b);
+            b = Math.Sqrt(xkj * xkj + ykj * ykj);
+            double dki = Abs((Math.PI / 2.0 * (theta10 * theta10 - theta20 * theta20) + delta_x(theta10, theta20)) / (theta10 * theta10 + theta20 * theta20)) * Abs(a - b) / Math.Sqrt(a * a + b * b);
             return dki;
 
         }
@@ -533,14 +520,13 @@ namespace AlloyAct_Pro
                 return Math.PI / 2.0;
             }
 
-            
+
         }
-              
-       
+
+
         public double UEM1(string k, string i, string j, string mode)
         {
-            double alpha_KA, wka, wkb, identy_ka, identy_kb;
-            double R = constant.R;
+            double alpha_KA;
             Element Ek = new Element(k);
             Element Ei = new Element(i);
             Element Ej = new Element(j);
@@ -550,7 +536,7 @@ namespace AlloyAct_Pro
             ternary_.setTemperature(T);
 
             double inter_ik, inter_ki, inter_jk, inter_kj;
-            inter_ik = ternary_.kexi(Ek, Ei);   
+            inter_ik = ternary_.kexi(Ek, Ei);
             inter_ki = ternary_.kexi(Ei, Ek);
             inter_jk = ternary_.kexi(Ek, Ej);
             inter_kj = ternary_.kexi(Ej, Ek);
@@ -575,9 +561,7 @@ namespace AlloyAct_Pro
         }
         public double UEM2(string k, string i, string j, string mode)
         {
-            double alpha_KA, alpha_KA2;
-            double R = constant.R;
-            double identified_term;
+            double alpha_KA;
             Element Ek = new Element(k);
             Element Ei = new Element(i);
             Element Ej = new Element(j);
@@ -589,7 +573,6 @@ namespace AlloyAct_Pro
             ternary_.setTemperature(T);
             ternary_.setEntropy(false);
             double weight1 = 0;
-            double inter_IJ, inter_KJ, inter_KI, inter_JI;
             double df_KI, df_KJ;
             if (mode == "UEM2-N")
             {
@@ -606,18 +589,18 @@ namespace AlloyAct_Pro
 
 
             }
-           
+
 
             else
             {
                 //UEM2_adv 图形中心之差
-                double df_ki, df_kj, df_ij;
-                df_ki = get_D_ki(k,i,j);
-                df_kj = get_D_ki(k,j,i);
-                
+                double df_ki, df_kj;
+                df_ki = get_D_ki(k, i, j);
+                df_kj = get_D_ki(k, j, i);
 
-               
-                if ((df_ki == 0||df_ki == double.NaN) &&  (df_kj == 0 || df_kj == double.NaN)) 
+
+
+                if ((df_ki == 0 || df_ki == double.NaN) && (df_kj == 0 || df_kj == double.NaN))
                 {
                     weight1 = 1;
                 }

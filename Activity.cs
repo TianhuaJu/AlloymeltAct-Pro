@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Text.RegularExpressions;
 
 namespace AlloyAct_Pro
 {
@@ -207,6 +198,32 @@ namespace AlloyAct_Pro
             i_comboBox3.Text = string.Empty;
             temp_comboBox4.Text = string.Empty;
             alloy_comboBox1.Text = string.Empty;
+        }
+        HelpActFm helpActFM = new HelpActFm();
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (helpActFM.IsDisposed)
+            {
+                HelpActFm helpActFM = new HelpActFm();
+                helpActFM.Show();
+            }
+            else
+            {
+                if (helpActFM.Visible == false)
+                {
+                    helpActFM.Visible = true;
+                    helpActFM.Show();
+                }
+                if (helpActFM.WindowState == FormWindowState.Minimized)
+                {
+                    helpActFM.WindowState = FormWindowState.Normal;
+                }
+            }
+        }
+
+        private void ActivityFm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            helpActFM.Close();
         }
     }
 }

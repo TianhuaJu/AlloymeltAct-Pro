@@ -24,15 +24,15 @@ namespace AlloyAct_Pro
             byte[] dataBase = global::AlloyAct_Pro.Properties.Resources.DataBase;
             byte[] NPOI = global::AlloyAct_Pro.Properties.Resources.NPOI;
 
-          
+
             string strPath_dataBase = Application.StartupPath + @"\data\DataBase.db";
-            
+
             string NPOI_path = Application.StartupPath + @"\NPOI.dll";
-            
+
 
 
             create_file_path(dataBase, strPath_dataBase);
-           
+
             create_file_path(NPOI, NPOI_path);
 
             void create_file_path(byte[] file, string filepath)

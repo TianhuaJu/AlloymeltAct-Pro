@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Threading;
-
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using MathNet.Numerics;
-
-namespace AlloyAct_Pro
+﻿namespace AlloyAct_Pro
 {
 
 
@@ -21,16 +9,16 @@ namespace AlloyAct_Pro
         private bool entropy { get => _entropy; }
         private bool _cp;
         private bool cp { get => _cp; }
-      
-        private string state { get => _state;  }
+
+        private string state { get => _state; }
         private static double R = constant.R;
         private bool _entropy = false;
         private (bool entropy, bool cp) _condition = (false, false);
         private string _state;
 
         private (bool entropy, bool cp) condition { get => _condition; }
-        delegate double delgateFfab(Element Ei, Element Ej,bool extra_term = false);
-        
+        delegate double delgateFfab(Element Ei, Element Ej, bool extra_term = false);
+
         public Ternary_melts(double T, string phaseState = "liquid", bool isSE = false)
         {
 
@@ -39,14 +27,14 @@ namespace AlloyAct_Pro
             this._state = phaseState;
             this.Tem = T;
 
-          
-             
+
+
             this._entropy = isSE;
 
         }
         public Ternary_melts()
         {
-           
+
 
 
         }
@@ -56,7 +44,7 @@ namespace AlloyAct_Pro
             this.Tem = Tem;
         }
 
-      
+
 
         public void setEntropy(bool entropy)
         {
@@ -66,7 +54,7 @@ namespace AlloyAct_Pro
         {
             this._state = state;
         }
-       
+
         /// <summary>
         /// apply for adding excess entropy by Witusiewicz
         /// </summary>
@@ -78,7 +66,7 @@ namespace AlloyAct_Pro
             double omga;
             omga = 1.0 / (2 * Math.PI) * Pow((Ea.Tm + Eb.Tm) / (Ea.Tb + Eb.Tb) + 1, Math.E);
 
-            return Pow(omga-1,2)/(this.Tem-298*omga)*this.Tem;
+            return Pow(omga - 1, 2) / (this.Tem - 298 * omga) * this.Tem;
         }
         /// <summary>
         /// apply for adding excess entropy by Witusiewicz
@@ -88,7 +76,7 @@ namespace AlloyAct_Pro
         /// <returns></returns>
         private double belta_ab(Element Ea, Element Eb)
         {
-            double omga, Pt,beta;
+            double omga, Pt, beta;
             omga = 1.0 / (2 * Math.PI) * Pow((Ea.Tm + Eb.Tm) / (Ea.Tb + Eb.Tb) + 1, Math.E);
             Pt = 1.0 / 2 + 4 * (Ea.Tm + Eb.Tm) / (6 * this.Tem) + 2 * Math.Log(this.Tem * 2 / (Ea.Tb + Eb.Tb - Ea.Tm - Eb.Tm));
             beta = (1 - omga) * omga * constant.R * (2 - 4 * (Ea.Tm + Eb.Tm) / (6 * this.Tem)) - omga * this.Tem * constant.R * Pt;
@@ -103,10 +91,10 @@ namespace AlloyAct_Pro
         /// <returns></returns>
         private double fab_pure(Element Ei, Element Ej, bool S = false)
         {
-            
-            
+
+
             double fij, rp, P, alpha;
-            
+
 
             if (this.state == "liquid")
             {
@@ -116,7 +104,7 @@ namespace AlloyAct_Pro
             {
                 alpha = 1.0;
             }
-           
+
             if (Ei.hybird_factor != "other" || Ej.hybird_factor != "other")
             {
                 rp = (Ei.hybird_factor == Ej.hybird_factor) ? 0.0 : Ei.hybird_Value * Ej.hybird_Value;
@@ -130,9 +118,9 @@ namespace AlloyAct_Pro
             P = (Ei.isTrans_group && Ej.isTrans_group) ? constant.P_TT : ((Ei.isTrans_group || Ej.isTrans_group) ? constant.P_TN : constant.P_NN);
 
 
-            fij = 2 *P*(constant.QtoP * Math.Pow(Ei.N_WS - Ej.N_WS, 2.0) - Math.Pow(Ei.Phi - Ej.Phi, 2.0) - alpha * rp) / (1 / Ei.N_WS + 1 / Ej.N_WS);
+            fij = 2 * P * (constant.QtoP * Math.Pow(Ei.N_WS - Ej.N_WS, 2.0) - Math.Pow(Ei.Phi - Ej.Phi, 2.0) - alpha * rp) / (1 / Ei.N_WS + 1 / Ej.N_WS);
 
-            return fij ;
+            return fij;
         }
         /// <summary>
         /// 添加过剩热容，fab是Ding定义的，包含了a，b的体积项
@@ -142,11 +130,11 @@ namespace AlloyAct_Pro
         /// <param name="state">熔体温度及相态</param>
         /// <param name="condition">是否考虑熵和热容</param>
         /// <returns></returns>
-        private double Dfab_Func(Element Ei, Element Ej ,bool s = true)
+        private double Dfab_Func(Element Ei, Element Ej, bool s = true)
         {
             (bool entropy, bool Cp) condition = this.condition;
             (string phase, double Tem) state = (this.state, this.Tem);
-            double fij = 0, sij, cp, alpha, rp, P;
+            double fij = 0, sij, alpha, rp, P;
             double avg_Tm = 1.0 / Ei.Tm + 1.0 / Ej.Tm;
 
 
@@ -161,14 +149,14 @@ namespace AlloyAct_Pro
                 {
                     sij = 1.0 / 15.1 * state.Tem * avg_Tm;
                 }
-                
+
 
             }
             else
             {
                 sij = 0;
             }
-           
+
             if (state.phase == "liquid")
             {
                 alpha = 0.73;
@@ -192,7 +180,7 @@ namespace AlloyAct_Pro
 
 
 
-            return fij * (1.0 - sij );
+            return fij * (1.0 - sij);
         }
         /// <summary>
         /// 纯Fab，包含熵项
@@ -200,9 +188,9 @@ namespace AlloyAct_Pro
         /// <param name="Ei"></param>
         /// <param name="Ej"></param>
         /// <returns></returns>
-        private double fab_func_ContainS(Element Ei, Element Ej,bool S = false)
+        private double fab_func_ContainS(Element Ei, Element Ej, bool S = false)
         {
-            double alpha,Rp, Pij, entropy_term,fij;
+            double alpha, Rp, Pij, entropy_term, fij;
             double avg_Tm = 1.0 / Ei.Tm + 1.0 / Ej.Tm;
             if (this.state == "liquid")
             {
@@ -235,16 +223,16 @@ namespace AlloyAct_Pro
             }
             Pij = (Ei.isTrans_group && Ej.isTrans_group) ? constant.P_TT : ((Ei.isTrans_group || Ej.isTrans_group) ? constant.P_TN : constant.P_NN);
             fij = 2.0 * Pij * (constant.QtoP * Pow(Ei.N_WS - Ej.N_WS, 2.0) - Pow(Ei.Phi - Ej.Phi, 2.0) - alpha * Rp) / ((1.0 / Ei.N_WS + 1.0 / Ej.N_WS));
-            
 
-            return fij*(1-entropy_term);
+
+            return fij * (1 - entropy_term);
 
 
         }
 
-       
 
-    
+
+
 
         /// <summary>
         /// 用于计算UEM1条件下，两组分间的性质差。ξ^k_i，D_ki = Abs(ξ^k_i-ξ^i_k)
@@ -258,9 +246,9 @@ namespace AlloyAct_Pro
 
             double lny0;
 
-            double fik,dHtrans_i = 0,dHtrans_slv = 0,dHtrans = 0;
-            
-           
+            double fik, dHtrans_i = 0, dHtrans_slv = 0, dHtrans = 0;
+
+
             fik = fab_pure(solvent, solutei);
             List<string> elemets_lst = new List<string>() { "Si", "Ge" };
 
@@ -286,8 +274,8 @@ namespace AlloyAct_Pro
             }
 
             dHtrans = dHtrans_slv;
-            lny0 = 1000 * fik * solutei.V*(1 + solutei.u * (solutei.Phi - solvent.Phi)) / (R * Tem)+1000*dHtrans/(R * Tem);
-         
+            lny0 = 1000 * fik * solutei.V * (1 + solutei.u * (solutei.Phi - solvent.Phi)) / (R * Tem) + 1000 * dHtrans / (R * Tem);
+
             return lny0;
 
         }
@@ -302,22 +290,22 @@ namespace AlloyAct_Pro
 
             double lny0;
 
-            double fik, dHtrans_i = 0, dHtrans_slv = 0, dHtrans = 0;
+            double fik, dHtrans = 0;
             fik = fab_func_ContainS(solvent, solutei);
-            
 
-            dHtrans = solutei.dH_Trans; 
-            lny0 = 1000 * fik * solutei.V * (1 + solutei.u * (solutei.Phi - solvent.Phi))  + 1000 * dHtrans ;
 
-            return lny0/(constant.R*Tem);
+            dHtrans = solutei.dH_Trans;
+            lny0 = 1000 * fik * solutei.V * (1 + solutei.u * (solutei.Phi - solvent.Phi)) + 1000 * dHtrans;
+
+            return lny0 / (constant.R * Tem);
 
         }
-     
+
         private double Pow(double x, double y)
         {
             return Math.Pow(x, y);
         }
-  
+
         /// <summary>
         /// 固溶体中弹性项对一阶相互作用系数的贡献,使用新几何模型展开。
         /// </summary>
@@ -327,16 +315,16 @@ namespace AlloyAct_Pro
         /// <param name="Fab"></param>
         /// <param name="contri_Func"></param>
         /// <returns></returns>
-        private double PresentModel1_AIP_Elac(Element solv, Element solui, Element soluj,  Geo_Model contri_Func,string GeoModel,string mode = "Normal")
+        private double PresentModel1_AIP_Elac(Element solv, Element solui, Element soluj, Geo_Model contri_Func, string GeoModel, string mode = "Normal")
         {
             double Hij, Hik, Hjk, dHik, dHjk;
             double Hj_in_i, Hi_in_j, Hi_in_k, Hk_in_i, Hj_in_k, Hk_in_j;
-            double alphai_jk, alphai_kj, alphaj_ki,alphaj_ik, alphak_ij,alphak_ji;
+            double alphai_jk, alphai_kj, alphaj_ki, alphaj_ik, alphak_ij, alphak_ji;
 
-            alphai_jk = contri_Func(solui.Name, soluj.Name,solv.Name, mode);
+            alphai_jk = contri_Func(solui.Name, soluj.Name, solv.Name, mode);
             alphaj_ik = contri_Func(soluj.Name, solui.Name, solv.Name, mode);
-            alphai_kj = contri_Func(solui.Name, solv.Name,soluj.Name, mode);
-            alphaj_ki = contri_Func(soluj.Name, solv.Name,solui.Name, mode);
+            alphai_kj = contri_Func(solui.Name, solv.Name, soluj.Name, mode);
+            alphaj_ki = contri_Func(soluj.Name, solv.Name, solui.Name, mode);
             alphak_ij = contri_Func(solv.Name, solui.Name, soluj.Name, mode);
             alphak_ji = contri_Func(solv.Name, soluj.Name, solui.Name, mode);
             Hj_in_i = new Binary_model().Elastic_AinB(soluj.Name, solui.Name);
@@ -355,16 +343,16 @@ namespace AlloyAct_Pro
 
 
 
-            return 1000.0 *(Hij - Hik - Hjk + dHik + dHjk) / (constant.R * Tem);
-            
-        }
-       
+            return 1000.0 * (Hij - Hik - Hjk + dHik + dHjk) / (constant.R * Tem);
 
-       
-        
+        }
+
+
+
+
         public double Activity_Interact_Coefficient_Model(Element solv, Element solui, Element soluj, Geo_Model geo_Model, string GeoModel = "UEM1")
         {
-          
+
 
             double fij = fab_func_ContainS(solui, soluj);
             double fik = fab_func_ContainS(solv, solui);
@@ -406,7 +394,7 @@ namespace AlloyAct_Pro
             d_omaga_ik_j = aji_ik * omaga_ik * (1 - solui.V / solv.V * (1 + 2 * solui.u * (solui.Phi - solv.Phi)));
             d_omaga_jk_i = aij_jk * omaga_jk * (1 - soluj.V / solv.V * (1 + 2 * soluj.u * (soluj.Phi - solv.Phi)));
 
-        
+
 
             double chemical_term = omaga_ij - omaga_jk - omaga_ik + d_omaga_ik_j + d_omaga_jk_i;
 
@@ -419,7 +407,7 @@ namespace AlloyAct_Pro
 
         }
 
-       
+
 
     }
 }

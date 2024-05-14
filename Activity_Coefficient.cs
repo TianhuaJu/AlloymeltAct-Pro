@@ -1,12 +1,4 @@
-﻿using MathNet.Numerics;
-using NPOI.SS.Formula.Functions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Text.RegularExpressions;
 
 namespace AlloyAct_Pro
 {
@@ -23,15 +15,16 @@ namespace AlloyAct_Pro
         /// <summary>
         /// 熔体的原始组成，{"A",x}形式的集合字典，非标准摩尔形式
         /// </summary>
-        private Dictionary<string, double> _comp_dict_Original 
-        { 
-            get 
+        private Dictionary<string, double> _comp_dict_Original
+        {
+            get
             { return this._comp_dict; }
         }
         /// <summary>
         /// 熔体的组成{"A",x}形式的集合字典，标准摩尔形式
         /// </summary>
-        private Dictionary<string, double> melts_dict {
+        private Dictionary<string, double> melts_dict
+        {
             get
             {
                 double sum = 0;
@@ -86,7 +79,7 @@ namespace AlloyAct_Pro
         /// <param name="text">AxByCz形式</param>
         public void set_CompositionDict(string text)
         {
-            
+
             Regex re = new Regex(@"([A-Z]{1}[a-z]?)(\d+[\.]?\d*)?");
             MatchCollection matchs = re.Matches(text);
 
@@ -120,11 +113,11 @@ namespace AlloyAct_Pro
         /// <param name="varable">变量组分</param>
         /// <param name="x">输入变量的摩尔组成</param>
         /// <returns></returns>
-        public Dictionary<string, double> get_NewCompositionDict(string varable, double x) 
+        public Dictionary<string, double> get_NewCompositionDict(string varable, double x)
         {
 
-            Dictionary<string,double> componet_molarPairs = new Dictionary<string,double>();
-            Dictionary<string,double> componet_molarfractionPairs = new Dictionary<string,double>();
+            Dictionary<string, double> componet_molarPairs = new Dictionary<string, double>();
+            Dictionary<string, double> componet_molarfractionPairs = new Dictionary<string, double>();
             double nA = 0, sum_noA = 0;
             foreach (var item in this._comp_dict_Original)
             {
@@ -133,24 +126,22 @@ namespace AlloyAct_Pro
                     componet_molarPairs.Add(item.Key, item.Value);
                     sum_noA = sum_noA + item.Value;
                 }
-                
+
             }
             nA = x * sum_noA / (1 - x);
-
-            double n_total;
             foreach (var item in this._comp_dict_Original)
             {
                 if (item.Key.Equals(varable))
                 {
-                    componet_molarfractionPairs.Add(varable,x); 
+                    componet_molarfractionPairs.Add(varable, x);
                 }
                 else
                 {
-                    componet_molarfractionPairs.Add(item.Key, item.Value*(1-x)/sum_noA);
+                    componet_molarfractionPairs.Add(item.Key, item.Value * (1 - x) / sum_noA);
                 }
-                
+
             }
-            return componet_molarfractionPairs;           
+            return componet_molarfractionPairs;
 
 
         }
@@ -162,11 +153,11 @@ namespace AlloyAct_Pro
         /// <param name="solute_i">待计算活度系数的组元</param>
         /// <param name="comp_dict">合金熔体的组成</param>
         /// <param name="Tem">温度</param>
-        public double activity_Coefficient_Wagner(Dictionary<string, double> comp_dict, string solvent, string solute_i,  Geo_Model geo_Model,string GeoModel,(string state, double T) info)
+        public double activity_Coefficient_Wagner(Dictionary<string, double> comp_dict, string solvent, string solute_i, Geo_Model geo_Model, string GeoModel, (string state, double T) info)
         {
 
-            double lnY0 = 0.0,lnYi;
-            
+            double lnY0 = 0.0, lnYi;
+
             Element solv = new Element(solvent);
             Element solu_i = new Element(solute_i);
             double acf = 0.0;
@@ -175,29 +166,29 @@ namespace AlloyAct_Pro
                 /**判断需求活度系数的溶质是否包含在组成内，如果包含，执行下列计算 */
 
 
-                Ternary_melts inacoef = new Ternary_melts(info.T,info.state);
-              
+                Ternary_melts inacoef = new Ternary_melts(info.T, info.state);
+
                 lnY0 = inacoef.lnY0(solv, solu_i);
                 foreach (string elementSymbol in this.melts_dict.Keys)
                 {
 
-                   
-                   
+
+
                     if (elementSymbol != solvent)
-                    { 
+                    {
                         Element solu_j = new Element(elementSymbol);
                         double x = this.melts_dict[elementSymbol];
-                        
-                        acf += this.melts_dict[elementSymbol] * inacoef.Activity_Interact_Coefficient_Model(solv, solu_i, solu_j,geo_Model, GeoModel);
-                        
+
+                        acf += this.melts_dict[elementSymbol] * inacoef.Activity_Interact_Coefficient_Model(solv, solu_i, solu_j, geo_Model, GeoModel);
+
                     }
 
-                   
+
                 }
 
                 lnYi = lnY0 + acf;
 
-                
+
 
 
             }
@@ -206,7 +197,7 @@ namespace AlloyAct_Pro
                 MessageBox.Show("组成中不存在" + solute_i);
                 lnYi = 0.0;
             }
-           
+
             return lnYi;
 
         }
@@ -221,19 +212,19 @@ namespace AlloyAct_Pro
         /// <param name="geo_Model">计算相互作用系数时使用的几何模型</param>
         /// <param name="GeoModel">几何模型的名称</param>
         /// <returns></returns>
-        public double activity_coefficient_Pelton(Dictionary<string,double> comp_dict, string solute_i, string matrix, double T,Geo_Model geo_Model,string GeoModel,string phase_state = "liquid")
+        public double activity_coefficient_Pelton(Dictionary<string, double> comp_dict, string solute_i, string matrix, double T, Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
         {
-            
+
             Element solv = new Element(matrix);
             Element solui = new Element(solute_i);
             double lnYi_0 = 0, lnYi = 0;
-            Ternary_melts ternary_melts = new Ternary_melts(T,phase_state);
+            Ternary_melts ternary_melts = new Ternary_melts(T, phase_state);
             lnYi_0 = ternary_melts.lnY0(solv, solui);
-            
+
 
             if (comp_dict.ContainsKey(solv.Name) && comp_dict.ContainsKey(solui.Name))
             {
-                double sum_xsij = 0,sum_xskj = 0;
+                double sum_xsij = 0, sum_xskj = 0;
                 foreach (var item in comp_dict)
                 {
                     if (item.Key != solv.Name)
@@ -243,13 +234,13 @@ namespace AlloyAct_Pro
                         sum_xsij += sji * item.Value;
                     }
                 }
-              
+
                 for (int p = 0; p < comp_dict.Count; p++)
                 {
                     //计算∑xj*xi*ɛ^j_i
                     for (int q = p; q < comp_dict.Count; q++)
                     {
-                        
+
                         string m, n;
                         m = comp_dict.ElementAt(p).Key;
                         n = comp_dict.ElementAt(q).Key;
@@ -263,28 +254,28 @@ namespace AlloyAct_Pro
 
                             sum_xskj += xm * xn * Smn;
                         }
-                        
-                        
+
+
                     }
                 }
-                
-                lnYi = lnYi_0 + sum_xsij - 1.0 / 2 * sum_xskj; 
+
+                lnYi = lnYi_0 + sum_xsij - 1.0 / 2 * sum_xskj;
                 return lnYi;
             }
             else
-            { 
-                return 0.0; 
+            {
+                return 0.0;
             }
 
 
-           
-        }
-        
-       
 
-        public Tuple<string,double> getTuple(string A, double x) 
+        }
+
+
+
+        public Tuple<string, double> getTuple(string A, double x)
         {
-            return new Tuple<string, double>(A,x);
+            return new Tuple<string, double>(A, x);
         }
 
 

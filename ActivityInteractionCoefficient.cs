@@ -135,7 +135,7 @@ namespace AlloyAct_Pro
                 row = +dataGridView1.Rows.Add();
                 dataGridView1["compositions", row].Value = k + "-" + i + "-" + j;
                 dataGridView1["CalculatedResult", row].Value = sij_UEM1;
-                dataGridView1["Remark", row].Value = sij_UEM2;
+                dataGridView1["Remark", row].Value = "";
 
                 dataGridView1["ExperimentalValue", row].Value = sij_exp;
                 dataGridView1["state", row].Value = getState();

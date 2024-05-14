@@ -419,6 +419,7 @@
             Melt_composition.HeaderText = "组成";
             Melt_composition.MinimumWidth = 6;
             Melt_composition.Name = "Melt_composition";
+            Melt_composition.ToolTipText = "AxByCz……，x表示包含基体元素的1mol熔体中组分A的组成";
             // 
             // solute_i
             // 

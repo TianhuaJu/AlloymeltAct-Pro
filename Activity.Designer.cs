@@ -57,6 +57,7 @@
             settingToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
+            toolTip1 = new ToolTip(components);
             k_name = new DataGridViewTextBoxColumn();
             Melt_composition = new DataGridViewTextBoxColumn();
             solute_i = new DataGridViewTextBoxColumn();
@@ -65,7 +66,6 @@
             Tem = new DataGridViewTextBoxColumn();
             state = new DataGridViewTextBoxColumn();
             remark = new DataGridViewTextBoxColumn();
-            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -404,7 +404,6 @@
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(953, 550);
             dataGridView1.TabIndex = 1;
-            toolTip1.SetToolTip(dataGridView1, "包含基体元素的1mol熔体中各组分的组成");
             // 
             // k_name
             // 
@@ -418,6 +417,7 @@
             Melt_composition.HeaderText = "组成";
             Melt_composition.MinimumWidth = 6;
             Melt_composition.Name = "Melt_composition";
+            Melt_composition.ToolTipText = "AxByCz……，x表示包含基体元素的1mol熔体中组分A的组成";
             // 
             // solute_i
             // 

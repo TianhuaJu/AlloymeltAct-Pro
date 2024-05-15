@@ -404,7 +404,6 @@
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(953, 550);
             dataGridView1.TabIndex = 1;
-            toolTip1.SetToolTip(dataGridView1, "包含基体元素的1mol熔体中各组分的组成");
             // 
             // k_name
             // 

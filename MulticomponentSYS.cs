@@ -1,27 +1,17 @@
-﻿using MathNet.Numerics.Distributions;
-using NPOI.SS.Formula.Functions;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System.Collections;
 using System.Text.RegularExpressions;
 using Match = System.Text.RegularExpressions.Match;
 
 namespace AlloyAct_Pro
 {
 
-    
+
     class binary_tuple
     {
         private string _a;
         private string _b;
         private string _name;
-        private Dictionary<string, Dictionary<string, double>> _compositionInfo_Dict = new Dictionary<string, Dictionary<string, double>>(); 
+        private Dictionary<string, Dictionary<string, double>> _compositionInfo_Dict = new Dictionary<string, Dictionary<string, double>>();
         public Dictionary<string, Dictionary<string, double>> compositionInfo_Dict { get => _compositionInfo_Dict; }
         public string Name { get => _name; }
         public string A { get => _a; }
@@ -56,7 +46,7 @@ namespace AlloyAct_Pro
             this._b = C;
 
         }
-        public void compositionInfo_Add(string Member, string contributor_Member,double x)
+        public void compositionInfo_Add(string Member, string contributor_Member, double x)
         {
             Dictionary<string, double> constructInfo = new Dictionary<string, double>();
             constructInfo.Add(contributor_Member, x);
@@ -72,7 +62,7 @@ namespace AlloyAct_Pro
                 {
                     this._compositionInfo_Dict[Member].Add(contributor_Member, x);
                 }
-                
+
             }
             else
             {
@@ -145,7 +135,7 @@ namespace AlloyAct_Pro
             bool t1 = b1.isContain(a);
             bool t2 = b1.isContain(b);
             bool t3 = b1.isContain(c);
-           
+
             if (!t1)
             {
                 return a;
@@ -279,25 +269,24 @@ namespace AlloyAct_Pro
         }
         public ternary_tuple degrade()
         {
-            ternary_tuple ternary_tupe;
-            string A, B, C,D,E,F;
+            string A, B, C, D, E, F;
             binary_tuple b1, b2, b3;
             (b1, b2, b3) = (this.binary1, this.binary2, this.binary3);
-            (A, B,C,D,E,F) = (b1.A, b1.B,b2.A,b2.B,b3.A,b3.B);
+            (A, B, C, D, E, F) = (b1.A, b1.B, b2.A, b2.B, b3.A, b3.B);
             List<string> lst = new List<string>() { A, B, C, D, E, F };
             List<string> sublst1 = subDifferent(A, lst);
             List<string> sublst2 = subDifferent(sublst1[0], sublst1);
             string a, b, c;
-            if(sublst2.Count>=1)
+            if (sublst2.Count >= 1)
             {
                 (a, b, c) = (A, sublst1[0], sublst2[0]);
                 return new ternary_tuple(a, b, c);
 
             }
-            
 
 
-          
+
+
             else
             {
                 return null;
@@ -308,11 +297,11 @@ namespace AlloyAct_Pro
 
     }
 
-   
+
 
     class MultiComponnetSYS
     {
-       
+
         private Dictionary<string, double> _multiComponnets_dict;
         private string _state = "liquid";
         private double _lammda;
@@ -337,7 +326,7 @@ namespace AlloyAct_Pro
             get
             {
                 double entropy_id = 0;
-                 
+
                 foreach (var item in Initial_Componnets_Dict.Values)
                 {
                     if (item != 0)
@@ -345,12 +334,12 @@ namespace AlloyAct_Pro
                         entropy_id += this.entropy.id_Entropy(item);
 
                     }
-                    
+
                 }
-                return entropy_id/1000.0;
+                return entropy_id / 1000.0;
             }
         }
-        private   const double R = constant.R;
+        private const double R = constant.R;
         /// <summary>
         /// {"A",x}形式的字典集合，用于存储1mol熔体中每个组元的含量
         /// </summary>
@@ -373,7 +362,7 @@ namespace AlloyAct_Pro
                             molarFraction_dict.Add(item, this._multiComponnets_dict[item] * 1.0 / sum);
 
                         }
-                        
+
                     }
 
                 }
@@ -418,7 +407,7 @@ namespace AlloyAct_Pro
         /// 设定合金组成，AxByCz存储为{"A",x},{"B",y},{"C",z}形式
         /// </summary>
         /// <param name="Composition"></param>
-        public void setComposition(string Composition) 
+        public void setComposition(string Composition)
         {
             //设定合金组成，AxByCz存储为{"A",x},{"B",y},{"C",z}形式
             Dictionary<string, double> compo_dict = new Dictionary<string, double>();
@@ -510,13 +499,13 @@ namespace AlloyAct_Pro
             return pair_list;
 
         }
-       
-      
+
+
 
 
         static Dictionary<string, double> Contri_eff1 = new Dictionary<string, double>();
         static Dictionary<string, double> Contri_eff2 = new Dictionary<string, double>();
-       
+
         /// <summary>
         /// 指定几何模型给出的子二元系摩尔组成
         /// </summary>
@@ -538,7 +527,6 @@ namespace AlloyAct_Pro
                 {
                     if (!bItem.isContain(item.Key))
                     {
-                        double alpha_KA, alpha_KB;
                         string K, A, B;
                         K = item.Key;
                         A = bItem.A;
@@ -593,14 +581,12 @@ namespace AlloyAct_Pro
         /// <param name="geo_Model">几何模型</param>
         /// <param name="GeoModel">几何模型标签</param>
         /// <param name="T">系统温度</param>
-        public void output_contri_eff(string path, Dictionary<string, double> dictionary, Geo_Model geo_Model, string GeoModel,double T)
+        public void output_contri_eff(string path, Dictionary<string, double> dictionary, Geo_Model geo_Model, string GeoModel, double T)
         {
-
-            string contri_str_uem1,contri_str_uem2;
             double alpha_ki_ij, alpha_kj_ij, alpha_ij_kj, alpha_ik_kj, alpha_ji_ik, alpha_jk_ik;
             ArrayList arrayList = new ArrayList();
             Dictionary<string, double> k_i_ij_dict = new Dictionary<string, double>();
-            
+
             string ki_ij;
             List<string> list = new List<string>();
 
@@ -611,22 +597,22 @@ namespace AlloyAct_Pro
             string solv, solutei, solutej;
             for (int i = 0; i < arrayList.Count; i++)
             {
-                for (int j = i+1; j < arrayList.Count; j++)
+                for (int j = i + 1; j < arrayList.Count; j++)
                 {
-                    for (int k = j+1; k < arrayList.Count; k++)
+                    for (int k = j + 1; k < arrayList.Count; k++)
                     {
-                        
+
                         solv = arrayList[k].ToString();
                         solutei = arrayList[i].ToString();
                         solutej = arrayList[j].ToString();
-                       
+
                         alpha_ij_kj = geo_Model(solutei, solutej, solv, GeoModel);
-                        alpha_ik_kj = geo_Model(solutei,solv,solutej, GeoModel);
-                        alpha_ji_ik = geo_Model(solutej,solutei,solv,GeoModel);
-                        alpha_jk_ik = geo_Model(solutej,solv,solutei, GeoModel);
-                        alpha_ki_ij = geo_Model(solv,solutei,solv,GeoModel);
-                        alpha_kj_ij = geo_Model(solv,solutej,solutei, GeoModel);
-                        
+                        alpha_ik_kj = geo_Model(solutei, solv, solutej, GeoModel);
+                        alpha_ji_ik = geo_Model(solutej, solutei, solv, GeoModel);
+                        alpha_jk_ik = geo_Model(solutej, solv, solutei, GeoModel);
+                        alpha_ki_ij = geo_Model(solv, solutei, solv, GeoModel);
+                        alpha_kj_ij = geo_Model(solv, solutej, solutei, GeoModel);
+
                         ki_ij = string.Format("{0}-{1}: \t {3}, \t {0}-{2}: \t {4} \t in ( {1}-{2})\n" +
                                              "{1}-{0}: \t {8}, \t {1}-{2}: \t {7} \t in ( {2}-{0})\n" +
                                              "{2}-{1}: \t {5}, \t {2}-{0}: \t {6} \t in ( {1}-{0})\n",
@@ -647,13 +633,13 @@ namespace AlloyAct_Pro
                 content += item + '\r' + '\n';
             }
 
-            myFunctions.WriteLog(path + "\\"  + "贡献系数"+ "("+ GeoModel + ").txt", content);
-            
+            myFunctions.WriteLog(path + "\\" + "贡献系数" + "(" + GeoModel + ").txt", content);
+
 
         }
-        
-       
-        
+
+
+
         /// <summary>
         /// 外推模型表示的多元系溶体性质
         /// </summary>
@@ -663,28 +649,28 @@ namespace AlloyAct_Pro
         /// <param name="GeoModel">外推模型代码</param>
         /// <param name="T">溶体的温度</param>
         /// <returns></returns>
-        public double multi_ComponentProperties_byUEM( Interaction_Func_b b_func, Geo_Model geo_Model, string GeoModel,double T)
+        public double multi_ComponentProperties_byUEM(Interaction_Func_b b_func, Geo_Model geo_Model, string GeoModel, double T)
         {
             double sum = 0;
-            
-            Dictionary<binary_tuple, Dictionary<string, double>> sub_binaryComp = sub_Binary_Composition(this.Initial_Componnets_Dict, geo_Model, GeoModel,T);
+
+            Dictionary<binary_tuple, Dictionary<string, double>> sub_binaryComp = sub_Binary_Composition(this.Initial_Componnets_Dict, geo_Model, GeoModel, T);
 
             foreach (var item in sub_binaryComp)
             {
-                string A,B;
-                double xA,xB,yA,yB;
+                string A, B;
+                double xA, xB, yA, yB;
                 A = item.Key.A; B = item.Key.B;
                 xA = this.Initial_Componnets_Dict[A]; xB = this.Initial_Componnets_Dict[B];
-                yA = item.Value[A];yB = item.Value[B];
+                yA = item.Value[A]; yB = item.Value[B];
 
-                sum = sum + b_func(A,B,yA,yB)* xA * xB /(yA*yB) ;
+                sum = sum + b_func(A, B, yA, yB) * xA * xB / (yA * yB);
             }
             return sum;
 
 
         }
 
-       
+
 
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 
 namespace AlloyAct_Pro
@@ -23,7 +18,7 @@ namespace AlloyAct_Pro
         private double _sij;
         private double _rji;
         private double _pji;
-        
+
         private string _Ref = "";
 
         public bool ij_flag;//判断查询到的字符串是ij类型？还是ji类型？还是空值？
@@ -66,9 +61,9 @@ namespace AlloyAct_Pro
         /// <summary>
         /// 以摩尔分数表示的一阶活度相互作用系数，j on i
         /// </summary>
-        public double sji {get => _sji;}
+        public double sji { get => _sji; }
         public double sij { get => _sij; }
-        
+
         /// <summary>
         /// 实验值温度
         /// </summary>
@@ -78,14 +73,14 @@ namespace AlloyAct_Pro
         /// 一阶相互作用系数实验值精度等级
         /// </summary>
         public string Rank_firstorder { get; set; }
-        
+
         public string eji_str { get; set; }
         public string T_str { get; set; }
         public string sji_str { get; set; }
         public string eij_str { get; set; }
         public string sij_str { get; set; }
 
-       
+
         public (string lnYi0, string T) str_lnYi0 { get; set; }
         public (string Yi0, string T) str_Yi0 { get; set; }
         public (string rji, string T) str_rji { get; set; }
@@ -114,44 +109,44 @@ namespace AlloyAct_Pro
             {
                 if (this.eij_str != null)
                 {
-                    this._eij = processdata((this.eij_str, this.str_T), T);                    
+                    this._eij = processdata((this.eij_str, this.str_T), T);
                     this._sij = myFunctions.first_order_w2m(this._eij, new Element(Solui), new Element(Solv)); ;
                     this._sji = this.sij;
                     this._eji = myFunctions.first_order_mTow(this._sji, new Element(soluj), new Element(solv));
                 }
                 else
                 {
-                    this._sij = processdata((this.sij_str,this.str_T),T);
+                    this._sij = processdata((this.sij_str, this.str_T), T);
                     this._eij = myFunctions.first_order_mTow(this.sij, new Element(Solui), new Element(solv));
                     this._sji = this.sij;
-                    this._eji = myFunctions.first_order_mTow(this._sji,new Element(soluj), new Element(solv));                    
-                    
-    
+                    this._eji = myFunctions.first_order_mTow(this._sji, new Element(soluj), new Element(solv));
+
+
                 }
             }
             else if (this.ji_flag)
             {
                 if (this.eji_str != null)
                 {
-                    this._eji = processdata((this.eji_str,this.str_T), T);
+                    this._eji = processdata((this.eji_str, this.str_T), T);
                     this._sji = myFunctions.first_order_w2m(this.eji, new Element(soluj), new Element(solv));
                     this._sij = this.sji;
                     this._eij = myFunctions.first_order_mTow(this.sij, new Element(Solui), new Element(solv));
                 }
                 else
                 {
-                    this._sji = processdata((this.sji_str,this.str_T), T);
-                    this._eji = myFunctions.first_order_mTow(this.sji,new Element(soluj), new Element(solv));
-                    this._sij= this.sji;
+                    this._sji = processdata((this.sji_str, this.str_T), T);
+                    this._eji = myFunctions.first_order_mTow(this.sji, new Element(soluj), new Element(solv));
+                    this._sij = this.sji;
                     this._eij = myFunctions.first_order_mTow(this.sij, new Element(solui), new Element(solv));
 
                 }
 
             }
             else
-            { 
-                this._eij= this._eji = this._sij = this._sji = double.NaN;
-                
+            {
+                this._eij = this._eji = this._sij = this._sji = double.NaN;
+
             }
 
             this._Yi0 = processdata(this.str_Yi0, T);
@@ -172,7 +167,7 @@ namespace AlloyAct_Pro
             this._lnYi0 = processdata(this.str_lnYi0, T);
 
         }
-      
+
         private double processdata((string valuetext, string T) textinfo, double T)
         {
             double a, b, data;

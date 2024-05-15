@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace AlloyAct_Pro
+﻿namespace AlloyAct_Pro
 {
     [Serializable]
-    public  class Element
+    public class Element
     {
         private double _hs_D;
         private double _hs_V;
@@ -42,7 +35,8 @@ namespace AlloyAct_Pro
         /// </summary>
         public double Shm { get; set; }
         public double density { get; set; }
-        public double hs_D {
+        public double hs_D
+        {
             get
             {
                 if (double.TryParse(str_hs_D, out _hs_D))
@@ -54,9 +48,10 @@ namespace AlloyAct_Pro
                     return double.NaN;
                 }
             }
-                
+
         }
-        public double hs_V {
+        public double hs_V
+        {
             get
             {
                 if (double.TryParse(str_hs_V, out _hs_V))
@@ -70,8 +65,8 @@ namespace AlloyAct_Pro
 
             }
 
-                
-            }
+
+        }
         public bool Ueno_Validation
         {
             get
@@ -90,45 +85,45 @@ namespace AlloyAct_Pro
         public string str_hs_V { get; set; }
 
 
-        public Element( string name )
+        public Element(string name)
         {
-            
+
             if (constant.periodicTable.ContainsKey(name))
             {
-               this.isExist = true;
+                this.isExist = true;
                 this.Name = name;
-                
+
                 DataCenter.get_MiedemaData(this);
-               
+
 
             }
             else
             {
                 this.isExist = false;
             }
-            
+
 
 
         }
-        public Element(string Symbol,bool isconn_mysql)
+        public Element(string Symbol, bool isconn_mysql)
         {
             this.Name = Symbol;
             if (isconn_mysql)
             {
                 this.isExist = true;
-                
+
             }
             else
             {
-               this.isExist = false;
+                this.isExist = false;
                 MessageBox.Show(this.Name + "  is not exist", "warning!!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-           
+
         }
-       
-        
-       
-       
+
+
+
+
 
     }
 }

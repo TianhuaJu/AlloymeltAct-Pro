@@ -1,7 +1,7 @@
 ﻿
 
-using System.Data.SQLite;
 using System.Data;
+using System.Data.SQLite;
 
 
 namespace AlloyAct_Pro
@@ -14,9 +14,9 @@ namespace AlloyAct_Pro
     {
 
 
-        
+
         static string Miedemadata = "MiedemaParameter";
-        
+
         public static void Database(string database)
         {
             Miedemadata = database;
@@ -25,7 +25,7 @@ namespace AlloyAct_Pro
         /// 从数据库读取Miedema参数
         /// </summary>
         /// <param name="E1"></param>
-        public static  void get_MiedemaData(Element E1)
+        public static void get_MiedemaData(Element E1)
         {
 
             string dbpath = "Data Source =" + "data\\DataBase.db";
@@ -48,11 +48,11 @@ namespace AlloyAct_Pro
                 E1.Tm = reader.GetDouble(9);
                 //E1.Name = reader.GetString(10);
                 E1.Tb = reader.GetDouble(11);
-                
+
             }
-             
-            
-            if (!reader.IsClosed )
+
+
+            if (!reader.IsClosed)
             {
                 reader.Close();
             }
@@ -60,15 +60,15 @@ namespace AlloyAct_Pro
 
             if (conn.State == ConnectionState.Open)
             {
-                 
+
                 conn.Close();
             }
-           
+
 
 
         }
-        
-     
+
+
         /// <summary>
         /// 从SQLite中查询一阶活度相互作用系数
         /// 数据库中的数据全部以string形式存储，除数据格式很明确外
@@ -131,12 +131,12 @@ namespace AlloyAct_Pro
                 {
                     //查询到k-j-i
                     melt.ij_flag = true;
-                    
+
                     if (string.IsNullOrEmpty(rd1.GetString(0)))
                     {
                         melt.eij_str = null;
                         melt.Rank_firstorder = rd1.GetString(1);
-                        melt.sij_str = rd1.GetString(2);                        
+                        melt.sij_str = rd1.GetString(2);
                         melt.str_T = rd1.GetString(3);
                         if (!rd1.IsDBNull(4))
                         {
@@ -150,7 +150,7 @@ namespace AlloyAct_Pro
                     }
                     else
                     {
-                       
+
                         melt.eij_str = rd1.GetString(0);
                         melt.sij_str = null;
                         melt.Rank_firstorder = rd1.GetString(1);
@@ -179,7 +179,7 @@ namespace AlloyAct_Pro
                 }
                 rd1.Close();
             }
-            
+
             if (liteConnection.State == ConnectionState.Open)
             {
                 liteConnection.Close();
@@ -195,7 +195,7 @@ namespace AlloyAct_Pro
         {
             SQLiteConnection liteConnection = null;
             string dbpath = "Data Source =" + "data\\DataBase.db";
-            string cmdTXT = "SELECT lnYi0,Yi0,T FROM lnY0 WHERE solv ='"+melt.Based+"'and solui ='"+melt.solui+"'";
+            string cmdTXT = "SELECT lnYi0,Yi0,T FROM lnY0 WHERE solv ='" + melt.Based + "'and solui ='" + melt.solui + "'";
 
             liteConnection = new SQLiteConnection(dbpath);
             if (liteConnection.State != ConnectionState.Open)
@@ -275,10 +275,10 @@ namespace AlloyAct_Pro
 
 
         }
-        
-        
 
-      
+
+
+
 
 
     }

@@ -1,16 +1,4 @@
-﻿using NPOI.SS.Formula.Functions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static NPOI.HSSF.Util.HSSFColor;
-
-namespace AlloyAct_Pro
+﻿namespace AlloyAct_Pro
 {
     public partial class ActivityInteractionCoefficientFm : Form
     {
@@ -98,7 +86,6 @@ namespace AlloyAct_Pro
         private void filldata_dgV(string k, string i, string j, (string state, bool entropy, double Tem) info, ref int row)
         {
             double Tem = info.Tem;
-            bool t = true;
             if (k != string.Empty && i != string.Empty && j != string.Empty)
             {
                 Element solv = null, solui = null, soluj = null;
@@ -115,7 +102,6 @@ namespace AlloyAct_Pro
                 miedemal.setEntropy(info.entropy);
 
                 double sij_UEM1 = 0, sij_UEM2 = 0, sij_exp;
-                string flag = "";
 
                 sij_UEM1 = wagner_.Activity_Interact_Coefficient_Model(solv, solui, soluj, miedemal.UEM1, "UEM1");
                 sij_UEM2 = wagner_.Activity_Interact_Coefficient_Model(solv, solui, soluj, miedemal.UEM2, "UEM2-Adv");
@@ -135,7 +121,7 @@ namespace AlloyAct_Pro
                 row = +dataGridView1.Rows.Add();
                 dataGridView1["compositions", row].Value = k + "-" + i + "-" + j;
                 dataGridView1["CalculatedResult", row].Value = sij_UEM1;
-                dataGridView1["Remark", row].Value = sij_UEM2;
+                dataGridView1["Remark", row].Value = "";
 
                 dataGridView1["ExperimentalValue", row].Value = sij_exp;
                 dataGridView1["state", row].Value = getState();
@@ -204,7 +190,30 @@ namespace AlloyAct_Pro
 
         private void ActivityInteractionCoefficientFm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            helpFM.Close();
             unit_conversionFm.Close();
+        }
+        Help_activityinteractioncoefficient helpFM = new Help_activityinteractioncoefficient();
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            if (helpFM.IsDisposed)
+            {
+                Help_activityinteractioncoefficient helpFM = new Help_activityinteractioncoefficient();
+                helpFM.Show();
+            }
+            else
+            {
+                if (helpFM.Visible == false)
+                {
+                    helpFM.Visible = true;
+                    helpFM.Show();
+                }
+                if (helpFM.WindowState == FormWindowState.Minimized)
+                {
+                    helpFM.WindowState = FormWindowState.Normal;
+                }
+            }
         }
     }
 }

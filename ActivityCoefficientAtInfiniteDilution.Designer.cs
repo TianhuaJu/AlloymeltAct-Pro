@@ -340,6 +340,7 @@
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             helpToolStripMenuItem.Size = new Size(56, 24);
             helpToolStripMenuItem.Text = "Help";
+            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 
             // dataGridView1
             // 
@@ -428,6 +429,7 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "ActivityCoefficientAtInfiniteDilution";
             Text = "Activity Coefficient At Infinite Dilution";
+            FormClosed += ActivityCoefficientAtInfiniteDilution_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);

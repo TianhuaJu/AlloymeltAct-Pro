@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AlloyAct_Pro
+﻿namespace AlloyAct_Pro
 {
     class Entropy
     {
@@ -55,13 +49,13 @@ namespace AlloyAct_Pro
         }
         public double id_Entropy(double x)
         {
-           
+
             double sum = 0;
             if (x > 0)
             {
                 sum = -constant.R * x * Ln(x);
             }
-            return sum/1000.0;
+            return sum / 1000.0;
         }
         /// <summary>
         /// Tanaka 过剩熵,由形成热带来的过剩熵
@@ -73,11 +67,11 @@ namespace AlloyAct_Pro
         /// <returns></returns>
         public double excess_Entropy_Tanaka(string A, string B, double X, double Y)
         {
-            double Hmix,entropy;
+            double Hmix, entropy;
             Binary_model miedemal_ = new Binary_model();
             miedemal_.setLammda(this.lamda);
             miedemal_.setState(this.state);
-            
+
             Element Ea = new Element(A);
             Element Eb = new Element(B);
             if (this.state == "solid")
@@ -90,7 +84,7 @@ namespace AlloyAct_Pro
                 {
                     Hmix = miedemal_.binary_Model(A, B, X, Y);
                 }
-                
+
                 entropy = 1.0 / 15.1 * (1.0 / Ea.Tm + 1.0 / Eb.Tm) * Hmix;
             }
             else
@@ -107,7 +101,7 @@ namespace AlloyAct_Pro
                 }
                 entropy = 1.0 / 14 * (1.0 / Ea.Tm + 1.0 / Eb.Tm) * Hmix;
             }
-            
+
             return entropy;
         }
         /// <summary>
@@ -117,8 +111,8 @@ namespace AlloyAct_Pro
         /// <returns></returns>
         public double excess_Entropy_dSize(Dictionary<string, double> compositions)
         {
-            double entropy0 = 0,sum_V = 0;
-            
+            double entropy0 = 0, sum_V = 0;
+
             foreach (var item1 in compositions.Keys)
             {
                 Element Ei = new Element(item1);
@@ -126,10 +120,10 @@ namespace AlloyAct_Pro
             }
             foreach (var item in compositions.Keys)
             {
-               Element Ei = new Element(item);
+                Element Ei = new Element(item);
                 double V_ic = compositions[item] * Ei.V / sum_V;
                 entropy0 += compositions[item] * Ln(V_ic / compositions[item]);
-                
+
             }
             return -constant.R * entropy0;
         }

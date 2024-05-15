@@ -373,6 +373,7 @@
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             helpToolStripMenuItem.Size = new Size(56, 24);
             helpToolStripMenuItem.Text = "Help";
+            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 
             // dataGridView1
             // 
@@ -417,6 +418,7 @@
             Melt_composition.HeaderText = "组成";
             Melt_composition.MinimumWidth = 6;
             Melt_composition.Name = "Melt_composition";
+            Melt_composition.ToolTipText = "AxByCz……，x表示包含基体元素的1mol熔体中组分A的组成";
             // 
             // solute_i
             // 
@@ -465,6 +467,7 @@
             MainMenuStrip = menuStrip1;
             Name = "ActivityFm";
             Text = "Activity";
+            FormClosed += ActivityFm_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);

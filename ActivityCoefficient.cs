@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Match = System.Text.RegularExpressions.Match;
 
 namespace AlloyAct_Pro
@@ -204,6 +205,33 @@ namespace AlloyAct_Pro
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             myFunctions.saveToExcel(dataGridView1);
+        }
+        HelpActCoeffFM helpActCoeffFM = new HelpActCoeffFM();
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            if (helpActCoeffFM.IsDisposed)
+            {
+                HelpActCoeffFM helpActCoeffFM = new HelpActCoeffFM();
+                helpActCoeffFM.Show();
+            }
+            else
+            {
+                if (helpActCoeffFM.Visible == false)
+                {
+                    helpActCoeffFM.Visible = true;
+                    helpActCoeffFM.Show();
+                }
+                if (helpActCoeffFM.WindowState == FormWindowState.Minimized)
+                {
+                    helpActCoeffFM.WindowState = FormWindowState.Normal;
+                }
+            }
+        }
+
+        private void ActivityCoefficientFm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            helpActCoeffFM.Close();
         }
     }
 }

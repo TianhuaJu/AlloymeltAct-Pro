@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AlloyAct_Pro
+﻿namespace AlloyAct_Pro
 {
     class constant
     {
@@ -17,7 +11,7 @@ namespace AlloyAct_Pro
         public const double Q_TT = 132;
         public const double Q_TN = 116;
         public const double Q_NN = 100;
-         
+
         public static Dictionary<string, int> periodicTable = new Dictionary<string, int>()
         {
             {"H",1 },{"Li",3 },{"Be",4 },{"B",5 },{"C",6 },{"N",7 },{"O",8 },{"F",9 },

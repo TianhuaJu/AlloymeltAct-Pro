@@ -1,15 +1,4 @@
-﻿using NPOI.SS.Formula.Functions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace AlloyAct_Pro
+﻿namespace AlloyAct_Pro
 {
     public partial class ActivityCoefficientAtInfiniteDilution : Form
     {
@@ -131,6 +120,32 @@ namespace AlloyAct_Pro
             k_combox.Text = string.Empty;
             i_combox.Text = string.Empty;
             T_combox.Text = string.Empty;
+        }
+        HelpActvtyInfiniteFM helpActInfiniteFM = new HelpActvtyInfiniteFM();
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (helpActInfiniteFM.IsDisposed)
+            {
+                HelpActvtyInfiniteFM helpActInfiniteFM = new HelpActvtyInfiniteFM();
+                helpActInfiniteFM.Show();
+            }
+            else
+            {
+                if (helpActInfiniteFM.Visible == false)
+                {
+                    helpActInfiniteFM.Visible = true;
+                    helpActInfiniteFM.Show();
+                }
+                if (helpActInfiniteFM.WindowState == FormWindowState.Minimized)
+                {
+                    helpActInfiniteFM.WindowState = FormWindowState.Normal;
+                }
+            }
+        }
+
+        private void ActivityCoefficientAtInfiniteDilution_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            helpActInfiniteFM.Close();
         }
     }
 }

@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace AlloyAct_Pro
 {
     public partial class Form1 : Form

@@ -112,8 +112,8 @@
             tableLayoutPanel2.Location = new Point(0, 28);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 58.2089539F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 41.7910461F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 62F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 38F));
             tableLayoutPanel2.Size = new Size(953, 134);
             tableLayoutPanel2.TabIndex = 2;
             // 
@@ -127,11 +127,11 @@
             tableLayoutPanel4.Controls.Add(Cal_btn, 1, 0);
             tableLayoutPanel4.Controls.Add(reset_btn, 2, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(3, 81);
+            tableLayoutPanel4.Location = new Point(3, 86);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(947, 50);
+            tableLayoutPanel4.Size = new Size(947, 45);
             tableLayoutPanel4.TabIndex = 1;
             // 
             // Cal_btn
@@ -141,7 +141,7 @@
             Cal_btn.ForeColor = Color.Maroon;
             Cal_btn.Location = new Point(239, 3);
             Cal_btn.Name = "Cal_btn";
-            Cal_btn.Size = new Size(230, 44);
+            Cal_btn.Size = new Size(230, 39);
             Cal_btn.TabIndex = 0;
             Cal_btn.Text = "计算";
             Cal_btn.UseVisualStyleBackColor = true;
@@ -154,7 +154,7 @@
             reset_btn.ForeColor = Color.Maroon;
             reset_btn.Location = new Point(475, 3);
             reset_btn.Name = "reset_btn";
-            reset_btn.Size = new Size(230, 44);
+            reset_btn.Size = new Size(230, 39);
             reset_btn.TabIndex = 1;
             reset_btn.Text = "清除";
             reset_btn.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(947, 72);
+            tableLayoutPanel1.Size = new Size(947, 77);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox5

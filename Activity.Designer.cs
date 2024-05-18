@@ -112,8 +112,8 @@
             tableLayoutPanel2.Location = new Point(0, 28);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 62F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 38F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 63F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 37F));
             tableLayoutPanel2.Size = new Size(953, 134);
             tableLayoutPanel2.TabIndex = 2;
             // 
@@ -127,11 +127,11 @@
             tableLayoutPanel4.Controls.Add(Cal_btn, 1, 0);
             tableLayoutPanel4.Controls.Add(reset_btn, 2, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(3, 86);
+            tableLayoutPanel4.Location = new Point(3, 87);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(947, 45);
+            tableLayoutPanel4.Size = new Size(947, 44);
             tableLayoutPanel4.TabIndex = 1;
             // 
             // Cal_btn
@@ -141,7 +141,7 @@
             Cal_btn.ForeColor = Color.Maroon;
             Cal_btn.Location = new Point(239, 3);
             Cal_btn.Name = "Cal_btn";
-            Cal_btn.Size = new Size(230, 39);
+            Cal_btn.Size = new Size(230, 38);
             Cal_btn.TabIndex = 0;
             Cal_btn.Text = "计算";
             Cal_btn.UseVisualStyleBackColor = true;
@@ -154,7 +154,7 @@
             reset_btn.ForeColor = Color.Maroon;
             reset_btn.Location = new Point(475, 3);
             reset_btn.Name = "reset_btn";
-            reset_btn.Size = new Size(230, 39);
+            reset_btn.Size = new Size(230, 38);
             reset_btn.TabIndex = 1;
             reset_btn.Text = "清除";
             reset_btn.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(947, 77);
+            tableLayoutPanel1.Size = new Size(947, 78);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox5
@@ -189,7 +189,7 @@
             groupBox5.Font = new Font("Times New Roman", 14F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox5.Location = new Point(806, 6);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(135, 60);
+            groupBox5.Size = new Size(135, 66);
             groupBox5.TabIndex = 5;
             groupBox5.TabStop = false;
             groupBox5.Text = "State";
@@ -207,7 +207,7 @@
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel3.Size = new Size(129, 32);
+            tableLayoutPanel3.Size = new Size(129, 38);
             tableLayoutPanel3.TabIndex = 0;
             // 
             // checkBox1
@@ -219,7 +219,7 @@
             checkBox1.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             checkBox1.Location = new Point(6, 6);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(54, 20);
+            checkBox1.Size = new Size(54, 26);
             checkBox1.TabIndex = 0;
             checkBox1.Text = "L";
             toolTip1.SetToolTip(checkBox1, "液态");
@@ -233,7 +233,7 @@
             checkBox2.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             checkBox2.Location = new Point(69, 6);
             checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(54, 20);
+            checkBox2.Size = new Size(54, 26);
             checkBox2.TabIndex = 1;
             checkBox2.Text = "S";
             toolTip1.SetToolTip(checkBox2, "固态");
@@ -247,7 +247,7 @@
             compositions.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             compositions.Location = new Point(148, 6);
             compositions.Name = "compositions";
-            compositions.Size = new Size(365, 60);
+            compositions.Size = new Size(365, 66);
             compositions.TabIndex = 2;
             compositions.TabStop = false;
             compositions.Text = "合金元素组成(AxByCz...)";
@@ -270,7 +270,7 @@
             Temp_groupBox4.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             Temp_groupBox4.Location = new Point(664, 6);
             Temp_groupBox4.Name = "Temp_groupBox4";
-            Temp_groupBox4.Size = new Size(133, 60);
+            Temp_groupBox4.Size = new Size(133, 66);
             Temp_groupBox4.TabIndex = 4;
             Temp_groupBox4.TabStop = false;
             Temp_groupBox4.Text = "温度(K)";
@@ -293,7 +293,7 @@
             i_groupBox3.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             i_groupBox3.Location = new Point(522, 6);
             i_groupBox3.Name = "i_groupBox3";
-            i_groupBox3.Size = new Size(133, 60);
+            i_groupBox3.Size = new Size(133, 66);
             i_groupBox3.TabIndex = 3;
             i_groupBox3.TabStop = false;
             i_groupBox3.Text = "溶质(i)";
@@ -318,7 +318,7 @@
             groupBox2.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox2.Location = new Point(6, 6);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(133, 60);
+            groupBox2.Size = new Size(133, 66);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "基体(k)";
@@ -433,7 +433,6 @@
             // 
             // activity
             // 
-            dataGridViewCellStyle2.Format = "N2";
             dataGridViewCellStyle2.NullValue = null;
             activity.DefaultCellStyle = dataGridViewCellStyle2;
             activity.HeaderText = "a_i";

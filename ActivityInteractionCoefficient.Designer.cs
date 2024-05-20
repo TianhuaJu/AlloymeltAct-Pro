@@ -769,7 +769,7 @@
             // unitConversionToolStripMenuItem
             // 
             unitConversionToolStripMenuItem.Name = "unitConversionToolStripMenuItem";
-            unitConversionToolStripMenuItem.Size = new Size(180, 24);
+            unitConversionToolStripMenuItem.Size = new Size(173, 24);
             unitConversionToolStripMenuItem.Text = "Unit_Convert";
             unitConversionToolStripMenuItem.Click += unitConversionToolStripMenuItem_Click;
             // 

@@ -139,17 +139,72 @@
 
         }
 
+        /// <summary>
+        /// 对体系是否考虑过剩熵的判断
+        /// </summary>
+        /// <param name="k"></param>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <returns></returns>
         private bool entropy_Judge(string k, string i, string j)
         {
             List<string> s = new List<string>() { k, i, j };
-            if (s.Contains("C") || s.Contains("Si") || s.Contains("B"))
+            if (s.Contains("O"))
             {
-                return true;
+                //O与非金属元素相互作用时，考虑过剩熵
+                if (i == "O")
+                {
+                    if (constant.non_metallst.Contains<string>(j) || constant.non_metallst.Contains<string>(k))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (j == "O")
+                {
+                    if (constant.non_metallst.Contains<string>(i) || constant.non_metallst.Contains<string>(k))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (constant.non_metallst.Contains<string>(j) || constant.non_metallst.Contains<string>(i))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if (s.Contains("H") || s.Contains("N"))
+            {
+                //不含O的体系中，但含气体元素H、N，不考虑过剩熵
+                return false;
+
             }
             else
             {
-                return false;
+                //不含O的体系中，且不含气体元素H、N，如果含C、Si、Ge，考虑过剩熵，否则不考虑
+                if (s.Contains("C") || s.Contains("Si") || s.Contains("B"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
+
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)

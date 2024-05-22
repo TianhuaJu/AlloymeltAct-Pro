@@ -428,6 +428,7 @@
             MainMenuStrip = menuStrip1;
             Margin = new Padding(3, 4, 3, 4);
             Name = "ActivityCoefficientAtInfiniteDilution";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Activity Coefficient At Infinite Dilution";
             FormClosed += ActivityCoefficientAtInfiniteDilution_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);

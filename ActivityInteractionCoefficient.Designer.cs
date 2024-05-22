@@ -794,6 +794,7 @@
             Controls.Add(splitContainer1);
             Controls.Add(menuStrip1);
             Name = "ActivityInteractionCoefficientFm";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Activity Interaction Coefficients";
             FormClosed += ActivityInteractionCoefficientFm_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);

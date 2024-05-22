@@ -224,6 +224,7 @@ namespace AlloyAct_Pro
         private void ActivityFm_FormClosed(object sender, FormClosedEventArgs e)
         {
             helpActFM.Close();
+            Program.F1.WindowState = FormWindowState.Normal;
         }
     }
 }

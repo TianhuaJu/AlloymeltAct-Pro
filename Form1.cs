@@ -32,6 +32,7 @@ namespace AlloyAct_Pro
                     actFm.WindowState = FormWindowState.Normal;
                 }
             }
+            this.WindowState = FormWindowState.Minimized;
         }
 
         private void ActivityCoeff_Click(object sender, EventArgs e)
@@ -54,6 +55,7 @@ namespace AlloyAct_Pro
                     coefficientFm.WindowState = FormWindowState.Normal;
                 }
             }
+            this.WindowState = FormWindowState.Minimized;
         }
 
         private void InteractionCoeff_Click(object sender, EventArgs e)
@@ -76,6 +78,7 @@ namespace AlloyAct_Pro
                     ActivityInteractionCoefficientFm.WindowState = FormWindowState.Normal;
                 }
             }
+            this.WindowState = FormWindowState.Minimized;
         }
 
         private void ActivityCoefficientAtInfinitely_Click(object sender, EventArgs e)
@@ -96,6 +99,7 @@ namespace AlloyAct_Pro
                     activityCoefficientAtInfiniteDilution.WindowState = FormWindowState.Normal;
                 }
             }
+            this.WindowState = FormWindowState.Minimized;
 
         }
     }

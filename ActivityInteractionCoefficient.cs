@@ -247,6 +247,7 @@
         {
             helpFM.Close();
             unit_conversionFm.Close();
+            Program.F1.WindowState = FormWindowState.Normal;
         }
         Help_activityinteractioncoefficient helpFM = new Help_activityinteractioncoefficient();
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)

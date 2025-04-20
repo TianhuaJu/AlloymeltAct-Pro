@@ -279,6 +279,66 @@
             return lny0;
 
         }
+
+
+        /// <summary>
+        /// Q(x)的一阶偏导,
+        /// </summary>
+        /// <param name="solv"></param>
+        /// <param name="solutei"></param>
+        /// <returns></returns>
+        public double first_Derative_Qx(Element i_element, Element j_element,double xi = 0)
+        {//Q(x)的一阶偏导,
+            double fij = fab_func_ContainS(i_element, j_element);
+            double vi,vj,ui,uj,phi_i,phi_j;
+            vi = i_element.V;
+            vj = j_element.V;
+            ui = i_element.u;
+            uj = j_element.u;
+            phi_i = i_element.Phi;
+            phi_j = j_element.Phi;
+            double delta_phi = phi_i - phi_j;
+
+            double Ax = vi * (1 + ui * delta_phi * (1 - xi));
+            double Bx = vj * (1 - uj * delta_phi * xi);
+            double Dx = xi*Ax + (1-xi) * Bx;
+            double Nx = Ax * Bx;
+
+            double dAx = -ui * delta_phi * vi;
+            double dBx = -uj * delta_phi * vj;
+
+            double dDx = Ax+xi*dAx-Bx+(1-xi)*dBx;
+            double dNx = dAx * Bx + Ax * dBx;
+
+            double dfx = (dNx*Dx-dDx*Nx)/(Dx*Dx);
+
+
+            return dfx;
+        }
+
+        /// <summary>
+        /// Q(x)的二阶偏导在0处的值
+        /// </summary>
+        /// <param name="solv"></param>
+        /// <param name="solutei"></param>
+        /// <returns></returns>
+        public double second_Derative_Q0(Element i_element, Element j_element, double xi = 0)
+        {//Q(x)的二阶偏导在0处的值
+            double fij = fab_func_ContainS(i_element, j_element);
+            double Vj, Vi, ui, phi_i, phi_j, uj;
+            Vi = i_element.V;
+            Vj = j_element.V;
+            ui = i_element.u;
+            uj =j_element.u;
+            phi_i = i_element.Phi;
+            phi_j = j_element.Phi;
+            double delta_phi = phi_i - phi_j;
+            double dd_f = 2 * fij * Pow(Vi, 3) * (1 + 3 * ui * delta_phi + ui * ui * Pow(delta_phi, 2) + 2 * uj * delta_phi + ui * uj * delta_phi * delta_phi) / (Vj * Vj);
+
+
+            return dd_f;
+        }
+
         /// <summary>
         /// 无限稀活度系数lnYi0 = GE_i/(RT)
         /// </summary>
@@ -407,7 +467,52 @@
 
         }
 
+        /// <summary>
+        /// 二阶自身活度相互作用系数ρi^ii
+        /// </summary>
+        /// <param name="solv"></param>
+        /// <param name="solui"></param>
+        /// <param name="geo_Model"></param>
+        /// <param name="GeoModel"></param>
+        /// <returns></returns>
+        public double Roui_ii(Element solv, Element solui, Geo_Model geo_Model, string GeoModel = "UEM1")
+        {
+            //二阶自身活度相互作用系数ρi^ii
 
+
+
+            return 0.0;
+        }
+
+        /// <summary>
+        /// 二阶活度相互作用系数ρi^jj
+        /// </summary>
+        /// <param name="solv"></param>
+        /// <param name="solui"></param>
+        /// <param name="soluj"></param>
+        /// <param name="geo_Model"></param>
+        /// <param name="GeoModel"></param>
+        /// <returns></returns>
+        public double Roui_jj(Element solv, Element solui, Element soluj, Geo_Model geo_Model, string GeoModel = "UEM1")
+        {
+            //二阶活度相互作用系数ρi^jj
+
+            return 0.0;
+        }
+        /// <summary>
+        /// 二阶交互活度相互作用系数ρi^ij
+        /// </summary>
+        /// <param name="solv"></param>
+        /// <param name="solui"></param>
+        /// <param name="soluj"></param>
+        /// <param name="geo_Model"></param>
+        /// <param name="GeoModel"></param>
+        /// <returns></returns>
+        public double Roui_ij(Element solv, Element solui, Element soluj, Geo_Model geo_Model, string GeoModel = "UEM1")
+        {//二阶交互活度相互作用系数ρi^ij
+
+            return 0.0;
+        }
 
     }
 }

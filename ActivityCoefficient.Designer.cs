@@ -61,7 +61,9 @@
             k_name = new DataGridViewTextBoxColumn();
             Melt_composition = new DataGridViewTextBoxColumn();
             solute_i = new DataGridViewTextBoxColumn();
+            acf_wagner = new DataGridViewTextBoxColumn();
             activityCoefficient = new DataGridViewTextBoxColumn();
+            acf_elloit = new DataGridViewTextBoxColumn();
             Tem = new DataGridViewTextBoxColumn();
             state = new DataGridViewTextBoxColumn();
             remark = new DataGridViewTextBoxColumn();
@@ -98,7 +100,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(880, 623);
+            splitContainer1.Size = new Size(1110, 623);
             splitContainer1.SplitterDistance = 178;
             splitContainer1.TabIndex = 0;
             // 
@@ -114,7 +116,7 @@
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 64.7482F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 35.2517967F));
-            tableLayoutPanel2.Size = new Size(880, 150);
+            tableLayoutPanel2.Size = new Size(1110, 150);
             tableLayoutPanel2.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -136,7 +138,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(874, 91);
+            tableLayoutPanel1.Size = new Size(1104, 91);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox5
@@ -144,9 +146,9 @@
             groupBox5.Controls.Add(tableLayoutPanel3);
             groupBox5.Dock = DockStyle.Fill;
             groupBox5.Font = new Font("Times New Roman", 14F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox5.Location = new Point(744, 6);
+            groupBox5.Location = new Point(938, 6);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(124, 79);
+            groupBox5.Size = new Size(160, 79);
             groupBox5.TabIndex = 5;
             groupBox5.TabStop = false;
             groupBox5.Text = "State";
@@ -160,13 +162,11 @@
             tableLayoutPanel3.Controls.Add(checkBox1, 0, 0);
             tableLayoutPanel3.Controls.Add(checkBox2, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(3, 30);
+            tableLayoutPanel3.Location = new Point(3, 25);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-
-            tableLayoutPanel3.Size = new Size(118, 36);
-
+            tableLayoutPanel3.Size = new Size(154, 51);
             tableLayoutPanel3.TabIndex = 0;
             // 
             // checkBox1
@@ -178,9 +178,7 @@
             checkBox1.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             checkBox1.Location = new Point(6, 6);
             checkBox1.Name = "checkBox1";
-
-            checkBox1.Size = new Size(48, 24);
-
+            checkBox1.Size = new Size(66, 39);
             checkBox1.TabIndex = 0;
             checkBox1.Text = "L";
             toolTip1.SetToolTip(checkBox1, "液态");
@@ -192,12 +190,9 @@
             checkBox2.AutoSize = true;
             checkBox2.Dock = DockStyle.Fill;
             checkBox2.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            checkBox2.Location = new Point(63, 6);
+            checkBox2.Location = new Point(81, 6);
             checkBox2.Name = "checkBox2";
-
-            checkBox2.Size = new Size(49, 24);
-
-
+            checkBox2.Size = new Size(67, 39);
             checkBox2.TabIndex = 1;
             checkBox2.Text = "S";
             toolTip1.SetToolTip(checkBox2, "固态");
@@ -209,9 +204,9 @@
             compositions.Controls.Add(alloy_comboBox1);
             compositions.Dock = DockStyle.Fill;
             compositions.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
-            compositions.Location = new Point(137, 6);
+            compositions.Location = new Point(171, 6);
             compositions.Name = "compositions";
-            compositions.Size = new Size(336, 79);
+            compositions.Size = new Size(428, 79);
             compositions.TabIndex = 2;
             compositions.TabStop = false;
             compositions.Text = "合金元素组成(AxByCz...)";
@@ -222,9 +217,9 @@
             alloy_comboBox1.Dock = DockStyle.Fill;
             alloy_comboBox1.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             alloy_comboBox1.FormattingEnabled = true;
-            alloy_comboBox1.Location = new Point(3, 30);
+            alloy_comboBox1.Location = new Point(3, 25);
             alloy_comboBox1.Name = "alloy_comboBox1";
-            alloy_comboBox1.Size = new Size(330, 38);
+            alloy_comboBox1.Size = new Size(422, 32);
             alloy_comboBox1.TabIndex = 0;
             toolTip1.SetToolTip(alloy_comboBox1, "不包含基体元素的合金组成，\r\nAxByCz表示xA=x/(1+x+y+z……)\r\n");
             // 
@@ -233,9 +228,9 @@
             Temp_groupBox4.Controls.Add(temp_comboBox4);
             Temp_groupBox4.Dock = DockStyle.Fill;
             Temp_groupBox4.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
-            Temp_groupBox4.Location = new Point(613, 6);
+            Temp_groupBox4.Location = new Point(773, 6);
             Temp_groupBox4.Name = "Temp_groupBox4";
-            Temp_groupBox4.Size = new Size(122, 79);
+            Temp_groupBox4.Size = new Size(156, 79);
             Temp_groupBox4.TabIndex = 4;
             Temp_groupBox4.TabStop = false;
             Temp_groupBox4.Text = "温度(K)";
@@ -246,9 +241,9 @@
             temp_comboBox4.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             temp_comboBox4.FormattingEnabled = true;
             temp_comboBox4.Items.AddRange(new object[] { "1873", "1273" });
-            temp_comboBox4.Location = new Point(3, 30);
+            temp_comboBox4.Location = new Point(3, 25);
             temp_comboBox4.Name = "temp_comboBox4";
-            temp_comboBox4.Size = new Size(116, 38);
+            temp_comboBox4.Size = new Size(150, 32);
             temp_comboBox4.TabIndex = 3;
             toolTip1.SetToolTip(temp_comboBox4, "熔体的温度，单位K");
             // 
@@ -257,9 +252,9 @@
             i_groupBox3.Controls.Add(i_comboBox3);
             i_groupBox3.Dock = DockStyle.Fill;
             i_groupBox3.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
-            i_groupBox3.Location = new Point(482, 6);
+            i_groupBox3.Location = new Point(608, 6);
             i_groupBox3.Name = "i_groupBox3";
-            i_groupBox3.Size = new Size(122, 79);
+            i_groupBox3.Size = new Size(156, 79);
             i_groupBox3.TabIndex = 3;
             i_groupBox3.TabStop = false;
             i_groupBox3.Text = "溶质(i)";
@@ -271,9 +266,9 @@
             i_comboBox3.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             i_comboBox3.FormattingEnabled = true;
             i_comboBox3.IntegralHeight = false;
-            i_comboBox3.Location = new Point(3, 30);
+            i_comboBox3.Location = new Point(3, 25);
             i_comboBox3.Name = "i_comboBox3";
-            i_comboBox3.Size = new Size(116, 38);
+            i_comboBox3.Size = new Size(150, 32);
             i_comboBox3.TabIndex = 2;
             toolTip1.SetToolTip(i_comboBox3, "待求活度系数的组元");
             i_comboBox3.Click += i_comboBox3_Click;
@@ -285,7 +280,7 @@
             groupBox2.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox2.Location = new Point(6, 6);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(122, 79);
+            groupBox2.Size = new Size(156, 79);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "基体(k)";
@@ -295,9 +290,9 @@
             k_comboBox2.Dock = DockStyle.Fill;
             k_comboBox2.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             k_comboBox2.FormattingEnabled = true;
-            k_comboBox2.Location = new Point(3, 30);
+            k_comboBox2.Location = new Point(3, 25);
             k_comboBox2.Name = "k_comboBox2";
-            k_comboBox2.Size = new Size(116, 38);
+            k_comboBox2.Size = new Size(150, 32);
             k_comboBox2.TabIndex = 0;
             toolTip1.SetToolTip(k_comboBox2, "合金基体");
             // 
@@ -315,7 +310,7 @@
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(874, 47);
+            tableLayoutPanel4.Size = new Size(1104, 47);
             tableLayoutPanel4.TabIndex = 1;
             // 
             // Cal_btn
@@ -323,9 +318,9 @@
             Cal_btn.Dock = DockStyle.Fill;
             Cal_btn.Font = new Font("隶书", 18F, FontStyle.Regular, GraphicsUnit.Point);
             Cal_btn.ForeColor = Color.Maroon;
-            Cal_btn.Location = new Point(221, 3);
+            Cal_btn.Location = new Point(279, 3);
             Cal_btn.Name = "Cal_btn";
-            Cal_btn.Size = new Size(212, 41);
+            Cal_btn.Size = new Size(270, 41);
             Cal_btn.TabIndex = 0;
             Cal_btn.Text = "计算";
             Cal_btn.UseVisualStyleBackColor = true;
@@ -336,9 +331,9 @@
             reset_btn.Dock = DockStyle.Fill;
             reset_btn.Font = new Font("隶书", 18F, FontStyle.Regular, GraphicsUnit.Point);
             reset_btn.ForeColor = Color.Maroon;
-            reset_btn.Location = new Point(439, 3);
+            reset_btn.Location = new Point(555, 3);
             reset_btn.Name = "reset_btn";
-            reset_btn.Size = new Size(212, 41);
+            reset_btn.Size = new Size(270, 41);
             reset_btn.TabIndex = 1;
             reset_btn.Text = "清除";
             reset_btn.UseVisualStyleBackColor = true;
@@ -350,7 +345,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { optionToolStripMenuItem, graphicToolStripMenuItem, settingToolStripMenuItem, helpToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(880, 28);
+            menuStrip1.Size = new Size(1110, 28);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -358,38 +353,38 @@
             // 
             optionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, exitToolStripMenuItem });
             optionToolStripMenuItem.Name = "optionToolStripMenuItem";
-            optionToolStripMenuItem.Size = new Size(74, 24);
+            optionToolStripMenuItem.Size = new Size(72, 24);
             optionToolStripMenuItem.Text = "Option";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(126, 26);
+            saveToolStripMenuItem.Size = new Size(112, 24);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(126, 26);
+            exitToolStripMenuItem.Size = new Size(112, 24);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // graphicToolStripMenuItem
             // 
             graphicToolStripMenuItem.Name = "graphicToolStripMenuItem";
-            graphicToolStripMenuItem.Size = new Size(79, 24);
+            graphicToolStripMenuItem.Size = new Size(77, 24);
             graphicToolStripMenuItem.Text = "Graphic";
             // 
             // settingToolStripMenuItem
             // 
             settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            settingToolStripMenuItem.Size = new Size(76, 24);
+            settingToolStripMenuItem.Size = new Size(74, 24);
             settingToolStripMenuItem.Text = "Setting";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(58, 24);
+            helpToolStripMenuItem.Size = new Size(56, 24);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 
@@ -399,7 +394,7 @@
             dataGridView1.BorderStyle = BorderStyle.Fixed3D;
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Sunken;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { k_name, Melt_composition, solute_i, activityCoefficient, Tem, state, remark });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { k_name, Melt_composition, solute_i, acf_wagner, activityCoefficient, acf_elloit, Tem, state, remark });
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = SystemColors.Window;
             dataGridViewCellStyle3.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
@@ -413,7 +408,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(880, 441);
+            dataGridView1.Size = new Size(1110, 441);
             dataGridView1.TabIndex = 0;
             // 
             // k_name
@@ -438,13 +433,23 @@
             solute_i.MinimumWidth = 6;
             solute_i.Name = "solute_i";
             // 
+            // acf_wagner
+            // 
+            acf_wagner.HeaderText = "lnγ_i(W)";
+            acf_wagner.Name = "acf_wagner";
+            // 
             // activityCoefficient
             // 
             dataGridViewCellStyle2.NullValue = null;
             activityCoefficient.DefaultCellStyle = dataGridViewCellStyle2;
-            activityCoefficient.HeaderText = "lnγ_i";
+            activityCoefficient.HeaderText = "lnγ_i(D)";
             activityCoefficient.MinimumWidth = 6;
             activityCoefficient.Name = "activityCoefficient";
+            // 
+            // acf_elloit
+            // 
+            acf_elloit.HeaderText = "lnγ_i(E)";
+            acf_elloit.Name = "acf_elloit";
             // 
             // Tem
             // 
@@ -468,7 +473,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(880, 623);
+            ClientSize = new Size(1110, 623);
             Controls.Add(splitContainer1);
             MainMenuStrip = menuStrip1;
             Name = "ActivityCoefficientFm";
@@ -528,7 +533,9 @@
         private DataGridViewTextBoxColumn k_name;
         private DataGridViewTextBoxColumn Melt_composition;
         private DataGridViewTextBoxColumn solute_i;
+        private DataGridViewTextBoxColumn acf_wagner;
         private DataGridViewTextBoxColumn activityCoefficient;
+        private DataGridViewTextBoxColumn acf_elloit;
         private DataGridViewTextBoxColumn Tem;
         private DataGridViewTextBoxColumn state;
         private DataGridViewTextBoxColumn remark;

@@ -410,7 +410,7 @@
 
 
 
-        public double Activity_Interact_Coefficient_Model(Element solv, Element solui, Element soluj, Geo_Model geo_Model, string GeoModel = "UEM1")
+        public double Activity_Interact_Coefficient_1st(Element solv, Element solui, Element soluj, Geo_Model geo_Model, string GeoModel = "UEM1")
         {
 
 
@@ -477,11 +477,15 @@
         /// <returns></returns>
         public double Roui_ii(Element solv, Element solui, Geo_Model geo_Model, string GeoModel = "UEM1")
         {
-            //二阶自身活度相互作用系数ρi^ii
+            //二阶自身活度相互作用系数2*ρi^ii=(-sii + d^3G^E_m/dx^3 (x=0)*1/RT)
 
+            double sii = Activity_Interact_Coefficient_1st(solv,solui,solui,geo_Model);
+            double df10 = first_Derative_Qx(solui, solv, 0);
+            double df20 = second_Derative_Q0(solui, solv, 1);
 
+            double rii = -sii + 1000 * (-6 * df10 + 3 * df20) / (R * Tem);
 
-            return 0.0;
+            return rii*1.0/2;
         }
 
         /// <summary>
@@ -495,9 +499,28 @@
         /// <returns></returns>
         public double Roui_jj(Element solv, Element solui, Element soluj, Geo_Model geo_Model, string GeoModel = "UEM1")
         {
-            //二阶活度相互作用系数ρi^jj
+            //二阶活度相互作用系数2*ρi^jj=-sjj +  d^3G^E_m/dxidxjdxj (x=0)*1/RT
 
-            return 0.0;
+            double aji_ik = 0, aij_jk = 0, aki_ij = 0, akj_ij = 0, aik_jk = 0, ajk_ik = 0,Qij=0,Qik=0,Qjk=0;
+            double sjj = Activity_Interact_Coefficient_1st(solv, soluj, soluj, geo_Model);
+            aji_ik = geo_Model(soluj.Name, solui.Name, solv.Name, GeoModel);
+            ajk_ik = geo_Model(soluj.Name, solv.Name, solui.Name, GeoModel);
+            aij_jk = geo_Model(solui.Name, soluj.Name, solv.Name, GeoModel);
+            aki_ij = geo_Model(solv.Name, solui.Name, soluj.Name, GeoModel);
+            akj_ij = geo_Model(solv.Name, soluj.Name, solui.Name, GeoModel);
+            aik_jk = geo_Model(solui.Name, solv.Name, soluj.Name, GeoModel);
+
+            Qij = -2*aki_ij/Pow(aki_ij+akj_ij,2)*first_Derative_Qx(solui,soluj,aki_ij/(aki_ij+akj_ij));
+            Qik = aji_ik * aji_ik * second_Derative_Q0(solui, solv, 0)-2*aji_ik*(aji_ik+ajk_ik)*first_Derative_Qx(solui,solv,0);
+            Qjk = 2*aij_jk*second_Derative_Q0(soluj,solv,0)-2*(2*aij_jk+aik_jk)*first_Derative_Qx(soluj,solv,0);
+
+            double ri_jj = (-sjj+1000*(Qij+Qik+Qjk)/(R * Tem) );
+
+
+
+
+
+            return ri_jj/2.0;
         }
         /// <summary>
         /// 二阶交互活度相互作用系数ρi^ij
@@ -509,9 +532,24 @@
         /// <param name="GeoModel"></param>
         /// <returns></returns>
         public double Roui_ij(Element solv, Element solui, Element soluj, Geo_Model geo_Model, string GeoModel = "UEM1")
-        {//二阶交互活度相互作用系数ρi^ij
+        {//二阶交互活度相互作用系数ρi^ij-sji +  d^3G^E_m/dxidxidxj (x=0)*1/RT
 
-            return 0.0;
+            double aji_ik = 0, aij_jk = 0, aki_ij = 0, akj_ij = 0, aik_jk = 0, ajk_ik = 0, Qij = 0, Qik = 0, Qjk = 0;
+            double sji = Activity_Interact_Coefficient_1st(solv, solui, soluj, geo_Model);
+            aji_ik = geo_Model(soluj.Name, solui.Name, solv.Name, GeoModel);
+            ajk_ik = geo_Model(soluj.Name, solv.Name, solui.Name, GeoModel);
+            aij_jk = geo_Model(solui.Name, soluj.Name, solv.Name, GeoModel);
+            aki_ij = geo_Model(solv.Name, solui.Name, soluj.Name, GeoModel);
+            akj_ij = geo_Model(solv.Name, soluj.Name, solui.Name, GeoModel);
+            aik_jk = geo_Model(solui.Name, solv.Name, soluj.Name, GeoModel);
+
+            Qij = 2*akj_ij/Pow(akj_ij+aki_ij,2)*first_Derative_Qx(solui,soluj,aki_ij/(aki_ij+aki_ij));
+            Qik = 2 * aji_ik * second_Derative_Q0(solui, solv, 0) - 2 *(2*aji_ik+ajk_ik)* first_Derative_Qx(solui, solv, 0);
+            Qjk = aij_jk*aij_jk*second_Derative_Q0(soluj,solv, 0) - 2*aij_jk*(aij_jk+aik_jk)*first_Derative_Qx(soluj,solv,0);
+
+
+
+            return (-sji+(Qij+Qik+Qjk)/(R*Tem));
         }
 
     }

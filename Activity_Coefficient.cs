@@ -179,7 +179,7 @@ namespace AlloyAct_Pro
                         Element solu_j = new Element(elementSymbol);
                         double x = this.melts_dict[elementSymbol];
 
-                        acf += this.melts_dict[elementSymbol] * inacoef.Activity_Interact_Coefficient_Model(solv, solu_i, solu_j, geo_Model, GeoModel);
+                        acf += this.melts_dict[elementSymbol] * inacoef.Activity_Interact_Coefficient_1st(solv, solu_i, solu_j, geo_Model, GeoModel);
 
                     }
 
@@ -230,7 +230,7 @@ namespace AlloyAct_Pro
                     if (item.Key != solv.Name)
                     {
                         //计算∑xjɛ^j_i
-                        double sji = ternary_melts.Activity_Interact_Coefficient_Model(solv, solui, new Element(item.Key), geo_Model, GeoModel);
+                        double sji = ternary_melts.Activity_Interact_Coefficient_1st(solv, solui, new Element(item.Key), geo_Model, GeoModel);
                         sum_xsij += sji * item.Value;
                     }
                 }
@@ -249,7 +249,7 @@ namespace AlloyAct_Pro
                             double xm, xn;
                             xm = comp_dict.ElementAt(p).Value;
                             xn = comp_dict.ElementAt(q).Value;
-                            double Smn = ternary_melts.Activity_Interact_Coefficient_Model(solv, new Element(m), new Element(n), geo_Model, GeoModel);
+                            double Smn = ternary_melts.Activity_Interact_Coefficient_1st(solv, new Element(m), new Element(n), geo_Model, GeoModel);
 
 
                             sum_xskj += xm * xn * Smn;
@@ -271,6 +271,63 @@ namespace AlloyAct_Pro
 
         }
 
+        public double activity_coefficient_Elloit(Dictionary<string, double> comp_dict, string solute_i, string matrix, double T, Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
+        {
+            //lnyi = lnyi0 + ∑sjixj+∑r_i^kj*xk*xj
+
+            Element solv = new Element(matrix);
+            Element solui = new Element(solute_i);
+            double lnYi_0 = 0, lnYi = 0;
+            Ternary_melts ternary_melts = new Ternary_melts(T, phase_state);
+            lnYi_0 = ternary_melts.lnY0(solv, solui);
+
+
+            if (comp_dict.ContainsKey(solv.Name) && comp_dict.ContainsKey(solui.Name))
+            {
+                double sum_xsij = 0, sum_xskj = 0;
+                foreach (var item in comp_dict)
+                {
+                    if (item.Key != solv.Name)
+                    {
+                        //计算∑xjɛ^j_i
+                        double sji = ternary_melts.Activity_Interact_Coefficient_1st(solv, solui, new Element(item.Key), geo_Model, GeoModel);
+                        sum_xsij += sji * item.Value;
+                    }
+                }
+                double xi = comp_dict[solui.Name];
+
+                for (int p = 0; p < comp_dict.Count; p++)
+                {
+                    //计算∑r_i^kj*xk*xj
+                    string j, n;
+                    j = comp_dict.ElementAt(p).Key;
+                    
+                    if (j != solv.Name && j != solui.Name)
+                    {
+                        double ri_jj, ri_ji,xj;
+                        ri_jj = ternary_melts.Roui_jj(solv,solui,new Element(j),geo_Model,GeoModel);
+                        ri_ji = ternary_melts.Roui_ij(solv,solui, new Element(j),geo_Model, GeoModel);
+
+                        xj = comp_dict[j];
+                        sum_xsij += ri_jj * xj * xj + ri_ji * xi * xj;
+
+                    }
+
+                
+                }
+                double rii = ternary_melts.Roui_ii(solv,solui,geo_Model,GeoModel);
+
+                lnYi = lnYi_0 + sum_xsij + sum_xskj + xi*xi*rii;
+                return lnYi;
+            }
+            else
+            {
+                return 0.0;
+            }
+
+
+
+        }
 
 
         public Tuple<string, double> getTuple(string A, double x)

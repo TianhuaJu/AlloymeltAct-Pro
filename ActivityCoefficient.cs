@@ -18,7 +18,7 @@ namespace AlloyAct_Pro
         private void filldata_gv(string matrix, string composition, string solutei, double Tem, string state, Geo_Model geo_Model, string GeoModel, ref int row)
         {
 
-            double Pelton_acf, Wagner_acf;
+            double Darken_acf, Wagner_acf, Elloit_acf;
             string alloy_melts = matrix + composition;
 
             Dictionary<string, double> comp_dict = get_Compositions(matrix, alloy_melts);
@@ -28,7 +28,8 @@ namespace AlloyAct_Pro
 
             Wagner_acf = activity_.activity_Coefficient_Wagner(comp_dict, matrix, solutei, geo_Model, GeoModel, (state, Tem));
 
-            Pelton_acf = activity_.activity_coefficient_Pelton(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
+            Darken_acf = activity_.activity_coefficient_Pelton(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
+            Elloit_acf = activity_.activity_coefficient_Elloit(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
 
             string compostion_new = "";
 
@@ -45,7 +46,9 @@ namespace AlloyAct_Pro
 
             dataGridView1["state", row].Value = state;
 
-            dataGridView1["activityCoefficient", row].Value = Pelton_acf;
+            dataGridView1["activityCoefficient", row].Value = Math.Round(Darken_acf, 3);
+            dataGridView1["acf_wagner", row].Value = Math.Round(Wagner_acf, 3);
+            dataGridView1["acf_elloit", row].Value = Math.Round(Elloit_acf, 3);
 
             dataGridView1["k_name", row].Value = matrix;
             dataGridView1.Update();

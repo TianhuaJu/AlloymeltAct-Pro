@@ -40,7 +40,7 @@ namespace AlloyAct_Pro
         private void filldata_gv(string matrix, string composition, string solutei, double Tem, string state, Geo_Model geo_Model, string GeoModel, ref int row)
         {
 
-            double Pelton_acf, acf, xi;
+            double Pelton_acf, acf, xi, Wagner_act, Elloit_act;
             string alloy_melts = matrix + composition;
 
             Dictionary<string, double> comp_dict = get_Compositions(matrix, alloy_melts);
@@ -50,7 +50,11 @@ namespace AlloyAct_Pro
             Pelton_acf = activity_.activity_coefficient_Pelton(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
             xi = comp_dict[solutei];
             acf = Math.Exp(Pelton_acf) * xi;
+            Wagner_act = activity_.activity_Coefficient_Wagner(comp_dict, matrix, solutei, geo_Model, GeoModel, (state, Tem));
+            Wagner_act = Math.Exp(Wagner_act) * xi;
 
+            Elloit_act = activity_.activity_coefficient_Elloit(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
+            Elloit_act = Math.Exp(Elloit_act) * xi;
             string compostion_new = "";
 
             comp_dict.Remove(matrix);
@@ -67,6 +71,8 @@ namespace AlloyAct_Pro
             dataGridView1["state", row].Value = state;
 
             dataGridView1["activity", row].Value = Math.Round(acf, 3);
+            dataGridView1["ai_wagner", row].Value = Math.Round(Wagner_act, 3);
+            dataGridView1["ai_elloit", row].Value = Math.Round(Elloit_act, 3);
             dataGridView1["xi", row].Value = Math.Round(xi, 3);
 
             dataGridView1["k_name", row].Value = matrix;

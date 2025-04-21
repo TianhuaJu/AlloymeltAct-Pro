@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             button14 = new Button();
             button7 = new Button();
             button8 = new Button();
@@ -220,9 +220,9 @@
             label5.AutoSize = true;
             label5.FlatStyle = FlatStyle.System;
             label5.Font = new Font("Times New Roman", 20F, FontStyle.Bold, GraphicsUnit.Point);
-            label5.Location = new Point(65, 47);
+            label5.Location = new Point(48, 44);
             label5.Name = "label5";
-            label5.Size = new Size(73, 31);
+            label5.Size = new Size(90, 38);
             label5.TabIndex = 0;
             label5.Text = "State";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -250,9 +250,9 @@
             liquid_checkBox1.Checked = true;
             liquid_checkBox1.CheckState = CheckState.Checked;
             liquid_checkBox1.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            liquid_checkBox1.Location = new Point(6, 23);
+            liquid_checkBox1.Location = new Point(6, 17);
             liquid_checkBox1.Name = "liquid_checkBox1";
-            liquid_checkBox1.Size = new Size(87, 29);
+            liquid_checkBox1.Size = new Size(105, 35);
             liquid_checkBox1.TabIndex = 0;
             liquid_checkBox1.Text = "Liquid";
             liquid_checkBox1.UseVisualStyleBackColor = true;
@@ -263,9 +263,9 @@
             Solid_checkBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             Solid_checkBox1.AutoSize = true;
             Solid_checkBox1.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            Solid_checkBox1.Location = new Point(6, 79);
+            Solid_checkBox1.Location = new Point(6, 73);
             Solid_checkBox1.Name = "Solid_checkBox1";
-            Solid_checkBox1.Size = new Size(76, 29);
+            Solid_checkBox1.Size = new Size(92, 35);
             Solid_checkBox1.TabIndex = 1;
             Solid_checkBox1.Text = "Solid";
             Solid_checkBox1.UseVisualStyleBackColor = true;
@@ -308,22 +308,22 @@
             // dataGridView1
             // 
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = SystemColors.Control;
-            dataGridViewCellStyle4.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { compositions, ri_ii, ri_ij, ri_jj, ExperimentalValue, Temperature, state });
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(1219, 555);
             dataGridView1.TabIndex = 0;
@@ -338,23 +338,26 @@
             // ri_ii
             // 
             ri_ii.HeaderText = "ρi^ii";
+            ri_ii.MinimumWidth = 6;
             ri_ii.Name = "ri_ii";
             // 
             // ri_ij
             // 
             ri_ij.HeaderText = "ρi^ij";
+            ri_ij.MinimumWidth = 6;
             ri_ij.Name = "ri_ij";
             // 
             // ri_jj
             // 
             ri_jj.HeaderText = "ρi_jj";
+            ri_jj.MinimumWidth = 6;
             ri_jj.Name = "ri_jj";
             // 
             // ExperimentalValue
             // 
-            dataGridViewCellStyle5.Format = "N3";
-            dataGridViewCellStyle5.NullValue = null;
-            ExperimentalValue.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Format = "N3";
+            dataGridViewCellStyle2.NullValue = null;
+            ExperimentalValue.DefaultCellStyle = dataGridViewCellStyle2;
             ExperimentalValue.HeaderText = "Exp.";
             ExperimentalValue.MinimumWidth = 6;
             ExperimentalValue.Name = "ExperimentalValue";
@@ -452,7 +455,7 @@
             T_comboBox4.Items.AddRange(new object[] { "1873" });
             T_comboBox4.Location = new Point(3, 44);
             T_comboBox4.Name = "T_comboBox4";
-            T_comboBox4.Size = new Size(348, 32);
+            T_comboBox4.Size = new Size(348, 38);
             T_comboBox4.TabIndex = 2;
             // 
             // label4
@@ -460,9 +463,9 @@
             label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label4.AutoSize = true;
             label4.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(3, 22);
+            label4.Location = new Point(3, 17);
             label4.Name = "label4";
-            label4.Size = new Size(79, 19);
+            label4.Size = new Size(94, 24);
             label4.TabIndex = 1;
             label4.Text = "温度(K)";
             // 
@@ -489,7 +492,7 @@
             j_comboBox3.Items.AddRange(new object[] { "Al", "Si", "V", "Ti", "Cr", "Mn", "C", "B" });
             j_comboBox3.Location = new Point(3, 44);
             j_comboBox3.Name = "j_comboBox3";
-            j_comboBox3.Size = new Size(168, 32);
+            j_comboBox3.Size = new Size(168, 38);
             j_comboBox3.TabIndex = 2;
             // 
             // label3
@@ -497,9 +500,9 @@
             label3.AutoSize = true;
             label3.Dock = DockStyle.Bottom;
             label3.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(3, 22);
+            label3.Location = new Point(3, 17);
             label3.Name = "label3";
-            label3.Size = new Size(168, 19);
+            label3.Size = new Size(168, 24);
             label3.TabIndex = 1;
             label3.Text = "组分(j)";
             // 
@@ -526,7 +529,7 @@
             i_comboBox2.Items.AddRange(new object[] { "Al", "Si", "C", "Ti", "Mn", "V" });
             i_comboBox2.Location = new Point(3, 44);
             i_comboBox2.Name = "i_comboBox2";
-            i_comboBox2.Size = new Size(168, 32);
+            i_comboBox2.Size = new Size(168, 38);
             i_comboBox2.TabIndex = 2;
             // 
             // label2
@@ -534,9 +537,9 @@
             label2.AutoSize = true;
             label2.Dock = DockStyle.Bottom;
             label2.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(3, 22);
+            label2.Location = new Point(3, 17);
             label2.Name = "label2";
-            label2.Size = new Size(168, 19);
+            label2.Size = new Size(168, 24);
             label2.TabIndex = 1;
             label2.Text = "组分(i)";
             // 
@@ -560,9 +563,9 @@
             label1.AutoSize = true;
             label1.Dock = DockStyle.Bottom;
             label1.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(3, 22);
+            label1.Location = new Point(3, 17);
             label1.Name = "label1";
-            label1.Size = new Size(168, 19);
+            label1.Size = new Size(168, 24);
             label1.TabIndex = 0;
             label1.Text = "基体(k)";
             // 
@@ -574,7 +577,7 @@
             k_comboBox1.Items.AddRange(new object[] { "Fe", "Ni", "Co", "Cu", "Al" });
             k_comboBox1.Location = new Point(3, 44);
             k_comboBox1.Name = "k_comboBox1";
-            k_comboBox1.Size = new Size(168, 32);
+            k_comboBox1.Size = new Size(168, 38);
             k_comboBox1.TabIndex = 1;
             // 
             // tableLayoutPanel6

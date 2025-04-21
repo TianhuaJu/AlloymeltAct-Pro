@@ -481,7 +481,7 @@
 
             double sii = Activity_Interact_Coefficient_1st(solv,solui,solui,geo_Model);
             double df10 = first_Derative_Qx(solui, solv, 0);
-            double df20 = second_Derative_Q0(solui, solv, 1);
+            double df20 = second_Derative_Q0(solui, solv, 0);
 
             double rii = -sii + 1000 * (-6 * df10 + 3 * df20) / (R * Tem);
 
@@ -515,9 +515,6 @@
             Qjk = 2*aij_jk*second_Derative_Q0(soluj,solv,0)-2*(2*aij_jk+aik_jk)*first_Derative_Qx(soluj,solv,0);
 
             double ri_jj = (-sjj+1000*(Qij+Qik+Qjk)/(R * Tem) );
-
-
-
 
 
             return ri_jj/2.0;

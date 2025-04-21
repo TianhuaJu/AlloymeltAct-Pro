@@ -121,9 +121,10 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(633, 611);
             Controls.Add(tableLayoutPanel1);
-            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(3, 4, 3, 4);
+            MaximizeBox = false;
             Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Alloy melt Activity Calculator Pro";
             tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);

@@ -36,7 +36,7 @@
             // pictureBox1
             // 
             pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Image = Properties.Resources.Snipaste_2024_05_14_21_18_362;
+            pictureBox1.Image = Properties.Resources.活度系数;
             pictureBox1.Location = new Point(0, 0);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(566, 476);
@@ -54,7 +54,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "HelpActCoeffFM";
-            Text = "Help";
+            Text = "Tips";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }

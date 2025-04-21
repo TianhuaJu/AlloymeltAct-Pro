@@ -232,6 +232,7 @@ namespace AlloyAct_Pro
         private void ActivityCoefficientFm_FormClosed(object sender, FormClosedEventArgs e)
         {
             helpActCoeffFM.Close();
+            Program.F1.WindowState = FormWindowState.Normal;
         }
     }
 }

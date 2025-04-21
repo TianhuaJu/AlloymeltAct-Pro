@@ -146,6 +146,7 @@
         private void ActivityCoefficientAtInfiniteDilution_FormClosed(object sender, FormClosedEventArgs e)
         {
             helpActInfiniteFM.Close();
+            Program.F1.WindowState = FormWindowState.Normal;
         }
     }
 }

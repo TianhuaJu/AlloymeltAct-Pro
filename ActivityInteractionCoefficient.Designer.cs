@@ -769,7 +769,10 @@
             // unitConversionToolStripMenuItem
             // 
             unitConversionToolStripMenuItem.Name = "unitConversionToolStripMenuItem";
+
             unitConversionToolStripMenuItem.Size = new Size(187, 26);
+
+
             unitConversionToolStripMenuItem.Text = "Unit_Convert";
             unitConversionToolStripMenuItem.Click += unitConversionToolStripMenuItem_Click;
             // 
@@ -794,6 +797,7 @@
             Controls.Add(splitContainer1);
             Controls.Add(menuStrip1);
             Name = "ActivityInteractionCoefficientFm";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Activity Interaction Coefficients";
             FormClosed += ActivityInteractionCoefficientFm_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);

@@ -2,8 +2,10 @@ namespace AlloyAct_Pro
 {
     delegate double Geo_Model(string k, string A, string B, string Geomodel);
     public delegate double Interaction_Func_b(string A, string B, double x, double y);
+
     internal static class Program
     {
+        public static Form1 F1 = new Form1();
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -15,7 +17,7 @@ namespace AlloyAct_Pro
 
             release_Resource();
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.Run(F1);
         }
 
         private static void release_Resource()

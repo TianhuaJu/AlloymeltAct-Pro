@@ -30,8 +30,9 @@
         {
             components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             splitContainer1 = new SplitContainer();
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
@@ -112,9 +113,11 @@
             tableLayoutPanel2.Location = new Point(0, 28);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
+
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 64F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 36F));
             tableLayoutPanel2.Size = new Size(1073, 144);
+
             tableLayoutPanel2.TabIndex = 2;
             // 
             // tableLayoutPanel4
@@ -127,11 +130,13 @@
             tableLayoutPanel4.Controls.Add(Cal_btn, 1, 0);
             tableLayoutPanel4.Controls.Add(reset_btn, 2, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
+
             tableLayoutPanel4.Location = new Point(3, 95);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.Size = new Size(1067, 46);
+
             tableLayoutPanel4.TabIndex = 1;
             // 
             // Cal_btn
@@ -141,7 +146,10 @@
             Cal_btn.ForeColor = Color.Maroon;
             Cal_btn.Location = new Point(269, 3);
             Cal_btn.Name = "Cal_btn";
+
             Cal_btn.Size = new Size(260, 40);
+
+
             Cal_btn.TabIndex = 0;
             Cal_btn.Text = "计算";
             Cal_btn.UseVisualStyleBackColor = true;
@@ -154,7 +162,10 @@
             reset_btn.ForeColor = Color.Maroon;
             reset_btn.Location = new Point(535, 3);
             reset_btn.Name = "reset_btn";
+
             reset_btn.Size = new Size(260, 40);
+
+
             reset_btn.TabIndex = 1;
             reset_btn.Text = "清除";
             reset_btn.UseVisualStyleBackColor = true;
@@ -179,7 +190,9 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
             tableLayoutPanel1.Size = new Size(1067, 86);
+
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox5
@@ -189,7 +202,10 @@
             groupBox5.Font = new Font("Times New Roman", 14F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox5.Location = new Point(908, 6);
             groupBox5.Name = "groupBox5";
+
             groupBox5.Size = new Size(153, 74);
+
+
             groupBox5.TabIndex = 5;
             groupBox5.TabStop = false;
             groupBox5.Text = "State";
@@ -207,7 +223,9 @@
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+
             tableLayoutPanel3.Size = new Size(147, 41);
+
             tableLayoutPanel3.TabIndex = 0;
             // 
             // checkBox1
@@ -219,7 +237,9 @@
             checkBox1.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             checkBox1.Location = new Point(6, 6);
             checkBox1.Name = "checkBox1";
+
             checkBox1.Size = new Size(63, 29);
+
             checkBox1.TabIndex = 0;
             checkBox1.Text = "L";
             toolTip1.SetToolTip(checkBox1, "液态");
@@ -233,7 +253,10 @@
             checkBox2.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             checkBox2.Location = new Point(78, 6);
             checkBox2.Name = "checkBox2";
+
             checkBox2.Size = new Size(63, 29);
+
+
             checkBox2.TabIndex = 1;
             checkBox2.Text = "S";
             toolTip1.SetToolTip(checkBox2, "固态");
@@ -247,7 +270,10 @@
             compositions.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             compositions.Location = new Point(166, 6);
             compositions.Name = "compositions";
+
             compositions.Size = new Size(413, 74);
+
+
             compositions.TabIndex = 2;
             compositions.TabStop = false;
             compositions.Text = "合金元素组成(AxByCz...)";
@@ -270,7 +296,9 @@
             Temp_groupBox4.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             Temp_groupBox4.Location = new Point(748, 6);
             Temp_groupBox4.Name = "Temp_groupBox4";
+
             Temp_groupBox4.Size = new Size(151, 74);
+
             Temp_groupBox4.TabIndex = 4;
             Temp_groupBox4.TabStop = false;
             Temp_groupBox4.Text = "温度(K)";
@@ -293,7 +321,9 @@
             i_groupBox3.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             i_groupBox3.Location = new Point(588, 6);
             i_groupBox3.Name = "i_groupBox3";
+
             i_groupBox3.Size = new Size(151, 74);
+
             i_groupBox3.TabIndex = 3;
             i_groupBox3.TabStop = false;
             i_groupBox3.Text = "溶质(i)";
@@ -318,7 +348,9 @@
             groupBox2.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox2.Location = new Point(6, 6);
             groupBox2.Name = "groupBox2";
+
             groupBox2.Size = new Size(151, 74);
+
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "基体(k)";
@@ -391,14 +423,14 @@
             dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { k_name, Melt_composition, solute_i, xi, activity, Tem, state, remark });
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Window;
-            dataGridViewCellStyle3.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            dataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
@@ -409,6 +441,8 @@
             // 
             // k_name
             // 
+            dataGridViewCellStyle2.Format = "N3";
+            k_name.DefaultCellStyle = dataGridViewCellStyle2;
             k_name.HeaderText = "基体";
             k_name.MinimumWidth = 6;
             k_name.Name = "k_name";
@@ -435,9 +469,8 @@
             // 
             // activity
             // 
-            dataGridViewCellStyle2.Format = "N2";
-            dataGridViewCellStyle2.NullValue = null;
-            activity.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.NullValue = null;
+            activity.DefaultCellStyle = dataGridViewCellStyle3;
             activity.HeaderText = "a_i";
             activity.MinimumWidth = 6;
             activity.Name = "activity";
@@ -468,6 +501,7 @@
             Controls.Add(splitContainer1);
             MainMenuStrip = menuStrip1;
             Name = "ActivityFm";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Activity";
             FormClosed += ActivityFm_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);

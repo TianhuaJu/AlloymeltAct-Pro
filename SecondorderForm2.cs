@@ -20,24 +20,24 @@ namespace AlloyAct_Pro
         int row = 0;
         private void Cal_btn_Click(object sender, EventArgs e)
         {
-            string k = k_comboBox1.Text.Trim();
+            string m = m_comboBox1.Text.Trim();
             bool t1;
             double Tem;
 
             t1 = double.TryParse(T_comboBox4.Text, out Tem);
             if (!t1) { Tem = 1873.0; }
 
-            if (k == string.Empty)
+            if (m == string.Empty)
             {
-                k = "Fe";
+                m = "Fe";
             }
-            string i, j;
+            string i, j, k;
             i = i_comboBox2.Text.Trim();
             j = j_comboBox3.Text.Trim();
-
-            display(k, i, j);//显示各元素的Miedema参数
-            (string phase, bool entropy, double Tem) info = (getState(), entropy_Judge(k, i, j), Tem);
-            filldata_dgV(k, i, j, info, ref row);
+            k = k_comboBox2.Text.Trim();
+            display(m, i, j, k);//显示各元素的Miedema参数
+            (string phase, bool entropy, double Tem) info = (getState(), entropy_Judge(m, i, j, k), Tem);
+            filldata_dgV(m, i, j, k, info, ref row);
 
 
         }
@@ -54,8 +54,9 @@ namespace AlloyAct_Pro
             liquid_checkBox1.Checked = false;
         }
 
-        private void display(string k, string i, string j)
+        private void display(string m, string i, string j, string k)
         {
+            Element Em = new Element(m);
             Element Ei = new Element(i);
             Element Ej = new Element(j);
             Element Ek = new Element(k);
@@ -69,9 +70,15 @@ namespace AlloyAct_Pro
             jnws.Text = Ej.N_WS.ToString();
             jV.Text = Ej.V.ToString();
 
-            kphi.Text = Ek.Phi.ToString();
-            knws.Text = Ek.N_WS.ToString();
-            kV.Text = Ek.V.ToString();
+            //m为基体
+            kphi.Text = Em.Phi.ToString();
+            knws.Text = Em.N_WS.ToString();
+            kV.Text = Em.V.ToString();
+
+            //组分k
+            k_btn.Text = Ek.Phi.ToString();
+            k_nws.Text = Ek.N_WS.ToString();
+            k_V.Text = Ek.V.ToString();
 
         }
         private string getState()
@@ -87,15 +94,16 @@ namespace AlloyAct_Pro
 
         }
 
-        private void filldata_dgV(string k, string i, string j, (string state, bool entropy, double Tem) info, ref int row)
+        private void filldata_dgV(string m, string i, string j, string k, (string state, bool entropy, double Tem) info, ref int row)
         {
             double Tem = info.Tem;
-            if (k != string.Empty && i != string.Empty && j != string.Empty)
+            if (m != string.Empty && i != string.Empty && j != string.Empty && k != string.Empty)
             {
-                Element solv = null, solui = null, soluj = null;
-                solv = new Element(k);
+                Element solv = null, solui = null, soluj = null, soluk = null;
+                solv = new Element(m);
                 solui = new Element(i);
                 soluj = new Element(j);
+                soluk = new Element(k);
                 Ternary_melts wagner_ = null;
                 wagner_ = new Ternary_melts(Tem, info.state, info.entropy);
 
@@ -105,22 +113,22 @@ namespace AlloyAct_Pro
                 miedemal.setTemperature(info.Tem);
                 miedemal.setEntropy(info.entropy);
 
-                double rii = 0, rij = 0, rjj;
+                double rii = 0, rij = 0, rjj = 0, rjk = 0;
 
                 rii = wagner_.Roui_ii(solv, solui, miedemal.UEM1);
                 rij = wagner_.Roui_ij(solv, solui, soluj, miedemal.UEM1);
                 rjj = wagner_.Roui_jj(solv, solui, soluj, miedemal.UEM1);
+                rjk = wagner_.Roui_jk(solv, solui, soluj, soluk, miedemal.UEM1);
 
-
-                Melt m1 = new Melt(k, i, j, Tem);
+                Melt m1 = new Melt(m, i, j, Tem);
 
 
                 row = +dataGridView1.Rows.Add();
-                dataGridView1["compositions", row].Value = k + "-" + i + "-" + j;
+                dataGridView1["compositions", row].Value = m + "-" + i + "-" + j;
                 dataGridView1["ri_ii", row].Value = Math.Round(rii, 3);
                 dataGridView1["ri_ij", row].Value = Math.Round(rij, 3);
                 dataGridView1["ri_jj", row].Value = Math.Round(rjj, 3);
-
+                dataGridView1["ri_jk", row].Value = Math.Round(rjk, 3);
                 dataGridView1["ExperimentalValue", row].Value = double.NaN;
                 dataGridView1["state", row].Value = getState();
                 dataGridView1["Temperature", row].Value = info.Tem;
@@ -140,19 +148,19 @@ namespace AlloyAct_Pro
         /// <summary>
         /// 对体系是否考虑过剩熵的判断
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="m"></param>
         /// <param name="i"></param>
         /// <param name="j"></param>
         /// <returns></returns>
-        private bool entropy_Judge(string k, string i, string j)
+        private bool entropy_Judge(string m, string i, string j, string k)
         {
-            List<string> s = new List<string>() { k, i, j };
+            List<string> s = new List<string>() { m, i, j, k };
             if (s.Contains("O"))
             {
                 //O与非金属元素相互作用时，考虑过剩熵
                 if (i == "O")
                 {
-                    if (constant.non_metallst.Contains<string>(j) || constant.non_metallst.Contains<string>(k))
+                    if (constant.non_metallst.Contains<string>(j) || constant.non_metallst.Contains<string>(m))
                     {
                         return true;
                     }
@@ -163,7 +171,7 @@ namespace AlloyAct_Pro
                 }
                 else if (j == "O")
                 {
-                    if (constant.non_metallst.Contains<string>(i) || constant.non_metallst.Contains<string>(k))
+                    if (constant.non_metallst.Contains<string>(i) || constant.non_metallst.Contains<string>(m))
                     {
                         return true;
                     }
@@ -193,14 +201,7 @@ namespace AlloyAct_Pro
             else
             {
                 //不含O的体系中，且不含气体元素H、N，如果含C、Si、Ge，考虑过剩熵，否则不考虑
-                if (s.Contains("C") || s.Contains("Si") || s.Contains("B"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
 
         }

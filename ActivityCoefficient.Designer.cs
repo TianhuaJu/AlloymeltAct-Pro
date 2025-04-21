@@ -160,11 +160,13 @@
             tableLayoutPanel3.Controls.Add(checkBox1, 0, 0);
             tableLayoutPanel3.Controls.Add(checkBox2, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(3, 25);
+            tableLayoutPanel3.Location = new Point(3, 30);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel3.Size = new Size(118, 51);
+
+            tableLayoutPanel3.Size = new Size(118, 36);
+
             tableLayoutPanel3.TabIndex = 0;
             // 
             // checkBox1
@@ -176,7 +178,9 @@
             checkBox1.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             checkBox1.Location = new Point(6, 6);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(48, 39);
+
+            checkBox1.Size = new Size(48, 24);
+
             checkBox1.TabIndex = 0;
             checkBox1.Text = "L";
             toolTip1.SetToolTip(checkBox1, "液态");
@@ -190,7 +194,10 @@
             checkBox2.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
             checkBox2.Location = new Point(63, 6);
             checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(49, 39);
+
+            checkBox2.Size = new Size(49, 24);
+
+
             checkBox2.TabIndex = 1;
             checkBox2.Text = "S";
             toolTip1.SetToolTip(checkBox2, "固态");
@@ -215,9 +222,9 @@
             alloy_comboBox1.Dock = DockStyle.Fill;
             alloy_comboBox1.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             alloy_comboBox1.FormattingEnabled = true;
-            alloy_comboBox1.Location = new Point(3, 25);
+            alloy_comboBox1.Location = new Point(3, 30);
             alloy_comboBox1.Name = "alloy_comboBox1";
-            alloy_comboBox1.Size = new Size(330, 32);
+            alloy_comboBox1.Size = new Size(330, 38);
             alloy_comboBox1.TabIndex = 0;
             toolTip1.SetToolTip(alloy_comboBox1, "不包含基体元素的合金组成，\r\nAxByCz表示xA=x/(1+x+y+z……)\r\n");
             // 
@@ -239,9 +246,9 @@
             temp_comboBox4.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             temp_comboBox4.FormattingEnabled = true;
             temp_comboBox4.Items.AddRange(new object[] { "1873", "1273" });
-            temp_comboBox4.Location = new Point(3, 25);
+            temp_comboBox4.Location = new Point(3, 30);
             temp_comboBox4.Name = "temp_comboBox4";
-            temp_comboBox4.Size = new Size(116, 32);
+            temp_comboBox4.Size = new Size(116, 38);
             temp_comboBox4.TabIndex = 3;
             toolTip1.SetToolTip(temp_comboBox4, "熔体的温度，单位K");
             // 
@@ -264,9 +271,9 @@
             i_comboBox3.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             i_comboBox3.FormattingEnabled = true;
             i_comboBox3.IntegralHeight = false;
-            i_comboBox3.Location = new Point(3, 25);
+            i_comboBox3.Location = new Point(3, 30);
             i_comboBox3.Name = "i_comboBox3";
-            i_comboBox3.Size = new Size(116, 32);
+            i_comboBox3.Size = new Size(116, 38);
             i_comboBox3.TabIndex = 2;
             toolTip1.SetToolTip(i_comboBox3, "待求活度系数的组元");
             i_comboBox3.Click += i_comboBox3_Click;
@@ -288,9 +295,9 @@
             k_comboBox2.Dock = DockStyle.Fill;
             k_comboBox2.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
             k_comboBox2.FormattingEnabled = true;
-            k_comboBox2.Location = new Point(3, 25);
+            k_comboBox2.Location = new Point(3, 30);
             k_comboBox2.Name = "k_comboBox2";
-            k_comboBox2.Size = new Size(116, 32);
+            k_comboBox2.Size = new Size(116, 38);
             k_comboBox2.TabIndex = 0;
             toolTip1.SetToolTip(k_comboBox2, "合金基体");
             // 
@@ -351,38 +358,38 @@
             // 
             optionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, exitToolStripMenuItem });
             optionToolStripMenuItem.Name = "optionToolStripMenuItem";
-            optionToolStripMenuItem.Size = new Size(72, 24);
+            optionToolStripMenuItem.Size = new Size(74, 24);
             optionToolStripMenuItem.Text = "Option";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(112, 24);
+            saveToolStripMenuItem.Size = new Size(126, 26);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(112, 24);
+            exitToolStripMenuItem.Size = new Size(126, 26);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // graphicToolStripMenuItem
             // 
             graphicToolStripMenuItem.Name = "graphicToolStripMenuItem";
-            graphicToolStripMenuItem.Size = new Size(77, 24);
+            graphicToolStripMenuItem.Size = new Size(79, 24);
             graphicToolStripMenuItem.Text = "Graphic";
             // 
             // settingToolStripMenuItem
             // 
             settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            settingToolStripMenuItem.Size = new Size(74, 24);
+            settingToolStripMenuItem.Size = new Size(76, 24);
             settingToolStripMenuItem.Text = "Setting";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(56, 24);
+            helpToolStripMenuItem.Size = new Size(58, 24);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 

@@ -271,77 +271,123 @@ namespace AlloyAct_Pro
 
         }
 
-        public double activity_coefficient_Elloit(Dictionary<string, double> comp_dict, string solute_i, string matrix, double T, Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
+        /// <summary>
+        /// 使用二阶相互作用参数模型计算组分i在多元混合物中的活度系数对数 (ln Gamma_i)。
+        /// </summary>
+        /// <param name="comp_dict">包含所有组分名称及其摩尔分数的字典。</param>
+        /// <param name="solute_i">目标溶质组分i的名称。</param>
+        /// <param name="matrix">溶剂（基体）组分m的名称。</param>
+        /// <param name="T">温度 (K)。</param>
+        /// <param name="geo_Model">包含模型参数或方法的对象。</param>
+        /// <param name="GeoModel">具体的模型名称字符串。</param>
+        /// <param name="phase_state">相态（默认为 "liquid"）。</param>
+        /// <returns>组分i的活度系数对数 ln(Gamma_i)。</returns>
+        /// <exception cref="ArgumentException">如果输入参数无效或缺少必要的组分。</exception>
+        public double activity_coefficient_Elloit(
+            Dictionary<string, double> comp_dict,
+            string solute_i,
+            string matrix,
+            double T,
+            Geo_Model geo_Model,
+            string GeoModel,
+            string phase_state = "liquid")
         {
-            //lnyi = lnyi0 + ∑sjixj + 1/2∑r_i^kj*xk*xj
+            // --- 输入验证和初始化 ---
+            if (string.IsNullOrEmpty(solute_i) || string.IsNullOrEmpty(matrix) || comp_dict == null || comp_dict.Count < 2)
+            {
+                throw new ArgumentException("无效的输入参数: comp_dict, solute_i, 或 matrix。");
+            }
 
-            Element solv = new Element(matrix);
-            Element solui = new Element(solute_i);
-            double lnYi_0 = 0, lnYi = 0;
+            Element solv = new Element(matrix); // 溶剂 m
+            Element solui = new Element(solute_i); // 溶质 i
+
+            // 确保字典中包含指定的溶质和溶剂
+            if (!comp_dict.ContainsKey(solv.Name))
+            {
+                throw new ArgumentException($"成分字典 comp_dict 必须包含溶剂: {matrix}");
+            }
+            if (!comp_dict.ContainsKey(solui.Name))
+            {
+                throw new ArgumentException($"成分字典 comp_dict 必须包含目标溶质: {solute_i}");
+            }
+            // 注意：如果 solute_i 就是 matrix，理论上 ln(gamma) 可能为 0 或需要特殊处理，
+            // 但此模型通常用于计算溶质在溶剂中的行为。
+
+            // 创建 Ternary_melts 实例 (假设构造函数需要 T 和 phase_state)
             Ternary_melts ternary_melts = new Ternary_melts(T, phase_state);
-            lnYi_0 = ternary_melts.lnY0(solv, solui);
 
-
-            if (comp_dict.ContainsKey(solv.Name) && comp_dict.ContainsKey(solui.Name))
+            // --- 项 1: 无限稀释活度系数对数 ln(gamma_i^0) ---
+            double lnYi_0 = ternary_melts.lnY0(solv, solui);
+            if (double.IsNaN(lnYi_0) || double.IsInfinity(lnYi_0))
             {
-                double sum_xsij = 0, sum_xskj = 0;
-                foreach (var item in comp_dict)
-                {
-                    if (item.Key != solv.Name)
-                    {
-                        //计算∑xjɛ^j_i
-                        double sji = ternary_melts.Activity_Interact_Coefficient_1st(solv, solui, new Element(item.Key), geo_Model, GeoModel);
-                        sum_xsij += sji * item.Value;
-                    }
-                }
-                double xi = comp_dict[solui.Name];
-
-                for (int p = 0; p < comp_dict.Count; p++)
-                {
-                    //计算∑r_i^kj*xk*xj
-                    string j, n;
-                    j = comp_dict.ElementAt(p).Key;
-                    double xj = comp_dict[j];
-                    if (j != solv.Name && j != solui.Name)
-                    {
-                        double ri_jj, ri_ji,xk,ri_jk;
-                        ri_jj = ternary_melts.Roui_jj(solv,solui,new Element(j),geo_Model,GeoModel);
-                        ri_ji = ternary_melts.Roui_ij(solv,solui, new Element(j),geo_Model, GeoModel);
-
-                        for (int q = 0; q < comp_dict.Count; q++)
-                        {
-                            string k = comp_dict.ElementAt(q).Key;
-                            xk = comp_dict[k];
-                            ri_jk = ternary_melts.Roui_jk(solv, solui, new Element(j), new Element(k), geo_Model, GeoModel);
-                            sum_xsij += ri_jk*xj*xk;
-                        }
-                        
-                        sum_xsij += ri_jj * xj * xj + ri_ji * xi * xj;
-
-                    }
-
-                
-                }
-                double rii = ternary_melts.Roui_ii(solv,solui,geo_Model,GeoModel);
-
-                lnYi = lnYi_0 + sum_xsij + 0.5*(sum_xskj + xi*xi*rii);
-                return lnYi;
-            }
-            else
-            {
-                return 0.0;
+                // 根据需要处理错误，例如抛出异常或返回特定值
+                Console.WriteLine($"警告: lnY0 返回无效值 ({lnYi_0})，溶质 {solui.Name}，溶剂 {solv.Name}");
+                // throw new Exception($"lnY0 calculation failed for solute {solui.Name}");
             }
 
 
+            // --- 项 2: 一阶相互作用项 ∑ (epsilon_i^j * xj) ---
+            double linear_sum = 0;
+            // 遍历所有组分 j
+            foreach (var item_j in comp_dict)
+            {
+                string j_name = item_j.Key;
+                // 只对溶质组分求和 (j != m)
+                if (j_name != solv.Name)
+                {
+                    double xj = item_j.Value;
+                    Element soluj = new Element(j_name);
+                    // 获取一阶参数 epsilon_i^j
+                    double epsilon_i_j = ternary_melts.Activity_Interact_Coefficient_1st(solv, solui, soluj, geo_Model, GeoModel);
+                    if (double.IsNaN(epsilon_i_j) || double.IsInfinity(epsilon_i_j))
+                    {
+                        Console.WriteLine($"警告: Epsilon(i={solui.Name}, j={j_name}) 返回无效值 ({epsilon_i_j})");
+                        // 根据需要处理错误
+                    }
+                    else
+                    {
+                        linear_sum += epsilon_i_j * xj;
+                    }
+                }
+            }
 
+            // --- 项 3: 二阶相互作用项 (1/2) * ∑ ∑ (rho_i^{j,k} * xj * xk) ---
+            double quadratic_sum = 0;
+            // 获取所有溶质名称列表 (j != m)
+            List<string> solute_keys = comp_dict.Keys.Where(k => k != solv.Name).ToList();
+
+            // 遍历所有溶质对 (j, k)
+            foreach (string j_name in solute_keys)
+            {
+                double xj = comp_dict[j_name];
+                Element soluj = new Element(j_name);
+
+                foreach (string k_name in solute_keys)
+                {
+                    double xk = comp_dict[k_name];
+                    Element soluk = new Element(k_name);
+
+                    // 获取二阶参数 rho_i^{j,k} (关键假设: Roui_jk 能处理所有 j,k 组合)
+                    double rho_i_jk = ternary_melts.Roui_jk(solv, solui, soluj, soluk, geo_Model, GeoModel);
+                    if (double.IsNaN(rho_i_jk) || double.IsInfinity(rho_i_jk))
+                    {
+                        Console.WriteLine($"警告: Rho(i={solui.Name}, j={j_name}, k={k_name}) 返回无效值 ({rho_i_jk})");
+                        // 根据需要处理错误
+                    }
+                    else
+                    {
+                        // 累加 (1/2) * rho_i^{j,k} * xj * xk
+                        quadratic_sum += 0.5 * rho_i_jk * xj * xk;
+                    }
+                }
+            }
+
+            // --- 最终结果 ---
+            // ln(gamma_i) = ln(gamma_i^0) + linear_term + quadratic_term
+            double lnYi = lnYi_0 + linear_sum + quadratic_sum;
+
+            return lnYi;
         }
-
-
-        public Tuple<string, double> getTuple(string A, double x)
-        {
-            return new Tuple<string, double>(A, x);
-        }
-
 
     }
 }

@@ -79,7 +79,6 @@
             tableLayoutPanel7 = new TableLayoutPanel();
             tableLayoutPanel8 = new TableLayoutPanel();
             button13 = new Button();
-            Clear_btn = new Button();
             tableLayoutPanel5 = new TableLayoutPanel();
             T_comboBox4 = new ComboBox();
             label4 = new Label();
@@ -93,6 +92,7 @@
             k_btn = new Button();
             k_nws = new Button();
             k_V = new Button();
+            Clear_btn = new Button();
             toolTip1 = new ToolTip(components);
             tableLayoutPanel11 = new TableLayoutPanel();
             comboBox1 = new ComboBox();
@@ -699,17 +699,6 @@
             button13.TabIndex = 0;
             button13.UseVisualStyleBackColor = true;
             // 
-            // Clear_btn
-            // 
-            Clear_btn.Dock = DockStyle.Fill;
-            Clear_btn.Font = new Font("隶书", 24F, FontStyle.Regular, GraphicsUnit.Point);
-            Clear_btn.Location = new Point(1059, 97);
-            Clear_btn.Name = "Clear_btn";
-            Clear_btn.Size = new Size(154, 126);
-            Clear_btn.TabIndex = 9;
-            Clear_btn.Text = "清除";
-            Clear_btn.UseVisualStyleBackColor = true;
-            // 
             // tableLayoutPanel5
             // 
             tableLayoutPanel5.ColumnCount = 1;
@@ -864,6 +853,17 @@
             k_V.TabIndex = 6;
             k_V.UseVisualStyleBackColor = true;
             // 
+            // Clear_btn
+            // 
+            Clear_btn.Dock = DockStyle.Fill;
+            Clear_btn.Font = new Font("隶书", 24F, FontStyle.Regular, GraphicsUnit.Point);
+            Clear_btn.Location = new Point(1059, 97);
+            Clear_btn.Name = "Clear_btn";
+            Clear_btn.Size = new Size(154, 126);
+            Clear_btn.TabIndex = 9;
+            Clear_btn.Text = "清除";
+            Clear_btn.UseVisualStyleBackColor = true;
+            // 
             // tableLayoutPanel11
             // 
             tableLayoutPanel11.ColumnCount = 1;
@@ -886,7 +886,7 @@
             comboBox1.Items.AddRange(new object[] { "Al", "Si", "V", "Ti", "Cr", "Mn", "C", "B" });
             comboBox1.Location = new Point(3, 23);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(194, 38);
+            comboBox1.Size = new Size(194, 39);
             comboBox1.TabIndex = 2;
             // 
             // label6

@@ -287,10 +287,10 @@
         /// <param name="solv"></param>
         /// <param name="solutei"></param>
         /// <returns></returns>
-        public double first_Derative_Qx(Element i_element, Element j_element,double xi = 0)
+        public double first_Derative_Qx(Element i_element, Element j_element, double xi = 0)
         {//Q(x)的一阶偏导,
             double fij = fab_func_ContainS(i_element, j_element);
-            double vi,vj,ui,uj,phi_i,phi_j;
+            double vi, vj, ui, uj, phi_i, phi_j;
             vi = i_element.V;
             vj = j_element.V;
             ui = i_element.u;
@@ -301,16 +301,16 @@
 
             double Ax = vi * (1 + ui * delta_phi * (1 - xi));
             double Bx = vj * (1 - uj * delta_phi * xi);
-            double Dx = xi*Ax + (1-xi) * Bx;
+            double Dx = xi * Ax + (1 - xi) * Bx;
             double Nx = Ax * Bx;
 
             double dAx = -ui * delta_phi * vi;
             double dBx = -uj * delta_phi * vj;
 
-            double dDx = Ax+xi*dAx-Bx+(1-xi)*dBx;
+            double dDx = Ax + xi * dAx - Bx + (1 - xi) * dBx;
             double dNx = dAx * Bx + Ax * dBx;
 
-            double dfx = (dNx*Dx-dDx*Nx)/(Dx*Dx);
+            double dfx = (dNx * Dx - dDx * Nx) / (Dx * Dx);
 
 
             return dfx;
@@ -329,7 +329,7 @@
             Vi = i_element.V;
             Vj = j_element.V;
             ui = i_element.u;
-            uj =j_element.u;
+            uj = j_element.u;
             phi_i = i_element.Phi;
             phi_j = j_element.Phi;
             double delta_phi = phi_i - phi_j;
@@ -479,13 +479,13 @@
         {
             //二阶自身活度相互作用系数2*ρi^ii=(-sii + d^3G^E_m/dx^3 (x=0)*1/RT)
 
-            double sii = Activity_Interact_Coefficient_1st(solv,solui,solui,geo_Model);
+            double sii = Activity_Interact_Coefficient_1st(solv, solui, solui, geo_Model);
             double df10 = first_Derative_Qx(solui, solv, 0);
-            double df20 = second_Derative_Q0(solui, solv, 1);
+            double df20 = second_Derative_Q0(solui, solv, 0);
 
             double rii = -sii + 1000 * (-6 * df10 + 3 * df20) / (R * Tem);
 
-            return rii*1.0/2;
+            return rii * 1.0 / 2;
         }
 
         /// <summary>
@@ -501,7 +501,7 @@
         {
             //二阶活度相互作用系数2*ρi^jj=-sjj +  d^3G^E_m/dxidxjdxj (x=0)*1/RT
 
-            double aji_ik = 0, aij_jk = 0, aki_ij = 0, akj_ij = 0, aik_jk = 0, ajk_ik = 0,Qij=0,Qik=0,Qjk=0;
+            double aji_ik = 0, aij_jk = 0, aki_ij = 0, akj_ij = 0, aik_jk = 0, ajk_ik = 0, Qij = 0, Qik = 0, Qjk = 0;
             double sjj = Activity_Interact_Coefficient_1st(solv, soluj, soluj, geo_Model);
             aji_ik = geo_Model(soluj.Name, solui.Name, solv.Name, GeoModel);
             ajk_ik = geo_Model(soluj.Name, solv.Name, solui.Name, GeoModel);
@@ -510,17 +510,14 @@
             akj_ij = geo_Model(solv.Name, soluj.Name, solui.Name, GeoModel);
             aik_jk = geo_Model(solui.Name, solv.Name, soluj.Name, GeoModel);
 
-            Qij = -2*aki_ij/Pow(aki_ij+akj_ij,2)*first_Derative_Qx(solui,soluj,aki_ij/(aki_ij+akj_ij));
-            Qik = aji_ik * aji_ik * second_Derative_Q0(solui, solv, 0)-2*aji_ik*(aji_ik+ajk_ik)*first_Derative_Qx(solui,solv,0);
-            Qjk = 2*aij_jk*second_Derative_Q0(soluj,solv,0)-2*(2*aij_jk+aik_jk)*first_Derative_Qx(soluj,solv,0);
+            Qij = -2 * aki_ij / Pow(aki_ij + akj_ij, 2) * first_Derative_Qx(solui, soluj, aki_ij / (aki_ij + akj_ij));
+            Qik = aji_ik * aji_ik * second_Derative_Q0(solui, solv, 0) - 2 * aji_ik * (aji_ik + ajk_ik) * first_Derative_Qx(solui, solv, 0);
+            Qjk = 2 * aij_jk * second_Derative_Q0(soluj, solv, 0) - 2 * (2 * aij_jk + aik_jk) * first_Derative_Qx(soluj, solv, 0);
 
-            double ri_jj = (-sjj+1000*(Qij+Qik+Qjk)/(R * Tem) );
-
-
+            double ri_jj = (-sjj + 1000 * (Qij + Qik + Qjk) / (R * Tem));
 
 
-
-            return ri_jj/2.0;
+            return ri_jj / 2.0;
         }
         /// <summary>
         /// 二阶交互活度相互作用系数ρi^ij
@@ -543,14 +540,95 @@
             akj_ij = geo_Model(solv.Name, soluj.Name, solui.Name, GeoModel);
             aik_jk = geo_Model(solui.Name, solv.Name, soluj.Name, GeoModel);
 
-            Qij = 2*akj_ij/Pow(akj_ij+aki_ij,2)*first_Derative_Qx(solui,soluj,aki_ij/(aki_ij+aki_ij));
-            Qik = 2 * aji_ik * second_Derative_Q0(solui, solv, 0) - 2 *(2*aji_ik+ajk_ik)* first_Derative_Qx(solui, solv, 0);
-            Qjk = aij_jk*aij_jk*second_Derative_Q0(soluj,solv, 0) - 2*aij_jk*(aij_jk+aik_jk)*first_Derative_Qx(soluj,solv,0);
+            Qij = 2 * akj_ij / Pow(akj_ij + aki_ij, 2) * first_Derative_Qx(solui, soluj, aki_ij / (aki_ij + aki_ij));
+            Qik = 2 * aji_ik * second_Derative_Q0(solui, solv, 0) - 2 * (2 * aji_ik + ajk_ik) * first_Derative_Qx(solui, solv, 0);
+            Qjk = aij_jk * aij_jk * second_Derative_Q0(soluj, solv, 0) - 2 * aij_jk * (aij_jk + aik_jk) * first_Derative_Qx(soluj, solv, 0);
 
 
 
-            return (-sji+(Qij+Qik+Qjk)/(R*Tem));
+            return (-sji + (Qij + Qik + Qjk) / (R * Tem));
         }
+
+        /// <summary>
+        /// 交互作用参数，组分j、k对i的影响
+        /// </summary>
+        /// <param name="m">基体</param>
+        /// <param name="i">溶质i</param>
+        /// <param name="j">溶质j</param>
+        /// <param name="k">溶质k</param>
+        /// <param name="geo_Model">外推模型</param>
+        /// <param name="GeoModel">外推模型符号</param>
+        /// <returns></returns>
+        public double Roui_jk(Element m, Element i, Element j, Element k, Geo_Model geo_Model, string GeoModel = "UEM1")
+        {
+            //交互作用参数，组分j、k对i的影响
+            double skj = Activity_Interact_Coefficient_1st(m, j, k, geo_Model);
+            double amj_ij = 0, ami_ij = 0, aki_ij = 0, akj_ij = 0, dfij = 0;
+            double amk_ik = 0, ami_ik = 0, aji_ik = 0, ajk_ik = 0, dfik = 0;
+            double aji_im = 0, ajm_im = 0, aki_im = 0, akm_im = 0, dfim = 0, ddfim = 0;
+            double amk_jk = 0, amj_jk = 0, aij_jk = 0, aik_jk = 0, dfjk = 0;
+            double aij_jm = 0, aim_jm = 0, akj_jm = 0, akm_jm = 0, dfjm = 0, ddfjm = 0;
+            double aik_km = 0, aim_km = 0, ajk_km = 0, ajm_km = 0, dfkm = 0, ddfkm = 0;
+
+            amj_ij = geo_Model(m.Name, j.Name, i.Name, GeoModel);
+            ami_ij = geo_Model(m.Name, i.Name, j.Name, GeoModel);
+            aki_ij = geo_Model(k.Name, i.Name, j.Name, GeoModel);
+            akj_ij = geo_Model(k.Name, j.Name, i.Name, GeoModel);
+
+            amk_ik = geo_Model(m.Name, k.Name, j.Name, GeoModel);
+            ami_ik = geo_Model(m.Name, i.Name, k.Name, GeoModel);
+            aji_ik = geo_Model(j.Name, i.Name, i.Name, GeoModel);
+            ajk_ik = geo_Model(j.Name, k.Name, i.Name, GeoModel);
+
+            aji_im = geo_Model(j.Name, i.Name, m.Name, GeoModel);
+            ajm_im = geo_Model(j.Name, m.Name, i.Name, GeoModel);
+            aki_im = geo_Model(k.Name, i.Name, m.Name, GeoModel);
+            akm_im = geo_Model(k.Name, m.Name, i.Name, GeoModel);
+
+            amk_jk = geo_Model(m.Name, k.Name, j.Name, GeoModel);
+            amj_jk = geo_Model(m.Name, j.Name, k.Name, GeoModel);
+            aik_jk = geo_Model(i.Name, k.Name, j.Name, GeoModel);
+            aij_jk = geo_Model(i.Name, j.Name, k.Name, GeoModel);
+
+            aij_jm = geo_Model(i.Name, j.Name, m.Name, GeoModel);
+            aim_jm = geo_Model(i.Name, m.Name, j.Name, GeoModel);
+            akj_jm = geo_Model(k.Name, j.Name, m.Name, GeoModel);
+            akm_jm = geo_Model(k.Name, m.Name, j.Name, GeoModel);
+
+            aik_km = geo_Model(i.Name, k.Name, m.Name, GeoModel);
+            aim_km = geo_Model(i.Name, m.Name, k.Name, GeoModel);
+            ajk_km = geo_Model(j.Name, k.Name, m.Name, GeoModel);
+            ajm_km = geo_Model(j.Name, m.Name, k.Name, GeoModel);
+
+            dfij = first_Derative_Qx(i, j, ami_ij / (ami_ij + amj_ij));
+            dfik = first_Derative_Qx(i, k, ami_ik / (ami_ik + amk_ik));
+
+            double Qij = (amj_ij * aki_ij - ami_ij * akj_ij) / Pow(ami_ij + amj_ij, 2) * dfij;
+            double Qik = (amk_ik * aji_ik - ami_ik * ajk_ik) / Pow(ami_ik + amk_ik, 2) * dfik;
+
+            dfim = first_Derative_Qx(i, m, 0);
+            ddfim = second_Derative_Q0(i, m, 0);
+
+            double Qim = aji_im * aki_im * ddfim - (aji_im * akm_im + aki_im * ajm_im + 2 * aji_im * aki_im) * dfim;
+
+            dfjk = first_Derative_Qx(j, k, amj_jk / (amj_jk + amk_jk));
+
+            double Qjk = (amk_jk * aij_jk - amj_jk * aik_jk) / Pow(amj_jk + amk_jk, 2) * dfjk;
+
+            dfjm = first_Derative_Qx(j, m, 0);
+            ddfjm = second_Derative_Q0(j, m, 0);
+            double Qjm = aij_jm * akj_jm * ddfjm - (aij_jm * akm_jm + akj_jm * aim_jm + 2 * aij_jm * akj_jm) * dfjm;
+
+            dfkm = first_Derative_Qx(k, m, 0);
+            ddfkm = second_Derative_Q0(k, m, 0);
+            double Qkm = aik_km * ajk_km * ddfkm - (aik_km * ajm_km + ajk_km * aim_km + 2 * aik_km * ajk_km) * dfkm;
+
+            return 1000 * (Qij + Qik + Qim + Qjk + Qjm + Qkm) / (R * Tem) - skj;
+
+
+        }
+
+
 
     }
 }

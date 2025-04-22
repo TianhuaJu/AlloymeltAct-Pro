@@ -273,7 +273,7 @@ namespace AlloyAct_Pro
 
         public double activity_coefficient_Elloit(Dictionary<string, double> comp_dict, string solute_i, string matrix, double T, Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
         {
-            //lnyi = lnyi0 + ∑sjixj+∑r_i^kj*xk*xj
+            //lnyi = lnyi0 + ∑sjixj + 1/2∑r_i^kj*xk*xj
 
             Element solv = new Element(matrix);
             Element solui = new Element(solute_i);
@@ -301,14 +301,21 @@ namespace AlloyAct_Pro
                     //计算∑r_i^kj*xk*xj
                     string j, n;
                     j = comp_dict.ElementAt(p).Key;
-                    
+                    double xj = comp_dict[j];
                     if (j != solv.Name && j != solui.Name)
                     {
-                        double ri_jj, ri_ji,xj;
+                        double ri_jj, ri_ji,xk,ri_jk;
                         ri_jj = ternary_melts.Roui_jj(solv,solui,new Element(j),geo_Model,GeoModel);
                         ri_ji = ternary_melts.Roui_ij(solv,solui, new Element(j),geo_Model, GeoModel);
 
-                        xj = comp_dict[j];
+                        for (int q = 0; q < comp_dict.Count; q++)
+                        {
+                            string k = comp_dict.ElementAt(q).Key;
+                            xk = comp_dict[k];
+                            ri_jk = ternary_melts.Roui_jk(solv, solui, new Element(j), new Element(k), geo_Model, GeoModel);
+                            sum_xsij += ri_jk*xj*xk;
+                        }
+                        
                         sum_xsij += ri_jj * xj * xj + ri_ji * xi * xj;
 
                     }
@@ -317,7 +324,7 @@ namespace AlloyAct_Pro
                 }
                 double rii = ternary_melts.Roui_ii(solv,solui,geo_Model,GeoModel);
 
-                lnYi = lnYi_0 + sum_xsij + sum_xskj + xi*xi*rii;
+                lnYi = lnYi_0 + sum_xsij + 0.5*(sum_xskj + xi*xi*rii);
                 return lnYi;
             }
             else

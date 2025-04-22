@@ -546,7 +546,7 @@
 
 
 
-            return (-sji + (Qij + Qik + Qjk) / (R * Tem));
+            return (-sji + 1000*(Qij + Qik + Qjk) / (R * Tem));
         }
 
         /// <summary>

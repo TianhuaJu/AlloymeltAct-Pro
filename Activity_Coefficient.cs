@@ -304,11 +304,24 @@ namespace AlloyAct_Pro
                     
                     if (j != solv.Name && j != solui.Name)
                     {
-                        double ri_jj, ri_ji,xj;
+                        double ri_jj, ri_ji,xj,ri_jk;
+                        xj = comp_dict[j];
                         ri_jj = ternary_melts.Roui_jj(solv,solui,new Element(j),geo_Model,GeoModel);
                         ri_ji = ternary_melts.Roui_ij(solv,solui, new Element(j),geo_Model, GeoModel);
-
-                        xj = comp_dict[j];
+                        for (int q = 0; q < comp_dict.Count - 1; q++)
+                        {
+                            string k;
+                            double xk;
+                            k = comp_dict.ElementAt(q).Key;
+                            if (k != solv.Name && k != solui.Name && k != j)
+                            {
+                                ri_jk = ternary_melts.Roui_jk(solv, solui, new Element(j), new Element(k), geo_Model, GeoModel);
+                                xk = comp_dict[k];
+                                sum_xsij += xj * xk * ri_jk;
+                            }
+                        }
+                        
+                        
                         sum_xsij += ri_jj * xj * xj + ri_ji * xi * xj;
 
                     }

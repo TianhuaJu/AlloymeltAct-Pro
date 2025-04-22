@@ -55,33 +55,7 @@
             this._state = state;
         }
 
-        /// <summary>
-        /// apply for adding excess entropy by Witusiewicz
-        /// </summary>
-        /// <param name="Ea"></param>
-        /// <param name="Eb"></param>
-        /// <returns></returns>
-        private double alpha_ab(Element Ea, Element Eb)
-        {
-            double omga;
-            omga = 1.0 / (2 * Math.PI) * Pow((Ea.Tm + Eb.Tm) / (Ea.Tb + Eb.Tb) + 1, Math.E);
-
-            return Pow(omga - 1, 2) / (this.Tem - 298 * omga) * this.Tem;
-        }
-        /// <summary>
-        /// apply for adding excess entropy by Witusiewicz
-        /// </summary>
-        /// <param name="Ea"></param>
-        /// <param name="Eb"></param>
-        /// <returns></returns>
-        private double belta_ab(Element Ea, Element Eb)
-        {
-            double omga, Pt, beta;
-            omga = 1.0 / (2 * Math.PI) * Pow((Ea.Tm + Eb.Tm) / (Ea.Tb + Eb.Tb) + 1, Math.E);
-            Pt = 1.0 / 2 + 4 * (Ea.Tm + Eb.Tm) / (6 * this.Tem) + 2 * Math.Log(this.Tem * 2 / (Ea.Tb + Eb.Tb - Ea.Tm - Eb.Tm));
-            beta = (1 - omga) * omga * constant.R * (2 - 4 * (Ea.Tm + Eb.Tm) / (6 * this.Tem)) - omga * this.Tem * constant.R * Pt;
-            return beta;
-        }
+        
 
         /// <summary>
         /// 纯粹的Fab,不含熵项
@@ -122,66 +96,7 @@
 
             return fij;
         }
-        /// <summary>
-        /// 添加过剩热容，fab是Ding定义的，包含了a，b的体积项
-        /// </summary>
-        /// <param name="Ei"></param>
-        /// <param name="Ej"></param>
-        /// <param name="state">熔体温度及相态</param>
-        /// <param name="condition">是否考虑熵和热容</param>
-        /// <returns></returns>
-        private double Dfab_Func(Element Ei, Element Ej, bool s = true)
-        {
-            (bool entropy, bool Cp) condition = this.condition;
-            (string phase, double Tem) state = (this.state, this.Tem);
-            double fij = 0, sij, alpha, rp, P;
-            double avg_Tm = 1.0 / Ei.Tm + 1.0 / Ej.Tm;
-
-
-            if (condition.entropy)
-            {
-                if (state.phase == "liquid")
-                {
-                    sij = 1.0 / 14 * state.Tem * avg_Tm;
-
-                }
-                else
-                {
-                    sij = 1.0 / 15.1 * state.Tem * avg_Tm;
-                }
-
-
-            }
-            else
-            {
-                sij = 0;
-            }
-
-            if (state.phase == "liquid")
-            {
-                alpha = 0.73;
-            }
-            else
-            {
-                alpha = 1.0;
-            }
-            if (Ei.hybird_factor != "other" || Ej.hybird_factor != "other")
-            {
-                rp = (Ei.hybird_factor == Ej.hybird_factor) ? 0.0 : Ei.hybird_Value * Ej.hybird_Value;
-            }
-            else
-            {
-                rp = 0.0;
-            }
-            P = (Ei.isTrans_group && Ej.isTrans_group) ? constant.P_TT : ((Ei.isTrans_group || Ej.isTrans_group) ? constant.P_TN : constant.P_NN);
-
-
-            fij = 2 * P * Ei.V * Ej.V * (constant.QtoP * Pow(Ei.N_WS - Ej.N_WS, 2.0) - Pow(Ei.Phi - Ej.Phi, 2.0) - alpha * rp) / (1 / Ei.N_WS + 1 / Ej.N_WS);
-
-
-
-            return fij * (1.0 - sij);
-        }
+       
         /// <summary>
         /// 纯Fab，包含熵项
         /// </summary>

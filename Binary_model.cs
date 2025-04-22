@@ -27,12 +27,7 @@ namespace AlloyAct_Pro
         {
 
         }
-        public Binary_model(Element A, Element B)
-        {
-            this.Ea = A;
-            this.Eb = B;
-
-        }
+        
         public void setTemperature(double Tem)
         {
             this.T = Tem;
@@ -87,28 +82,7 @@ namespace AlloyAct_Pro
 
 
 
-        /// <summary>
-        /// extract the information of Compound AxBy,return (A,x,B,y)
-        /// </summary>
-        /// <param name="compound">AxBy</param>
-        /// <returns></returns>
-        private (string A, double x, string B, double y) extract_Compound(string compound)
-        {
-            Regex_Extend re = new Regex_Extend(@"^([A-Z]{1}[a-z]?)(\d+\.?\d*)?([A-Z]{1}[a-z]?)(\d+\.?\d*)?");
-
-            string A, B;
-            double x = 1.0, y = 1.0;
-
-
-            GroupCollection groups = re.group(compound);
-            bool t1 = double.TryParse(groups[2].Value, out x);
-            bool t2 = double.TryParse(groups[4].Value, out y);
-            if (t1) { } else { x = 1.0; }
-            if (t2) { } else { y = 1.0; }
-            A = groups[1].Value;
-            B = groups[3].Value;
-            return (A, x, B, y);
-        }
+        
         private double rp(Element _Ea, Element _Eb, string _state)
         {
             double alpha = 0.0;
@@ -182,45 +156,8 @@ namespace AlloyAct_Pro
 
         }
 
-        /// <summary>
-        /// xa=1,xb=0时的O_AB
-        /// </summary>
-        /// <param name="A"></param>
-        /// <param name="B"></param>
-        /// <param name="Xa"></param>
-        /// <param name="Xb"></param>
-        /// <returns></returns>
-        public double infinity_enthalpy(string A, string B, double Xa = 1, double Xb = 0)
-        {
-            setPairElement(A, B);
-            double Vb = this.Eb.V * (1 + this.Eb.u * (this.Eb.Phi - this.Ea.Phi));
-            double fab = this.fab(this.Ea, this.Eb, this.state);
-
-
-
-            return fab * Vb + this.Eb.dH_Trans;
-
-        }
-        /// <summary>
-        /// 返回A在B中的偏摩尔溶解焓ΔH(B) = H + (1-xA)(dH/dxA)
-        /// </summary>
-        /// <param name="A">组元A</param>
-        /// <param name="B">组元B</param>
-        /// <param name="phaseState">合金相态，液态or固态</param>
-        /// <param name="orderDegree">合金结构化参数，无序取0，有序取8.0，非晶5.0</param>
-        /// <returns></returns>
-        public double partialmolarEnthalpy(string A, string B, string phaseState, double orderDegree)
-        {
-            setPairElement(A, B);
-            setState(phaseState);
-            setLammda(orderDegree);
-            double fAB = this.fab(this.Ea, this.Eb, this.state);
-            double VAa = Ea.V * (1 + this.Ea.u * (Ea.Phi - Eb.Phi));
-
-
-            return fAB * VAa + Ea.dH_Trans;
-
-        }
+      
+        
 
         private (double V1, double V2) V_inalloy(Element Ea, Element Eb, double xa, double xb)
         {
@@ -288,46 +225,6 @@ namespace AlloyAct_Pro
         }
 
 
-        /// <summary>
-        /// 1 mole B（溶质 solute）在体积无限大的A（溶剂solv）中的溶解热
-        /// </summary>
-        /// <param name="solv">溶剂</param>
-        /// <param name="solute">溶质</param>
-        /// <param name="state">状态</param>
-        /// <returns></returns>
-        public double Solution_Heat(Element solute, Element solv, string state)
-        {
-
-
-
-            double diff = fab(solv, solute, state);
-            double Vb = solute.V * (1.0 + solute.u * (solute.Phi - solv.Phi));
-            double dHtrans;
-            bool b = solv.Name == "Si" || solv.Name == "Ge";
-
-            if (state == "liquid")
-            {
-
-                if (b)
-                {
-                    dHtrans = 0;
-                }
-                else
-                {
-                    dHtrans = solv.dH_Trans;
-                }
-
-            }
-
-            else
-            {
-                dHtrans = solv.dH_Trans;
-            }
-
-
-
-            return (Vb * diff + dHtrans) * 1000;
-        }
 
 
 

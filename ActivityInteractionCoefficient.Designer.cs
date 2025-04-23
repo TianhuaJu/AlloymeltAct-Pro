@@ -191,7 +191,7 @@
             T_comboBox4.Items.AddRange(new object[] { "1873" });
             T_comboBox4.Location = new Point(3, 40);
             T_comboBox4.Name = "T_comboBox4";
-            T_comboBox4.Size = new Size(256, 38);
+            T_comboBox4.Size = new Size(256, 32);
             T_comboBox4.TabIndex = 2;
             // 
             // label4
@@ -199,9 +199,9 @@
             label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label4.AutoSize = true;
             label4.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(3, 13);
+            label4.Location = new Point(3, 18);
             label4.Name = "label4";
-            label4.Size = new Size(94, 24);
+            label4.Size = new Size(79, 19);
             label4.TabIndex = 1;
             label4.Text = "温度(K)";
             // 
@@ -228,7 +228,7 @@
             j_comboBox3.Items.AddRange(new object[] { "Al", "Si", "V", "Ti", "Cr", "Mn", "C", "B" });
             j_comboBox3.Location = new Point(3, 40);
             j_comboBox3.Name = "j_comboBox3";
-            j_comboBox3.Size = new Size(122, 38);
+            j_comboBox3.Size = new Size(122, 32);
             j_comboBox3.TabIndex = 2;
             // 
             // label3
@@ -236,9 +236,9 @@
             label3.AutoSize = true;
             label3.Dock = DockStyle.Bottom;
             label3.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(3, 13);
+            label3.Location = new Point(3, 18);
             label3.Name = "label3";
-            label3.Size = new Size(122, 24);
+            label3.Size = new Size(122, 19);
             label3.TabIndex = 1;
             label3.Text = "组分(j)";
             // 
@@ -265,7 +265,7 @@
             i_comboBox2.Items.AddRange(new object[] { "Al", "Si", "C", "Ti", "Mn", "V" });
             i_comboBox2.Location = new Point(3, 40);
             i_comboBox2.Name = "i_comboBox2";
-            i_comboBox2.Size = new Size(122, 38);
+            i_comboBox2.Size = new Size(122, 32);
             i_comboBox2.TabIndex = 2;
             // 
             // label2
@@ -273,9 +273,9 @@
             label2.AutoSize = true;
             label2.Dock = DockStyle.Bottom;
             label2.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(3, 13);
+            label2.Location = new Point(3, 18);
             label2.Name = "label2";
-            label2.Size = new Size(122, 24);
+            label2.Size = new Size(122, 19);
             label2.TabIndex = 1;
             label2.Text = "组分(i)";
             // 
@@ -299,9 +299,9 @@
             label1.AutoSize = true;
             label1.Dock = DockStyle.Bottom;
             label1.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(3, 13);
+            label1.Location = new Point(3, 18);
             label1.Name = "label1";
-            label1.Size = new Size(122, 24);
+            label1.Size = new Size(122, 19);
             label1.TabIndex = 0;
             label1.Text = "基体(k)";
             // 
@@ -313,7 +313,7 @@
             k_comboBox1.Items.AddRange(new object[] { "Fe", "Ni", "Co", "Cu", "Al" });
             k_comboBox1.Location = new Point(3, 40);
             k_comboBox1.Name = "k_comboBox1";
-            k_comboBox1.Size = new Size(122, 38);
+            k_comboBox1.Size = new Size(122, 32);
             k_comboBox1.TabIndex = 1;
             // 
             // tableLayoutPanel6
@@ -599,9 +599,9 @@
             label5.AutoSize = true;
             label5.FlatStyle = FlatStyle.System;
             label5.Font = new Font("Times New Roman", 20F, FontStyle.Bold, GraphicsUnit.Point);
-            label5.Location = new Point(11, 28);
+            label5.Location = new Point(28, 31);
             label5.Name = "label5";
-            label5.Size = new Size(90, 38);
+            label5.Size = new Size(73, 31);
             label5.TabIndex = 0;
             label5.Text = "State";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -629,9 +629,9 @@
             liquid_checkBox1.Checked = true;
             liquid_checkBox1.CheckState = CheckState.Checked;
             liquid_checkBox1.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            liquid_checkBox1.Location = new Point(6, 6);
+            liquid_checkBox1.Location = new Point(6, 7);
             liquid_checkBox1.Name = "liquid_checkBox1";
-            liquid_checkBox1.Size = new Size(105, 30);
+            liquid_checkBox1.Size = new Size(87, 29);
             liquid_checkBox1.TabIndex = 0;
             liquid_checkBox1.Text = "Liquid";
             liquid_checkBox1.UseVisualStyleBackColor = true;
@@ -642,9 +642,9 @@
             Solid_checkBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             Solid_checkBox1.AutoSize = true;
             Solid_checkBox1.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
-            Solid_checkBox1.Location = new Point(6, 45);
+            Solid_checkBox1.Location = new Point(6, 47);
             Solid_checkBox1.Name = "Solid_checkBox1";
-            Solid_checkBox1.Size = new Size(92, 31);
+            Solid_checkBox1.Size = new Size(76, 29);
             Solid_checkBox1.TabIndex = 1;
             Solid_checkBox1.Text = "Solid";
             Solid_checkBox1.UseVisualStyleBackColor = true;
@@ -744,53 +744,53 @@
             // 
             optionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, exitToolStripMenuItem });
             optionToolStripMenuItem.Name = "optionToolStripMenuItem";
-            optionToolStripMenuItem.Size = new Size(74, 24);
+            optionToolStripMenuItem.Size = new Size(72, 24);
             optionToolStripMenuItem.Text = "Option";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(126, 26);
+            saveToolStripMenuItem.Size = new Size(112, 24);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(126, 26);
+            exitToolStripMenuItem.Size = new Size(112, 24);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // unitConverstionToolStripMenuItem
             // 
             unitConverstionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { unitConversionToolStripMenuItem, secondorderToolStripMenuItem });
             unitConverstionToolStripMenuItem.Name = "unitConverstionToolStripMenuItem";
-            unitConverstionToolStripMenuItem.Size = new Size(63, 24);
+            unitConverstionToolStripMenuItem.Size = new Size(61, 24);
             unitConverstionToolStripMenuItem.Text = "Tools";
             // 
             // unitConversionToolStripMenuItem
             // 
             unitConversionToolStripMenuItem.Name = "unitConversionToolStripMenuItem";
-            unitConversionToolStripMenuItem.Size = new Size(194, 26);
+            unitConversionToolStripMenuItem.Size = new Size(180, 24);
             unitConversionToolStripMenuItem.Text = "Unit_Convert";
             unitConversionToolStripMenuItem.Click += unitConversionToolStripMenuItem_Click;
             // 
             // secondorderToolStripMenuItem
             // 
             secondorderToolStripMenuItem.Name = "secondorderToolStripMenuItem";
-            secondorderToolStripMenuItem.Size = new Size(194, 26);
+            secondorderToolStripMenuItem.Size = new Size(180, 24);
             secondorderToolStripMenuItem.Text = "Second-order";
             secondorderToolStripMenuItem.Click += secondorderToolStripMenuItem_Click;
             // 
             // settingToolStripMenuItem
             // 
             settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            settingToolStripMenuItem.Size = new Size(76, 24);
+            settingToolStripMenuItem.Size = new Size(74, 24);
             settingToolStripMenuItem.Text = "Setting";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(58, 24);
+            helpToolStripMenuItem.Size = new Size(56, 24);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 

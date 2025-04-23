@@ -346,7 +346,9 @@ namespace AlloyAct_Pro
                     }
                     else
                     {
+
                         linear_sum += epsilon_i_j * xj;
+
                     }
                 }
             }

@@ -124,13 +124,6 @@
                 dataGridView1["Temperature", row].Value = info.Tem;
 
                 dataGridView1.Update();
-
-                m1 = null;
-                solv = null;
-                solui = null;
-                soluj = null;
-                System.GC.Collect();
-
             }
 
         }

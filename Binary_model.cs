@@ -260,8 +260,6 @@ namespace AlloyAct_Pro
                 yeta_DICT.Add(k + A + B + this.T, f);
             }
 
-            m1 = m2 = null;
-            System.GC.Collect();
             return f;
 
 
@@ -314,8 +312,6 @@ namespace AlloyAct_Pro
 
 
 
-            mkj = mij = null;
-            System.GC.Collect();
             double tem = 0;
             tem = (f_ij - f_kj) / (f_ij + f_kj);
             return Abs(tem * 1);
@@ -451,9 +447,6 @@ namespace AlloyAct_Pro
             double beta3 = df_kj / (df_ki + df_kj);
             alpha_KA = alpha * beta3;
 
-            ternary_ = null;
-            System.GC.Collect();
-
             return alpha_KA;
         }
         public double UEM2(string k, string i, string j, string mode)
@@ -510,11 +503,6 @@ namespace AlloyAct_Pro
 
             }
 
-
-
-            ternary_ = null;
-            Ek = Ei = Ej = null;
-            System.GC.Collect();
 
 
             return alpha_KA;

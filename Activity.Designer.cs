@@ -101,7 +101,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1000, 672);
+            splitContainer1.Size = new Size(1200, 772);
             splitContainer1.SplitterDistance = 172;
             splitContainer1.TabIndex = 0;
             // 
@@ -439,22 +439,25 @@
             xi.Name = "xi";
             // 
             // activity
-            // 
+            //
             dataGridViewCellStyle3.NullValue = null;
             activity.DefaultCellStyle = dataGridViewCellStyle3;
-            activity.HeaderText = "ai(D)";
+            activity.HeaderText = "ai(Pelton)";
             activity.MinimumWidth = 6;
             activity.Name = "activity";
-            // 
+            activity.ToolTipText = "Pelton模型(Darken方法)：采用Pelton-Darken积分公式计算多元系活度，适用于稀溶液和浓溶液";
+            //
             // ai_elloit
-            // 
-            ai_elloit.HeaderText = "ai(E)";
+            //
+            ai_elloit.HeaderText = "ai(Elliott)";
             ai_elloit.Name = "ai_elloit";
-            // 
+            ai_elloit.ToolTipText = "Elliott模型：采用Elliott统一活度相互作用参数公式，考虑溶质间相互作用";
+            //
             // ai_wagner
-            // 
-            ai_wagner.HeaderText = "ai(W)";
+            //
+            ai_wagner.HeaderText = "ai(Wagner)";
             ai_wagner.Name = "ai_wagner";
+            ai_wagner.ToolTipText = "Wagner模型：采用Wagner一阶相互作用参数公式，适用于无限稀溶液";
             // 
             // Tem
             // 
@@ -478,7 +481,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 700);
+            ClientSize = new Size(1200, 800);
             Controls.Add(splitContainer1);
             MainMenuStrip = menuStrip1;
             Name = "ActivityFm";

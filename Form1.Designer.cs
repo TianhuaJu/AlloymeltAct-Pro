@@ -55,7 +55,7 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(580, 480);
+            tableLayoutPanel1.Size = new Size(720, 560);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // Activity
@@ -119,7 +119,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(580, 480);
+            ClientSize = new Size(720, 560);
             Controls.Add(tableLayoutPanel1);
             Margin = new Padding(3, 4, 3, 4);
             MaximizeBox = false;

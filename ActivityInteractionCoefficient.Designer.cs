@@ -124,7 +124,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(950, 652);
+            splitContainer1.Size = new Size(1100, 752);
             splitContainer1.SplitterDistance = 189;
             splitContainer1.TabIndex = 0;
             // 
@@ -798,7 +798,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(950, 680);
+            ClientSize = new Size(1100, 780);
             Controls.Add(splitContainer1);
             Controls.Add(menuStrip1);
             Name = "ActivityInteractionCoefficientFm";

@@ -90,7 +90,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1000, 722);
+            splitContainer1.Size = new Size(1100, 772);
             splitContainer1.SplitterDistance = 193;
             splitContainer1.TabIndex = 0;
             // 
@@ -418,18 +418,20 @@
             Remark.HeaderText = "Remark";
             Remark.MinimumWidth = 6;
             Remark.Name = "Remark";
-            // 
+            //
             // ActivityCoefficientAtInfiniteDilution
-            // 
+            //
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 750);
+            BackColor = Color.FromArgb(245, 250, 255);
+            ClientSize = new Size(1100, 800);
             Controls.Add(splitContainer1);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             MainMenuStrip = menuStrip1;
             Margin = new Padding(3, 4, 3, 4);
             Name = "ActivityCoefficientAtInfiniteDilution";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "Activity Coefficient At Infinite Dilution";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "无限稀活度系数计算 - Activity Coefficient At Infinite Dilution";
             FormClosed += ActivityCoefficientAtInfiniteDilution_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();

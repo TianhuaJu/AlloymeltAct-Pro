@@ -412,7 +412,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1250, 822);
+            splitContainer1.Size = new Size(1300, 872);
             splitContainer1.SplitterDistance = 229;
             splitContainer1.TabIndex = 2;
             // 
@@ -899,15 +899,18 @@
             label6.Size = new Size(194, 24);
             label6.TabIndex = 1;
             label6.Text = "组分(j)";
-            // 
+            //
             // SecondorderForm2
-            // 
+            //
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1250, 850);
+            BackColor = Color.FromArgb(245, 250, 255);
+            ClientSize = new Size(1300, 900);
             Controls.Add(splitContainer1);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "SecondorderForm2";
-            Text = "SecondorderForm2";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "二阶活度相互作用系数计算 - Second Order Interaction Coefficients";
             tableLayoutPanel9.ResumeLayout(false);
             tableLayoutPanel9.PerformLayout();
             tableLayoutPanel10.ResumeLayout(false);

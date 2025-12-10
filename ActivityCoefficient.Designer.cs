@@ -100,7 +100,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1200, 772);
+            splitContainer1.Size = new Size(1280, 822);
             splitContainer1.SplitterDistance = 178;
             splitContainer1.TabIndex = 0;
             // 
@@ -437,22 +437,22 @@
             //
             acf_wagner.HeaderText = "lnγ_i(Wagner)";
             acf_wagner.Name = "acf_wagner";
-            acf_wagner.ToolTipText = "Wagner模型：采用Wagner一阶相互作用参数公式，适用于无限稀溶液";
+            acf_wagner.ToolTipText = "Wagner模型：仅考虑一阶相互作用参数";
             //
             // activityCoefficient
             //
             dataGridViewCellStyle2.NullValue = null;
             activityCoefficient.DefaultCellStyle = dataGridViewCellStyle2;
-            activityCoefficient.HeaderText = "lnγ_i(Pelton)";
+            activityCoefficient.HeaderText = "lnγ_i(Darken)";
             activityCoefficient.MinimumWidth = 6;
             activityCoefficient.Name = "activityCoefficient";
-            activityCoefficient.ToolTipText = "Pelton模型(Darken方法)：采用Pelton-Darken积分公式计算多元系活度系数，适用于稀溶液和浓溶液";
+            activityCoefficient.ToolTipText = "Darken模型：采用Darken二次式计算活度系数";
             //
             // acf_elloit
             //
             acf_elloit.HeaderText = "lnγ_i(Elliott)";
             acf_elloit.Name = "acf_elloit";
-            acf_elloit.ToolTipText = "Elliott模型：采用Elliott统一活度相互作用参数公式，考虑溶质间相互作用";
+            acf_elloit.ToolTipText = "Elliott模型：考虑二阶相互作用系数";
             // 
             // Tem
             // 
@@ -471,17 +471,19 @@
             remark.HeaderText = "Remark";
             remark.MinimumWidth = 6;
             remark.Name = "remark";
-            // 
+            //
             // ActivityCoefficientFm
-            // 
+            //
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1200, 800);
+            BackColor = Color.FromArgb(245, 250, 255);
+            ClientSize = new Size(1280, 850);
             Controls.Add(splitContainer1);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             MainMenuStrip = menuStrip1;
             Name = "ActivityCoefficientFm";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "Activity Coefficients";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "活度系数计算 - Activity Coefficients";
             FormClosed += ActivityCoefficientFm_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();

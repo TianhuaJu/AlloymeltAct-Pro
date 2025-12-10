@@ -124,7 +124,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1100, 752);
+            splitContainer1.Size = new Size(1200, 822);
             splitContainer1.SplitterDistance = 189;
             splitContainer1.TabIndex = 0;
             // 
@@ -793,17 +793,19 @@
             helpToolStripMenuItem.Size = new Size(56, 24);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
-            // 
+            //
             // ActivityInteractionCoefficientFm
-            // 
+            //
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1100, 780);
+            BackColor = Color.FromArgb(245, 250, 255);
+            ClientSize = new Size(1200, 850);
             Controls.Add(splitContainer1);
             Controls.Add(menuStrip1);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             Name = "ActivityInteractionCoefficientFm";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "Activity Interaction Coefficients";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "活度相互作用系数计算 - Activity Interaction Coefficients";
             FormClosed += ActivityInteractionCoefficientFm_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);

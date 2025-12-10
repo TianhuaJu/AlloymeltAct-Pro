@@ -101,7 +101,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1200, 772);
+            splitContainer1.Size = new Size(1280, 822);
             splitContainer1.SplitterDistance = 172;
             splitContainer1.TabIndex = 0;
             // 
@@ -442,22 +442,22 @@
             //
             dataGridViewCellStyle3.NullValue = null;
             activity.DefaultCellStyle = dataGridViewCellStyle3;
-            activity.HeaderText = "ai(Pelton)";
+            activity.HeaderText = "ai(Darken)";
             activity.MinimumWidth = 6;
             activity.Name = "activity";
-            activity.ToolTipText = "Pelton模型(Darken方法)：采用Pelton-Darken积分公式计算多元系活度，适用于稀溶液和浓溶液";
+            activity.ToolTipText = "Darken模型：采用Darken二次式计算活度";
             //
             // ai_elloit
             //
             ai_elloit.HeaderText = "ai(Elliott)";
             ai_elloit.Name = "ai_elloit";
-            ai_elloit.ToolTipText = "Elliott模型：采用Elliott统一活度相互作用参数公式，考虑溶质间相互作用";
+            ai_elloit.ToolTipText = "Elliott模型：考虑二阶相互作用系数";
             //
             // ai_wagner
             //
             ai_wagner.HeaderText = "ai(Wagner)";
             ai_wagner.Name = "ai_wagner";
-            ai_wagner.ToolTipText = "Wagner模型：采用Wagner一阶相互作用参数公式，适用于无限稀溶液";
+            ai_wagner.ToolTipText = "Wagner模型：仅考虑一阶相互作用参数";
             // 
             // Tem
             // 
@@ -476,17 +476,19 @@
             remark.HeaderText = "Remark";
             remark.MinimumWidth = 6;
             remark.Name = "remark";
-            // 
+            //
             // ActivityFm
-            // 
+            //
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1200, 800);
+            BackColor = Color.FromArgb(245, 250, 255);
+            ClientSize = new Size(1280, 850);
             Controls.Add(splitContainer1);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             MainMenuStrip = menuStrip1;
             Name = "ActivityFm";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "Activity";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "活度计算 - Activity";
             FormClosed += ActivityFm_FormClosed;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();

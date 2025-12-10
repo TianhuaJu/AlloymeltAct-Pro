@@ -412,7 +412,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1219, 788);
+            splitContainer1.Size = new Size(1100, 722);
             splitContainer1.SplitterDistance = 229;
             splitContainer1.TabIndex = 2;
             // 
@@ -904,7 +904,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1219, 788);
+            ClientSize = new Size(1100, 750);
             Controls.Add(splitContainer1);
             Name = "SecondorderForm2";
             Text = "SecondorderForm2";

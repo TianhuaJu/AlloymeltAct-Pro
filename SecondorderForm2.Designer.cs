@@ -348,7 +348,7 @@
             // 
             // compositions
             // 
-            compositions.HeaderText = "k-i-j";
+            compositions.HeaderText = "M-i-j-k";
             compositions.MinimumWidth = 6;
             compositions.Name = "compositions";
             // 

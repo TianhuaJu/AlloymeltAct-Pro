@@ -1,19 +1,41 @@
-﻿using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using Match = System.Text.RegularExpressions.Match;
 
 namespace AlloyAct_Pro
 {
     public partial class ActivityCoefficientFm : Form
     {
+        private HelpActCoeffFM _helpForm;
+
         public ActivityCoefficientFm()
         {
             InitializeComponent();
+            InitializeControls();
+        }
+
+        /// <summary>
+        /// 初始化控件，预填充常用元素
+        /// </summary>
+        private void InitializeControls()
+        {
+            // 初始化基体ComboBox
+            UIHelper.InitializeComboBox(k_comboBox2, UIHelper.CommonMetals);
+            k_comboBox2.SelectedItem = "Fe";
+
+            // 初始化温度ComboBox
+            UIHelper.InitializeComboBox(temp_comboBox4, UIHelper.CommonTemperatures);
+            temp_comboBox4.SelectedItem = "1873";
+
+            // 初始化溶质ComboBox
+            UIHelper.InitializeComboBox(i_comboBox3, UIHelper.CommonSolutes);
+
+            // 默认液态
+            checkBox1.Checked = true;
+            checkBox2.Checked = false;
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
         {
-
         }
         private void filldata_gv(string matrix, string composition, string solutei, double Tem, string state, Geo_Model geo_Model, string GeoModel, ref int row)
         {
@@ -113,59 +135,73 @@ namespace AlloyAct_Pro
         int row = 0;
         private void Cal_btn_Click(object sender, EventArgs e)
         {
-            string slov = k_comboBox2.Text.Trim();
-            string alloy_melts = alloy_comboBox1.Text.Trim();
-            string solute_i = i_comboBox3.Text.Trim();
-            double T = 0;
-            string state;
-            double.TryParse(temp_comboBox4.Text.Trim(), out T);
-
-            if (slov != string.Empty && alloy_melts != string.Empty && solute_i != string.Empty)
+            // 输入验证
+            if (!UIHelper.ValidateRequiredFields(
+                (k_comboBox2, "基体(k)"),
+                (alloy_comboBox1, "合金组成"),
+                (i_comboBox3, "溶质(i)")))
             {
-
-                Dictionary<string, double> compositions_dict = get_Compositions(slov, alloy_melts);
-                state = get_State();
-                Binary_model binary_Model = new Binary_model();
-                binary_Model.setState(state);
-                binary_Model.setTemperature(T);
-
-                if (compositions_dict.ContainsKey(solute_i) && slov != solute_i)
-                {
-                    filldata_gv(slov, alloy_melts, solute_i, T, state, binary_Model.UEM1, "UEM1", ref row);
-
-                }
-                else
-                {
-                    MessageBox.Show("重新输入溶质i");
-                }
-
+                return;
             }
 
+            string solvent = k_comboBox2.Text.Trim();
+            string alloyComposition = alloy_comboBox1.Text.Trim();
+            string soluteI = i_comboBox3.Text.Trim();
 
+            // 温度验证
+            if (!UIHelper.ValidateTemperature(temp_comboBox4.Text, out double temperature))
+            {
+                return;
+            }
 
+            // 解析组成
+            Dictionary<string, double> compositionsDict = UIHelper.ParseComposition(solvent, alloyComposition);
+            string state = get_State();
+
+            // 验证溶质是否在组成中
+            if (!compositionsDict.ContainsKey(soluteI))
+            {
+                MessageBox.Show(
+                    $"溶质 {soluteI} 不在合金组成中，请检查输入。\n" +
+                    $"当前组成包含：{string.Join(", ", compositionsDict.Keys)}",
+                    "溶质验证",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (solvent == soluteI)
+            {
+                MessageBox.Show(
+                    "溶质不能与基体相同，请重新选择溶质。",
+                    "输入错误",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 执行计算
+            Binary_model binaryModel = new Binary_model();
+            binaryModel.setState(state);
+            binaryModel.setTemperature(temperature);
+            filldata_gv(solvent, alloyComposition, soluteI, temperature, state, binaryModel.UEM1, "UEM1", ref row);
         }
 
         private string get_State()
         {
-            if (checkBox1.Checked)
-            {
-                return "liquid";
-            }
-            else
-            {
-                return "solid";
-            }
+            return checkBox1.Checked ? "liquid" : "solid";
         }
+
         private void checkBox1_Click(object sender, EventArgs e)
         {
-            //熔体状态为液态
+            // 液态
             checkBox1.Checked = true;
             checkBox2.Checked = false;
         }
 
         private void checkBox2_Click(object sender, EventArgs e)
         {
-            //熔体状态为固态
+            // 固态
             checkBox1.Checked = false;
             checkBox2.Checked = true;
         }
@@ -199,43 +235,35 @@ namespace AlloyAct_Pro
         private void reset_btn_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
-            k_comboBox2.Text = string.Empty;
+            // 重置为默认值
+            k_comboBox2.SelectedItem = "Fe";
             i_comboBox3.Text = string.Empty;
-            temp_comboBox4.Text = string.Empty;
+            temp_comboBox4.SelectedItem = "1873";
             alloy_comboBox1.Text = string.Empty;
+
+            // 重置控件背景色
+            k_comboBox2.BackColor = SystemColors.Window;
+            i_comboBox3.BackColor = SystemColors.Window;
+            alloy_comboBox1.BackColor = SystemColors.Window;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             myFunctions.saveToExcel(dataGridView1);
         }
-        HelpActCoeffFM helpActCoeffFM = new HelpActCoeffFM();
+
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            if (helpActCoeffFM.IsDisposed)
-            {
-                HelpActCoeffFM helpActCoeffFM = new HelpActCoeffFM();
-                helpActCoeffFM.Show();
-            }
-            else
-            {
-                if (helpActCoeffFM.Visible == false)
-                {
-                    helpActCoeffFM.Visible = true;
-                    helpActCoeffFM.Show();
-                }
-                if (helpActCoeffFM.WindowState == FormWindowState.Minimized)
-                {
-                    helpActCoeffFM.WindowState = FormWindowState.Normal;
-                }
-            }
+            UIHelper.ShowOrActivateForm(ref _helpForm);
         }
 
         private void ActivityCoefficientFm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            helpActCoeffFM.Close();
-            Program.F1.WindowState = FormWindowState.Normal;
+            UIHelper.SafeCloseForm(_helpForm);
+            if (Program.F1 != null)
+            {
+                Program.F1.WindowState = FormWindowState.Normal;
+            }
         }
     }
 }

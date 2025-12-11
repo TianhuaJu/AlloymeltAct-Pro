@@ -161,9 +161,10 @@
             button9.UseVisualStyleBackColor = true;
             // 
             // iphi
-            // 
+            //
             iphi.BackColor = Color.FromArgb(255, 224, 192);
             iphi.Dock = DockStyle.Fill;
+            iphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             iphi.Location = new Point(49, 3);
             iphi.Name = "iphi";
             iphi.Size = new Size(104, 35);
@@ -172,9 +173,10 @@
             iphi.UseVisualStyleBackColor = false;
             // 
             // inws
-            // 
+            //
             inws.BackColor = Color.FromArgb(255, 224, 192);
             inws.Dock = DockStyle.Fill;
+            inws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             inws.Location = new Point(49, 44);
             inws.Name = "inws";
             inws.Size = new Size(104, 35);
@@ -183,9 +185,10 @@
             inws.UseVisualStyleBackColor = false;
             // 
             // jphi
-            // 
+            //
             jphi.BackColor = Color.FromArgb(255, 224, 192);
             jphi.Dock = DockStyle.Fill;
+            jphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jphi.Location = new Point(57, 3);
             jphi.Name = "jphi";
             jphi.Size = new Size(121, 35);
@@ -194,9 +197,10 @@
             jphi.UseVisualStyleBackColor = false;
             // 
             // jnws
-            // 
+            //
             jnws.BackColor = Color.FromArgb(255, 224, 192);
             jnws.Dock = DockStyle.Fill;
+            jnws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jnws.Location = new Point(57, 44);
             jnws.Name = "jnws";
             jnws.Size = new Size(121, 35);
@@ -205,9 +209,10 @@
             jnws.UseVisualStyleBackColor = false;
             // 
             // jV
-            // 
+            //
             jV.BackColor = Color.FromArgb(255, 224, 192);
             jV.Dock = DockStyle.Fill;
+            jV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jV.Location = new Point(57, 85);
             jV.Name = "jV";
             jV.Size = new Size(121, 38);
@@ -312,9 +317,10 @@
             Cal_btn.Click += Cal_btn_Click;
             // 
             // iV
-            // 
+            //
             iV.BackColor = Color.FromArgb(255, 224, 192);
             iV.Dock = DockStyle.Fill;
+            iV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             iV.Location = new Point(49, 85);
             iV.Name = "iV";
             iV.Size = new Size(104, 38);
@@ -614,9 +620,10 @@
             button3.UseVisualStyleBackColor = true;
             // 
             // kphi
-            // 
+            //
             kphi.BackColor = Color.FromArgb(255, 224, 192);
             kphi.Dock = DockStyle.Fill;
+            kphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             kphi.Location = new Point(54, 3);
             kphi.Name = "kphi";
             kphi.Size = new Size(114, 35);
@@ -625,9 +632,10 @@
             kphi.UseVisualStyleBackColor = false;
             // 
             // knws
-            // 
+            //
             knws.BackColor = Color.FromArgb(255, 224, 192);
             knws.Dock = DockStyle.Fill;
+            knws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             knws.Location = new Point(54, 44);
             knws.Name = "knws";
             knws.Size = new Size(114, 35);
@@ -636,9 +644,10 @@
             knws.UseVisualStyleBackColor = false;
             // 
             // kV
-            // 
+            //
             kV.BackColor = Color.FromArgb(255, 224, 192);
             kV.Dock = DockStyle.Fill;
+            kV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             kV.Location = new Point(54, 85);
             kV.Name = "kV";
             kV.Size = new Size(114, 38);
@@ -837,17 +846,21 @@
             k_btn.UseVisualStyleBackColor = true;
             // 
             // k_nws
-            // 
+            //
+            k_nws.BackColor = Color.FromArgb(255, 224, 192);
             k_nws.Dock = DockStyle.Fill;
+            k_nws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             k_nws.Location = new Point(62, 45);
             k_nws.Name = "k_nws";
             k_nws.Size = new Size(134, 36);
             k_nws.TabIndex = 5;
-            k_nws.UseVisualStyleBackColor = true;
+            k_nws.UseVisualStyleBackColor = false;
             // 
             // k_V
-            // 
+            //
+            k_V.BackColor = Color.FromArgb(255, 224, 192);
             k_V.Dock = DockStyle.Fill;
+            k_V.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             k_V.Location = new Point(62, 87);
             k_V.Name = "k_V";
             k_V.Size = new Size(134, 36);

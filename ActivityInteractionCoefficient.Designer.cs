@@ -371,9 +371,10 @@
             button3.UseVisualStyleBackColor = true;
             // 
             // kphi
-            // 
+            //
             kphi.BackColor = Color.FromArgb(255, 224, 192);
             kphi.Dock = DockStyle.Fill;
+            kphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             kphi.Location = new Point(41, 3);
             kphi.Name = "kphi";
             kphi.Size = new Size(84, 25);
@@ -382,9 +383,10 @@
             kphi.UseVisualStyleBackColor = false;
             // 
             // knws
-            // 
+            //
             knws.BackColor = Color.FromArgb(255, 224, 192);
             knws.Dock = DockStyle.Fill;
+            knws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             knws.Location = new Point(41, 34);
             knws.Name = "knws";
             knws.Size = new Size(84, 25);
@@ -393,9 +395,10 @@
             knws.UseVisualStyleBackColor = false;
             // 
             // kV
-            // 
+            //
             kV.BackColor = Color.FromArgb(255, 224, 192);
             kV.Dock = DockStyle.Fill;
+            kV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             kV.Location = new Point(41, 65);
             kV.Name = "kV";
             kV.Size = new Size(84, 26);
@@ -458,9 +461,10 @@
             button9.UseVisualStyleBackColor = true;
             // 
             // iphi
-            // 
+            //
             iphi.BackColor = Color.FromArgb(255, 224, 192);
             iphi.Dock = DockStyle.Fill;
+            iphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             iphi.Location = new Point(41, 3);
             iphi.Name = "iphi";
             iphi.Size = new Size(84, 25);
@@ -469,9 +473,10 @@
             iphi.UseVisualStyleBackColor = false;
             // 
             // inws
-            // 
+            //
             inws.BackColor = Color.FromArgb(255, 224, 192);
             inws.Dock = DockStyle.Fill;
+            inws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             inws.Location = new Point(41, 34);
             inws.Name = "inws";
             inws.Size = new Size(84, 25);
@@ -480,9 +485,10 @@
             inws.UseVisualStyleBackColor = false;
             // 
             // iV
-            // 
+            //
             iV.BackColor = Color.FromArgb(255, 224, 192);
             iV.Dock = DockStyle.Fill;
+            iV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             iV.Location = new Point(41, 65);
             iV.Name = "iV";
             iV.Size = new Size(84, 26);
@@ -545,9 +551,10 @@
             button15.UseVisualStyleBackColor = true;
             // 
             // jphi
-            // 
+            //
             jphi.BackColor = Color.FromArgb(255, 224, 192);
             jphi.Dock = DockStyle.Fill;
+            jphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jphi.Location = new Point(41, 3);
             jphi.Name = "jphi";
             jphi.Size = new Size(84, 25);
@@ -556,9 +563,10 @@
             jphi.UseVisualStyleBackColor = false;
             // 
             // jnws
-            // 
+            //
             jnws.BackColor = Color.FromArgb(255, 224, 192);
             jnws.Dock = DockStyle.Fill;
+            jnws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jnws.Location = new Point(41, 34);
             jnws.Name = "jnws";
             jnws.Size = new Size(84, 25);
@@ -567,9 +575,10 @@
             jnws.UseVisualStyleBackColor = false;
             // 
             // jV
-            // 
+            //
             jV.BackColor = Color.FromArgb(255, 224, 192);
             jV.Dock = DockStyle.Fill;
+            jV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jV.Location = new Point(41, 65);
             jV.Name = "jV";
             jV.Size = new Size(84, 26);

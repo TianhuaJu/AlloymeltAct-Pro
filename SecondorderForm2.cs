@@ -114,7 +114,7 @@
 
 
                 row = +dataGridView1.Rows.Add();
-                dataGridView1["compositions", row].Value = m + "-" + i + "-" + j;
+                dataGridView1["compositions", row].Value = m + "-" + i + "-" + j + "-" + k;
                 dataGridView1["ri_ii", row].Value = Math.Round(rii, 3);
                 dataGridView1["ri_ij", row].Value = Math.Round(rij, 3);
                 dataGridView1["ri_jj", row].Value = Math.Round(rjj, 3);
@@ -124,13 +124,6 @@
                 dataGridView1["Temperature", row].Value = info.Tem;
 
                 dataGridView1.Update();
-
-                m1 = null;
-                solv = null;
-                solui = null;
-                soluj = null;
-                System.GC.Collect();
-
             }
 
         }

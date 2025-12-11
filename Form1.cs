@@ -2,10 +2,12 @@ namespace AlloyAct_Pro
 {
     public partial class Form1 : Form
     {
-        ActivityFm actFm = new ActivityFm();
-        ActivityCoefficientFm coefficientFm = new ActivityCoefficientFm();
-        ActivityInteractionCoefficientFm ActivityInteractionCoefficientFm = new ActivityInteractionCoefficientFm();
-        ActivityCoefficientAtInfiniteDilution activityCoefficientAtInfiniteDilution = new ActivityCoefficientAtInfiniteDilution();
+        // 瀛愮獥浣撳紩鐢紙寤惰繜鍒濆鍖栵級
+        private ActivityFm _activityFm;
+        private ActivityCoefficientFm _coefficientFm;
+        private ActivityInteractionCoefficientFm _interactionCoefficientFm;
+        private ActivityCoefficientAtInfiniteDilution _infiniteDilutionFm;
+
         public Form1()
         {
             InitializeComponent();
@@ -13,94 +15,30 @@ namespace AlloyAct_Pro
 
         private void Activity_Click(object sender, EventArgs e)
         {
-            //活度计算窗口
-
-            if (actFm.IsDisposed)
-            {
-                actFm = new ActivityFm();
-                actFm.Show();
-            }
-            else
-            {
-                if (!actFm.Visible)
-
-                {
-                    actFm.Show();
-                }
-                else if (actFm.WindowState == FormWindowState.Minimized)
-                {
-                    actFm.WindowState = FormWindowState.Normal;
-                }
-            }
+            // 娲诲害璁＄畻绐椾綋
+            UIHelper.ShowOrActivateForm(ref _activityFm);
             this.WindowState = FormWindowState.Minimized;
         }
 
         private void ActivityCoeff_Click(object sender, EventArgs e)
         {
-            //活度系数计算窗口
-            if (coefficientFm.IsDisposed)
-            {
-                coefficientFm = new ActivityCoefficientFm();
-                coefficientFm.Show();
-            }
-            else
-            {
-                if (!coefficientFm.Visible)
-
-                {
-                    coefficientFm.Show();
-                }
-                else if (coefficientFm.WindowState == FormWindowState.Minimized)
-                {
-                    coefficientFm.WindowState = FormWindowState.Normal;
-                }
-            }
+            // 娲诲害绯绘暟璁＄畻绐椾綋
+            UIHelper.ShowOrActivateForm(ref _coefficientFm);
             this.WindowState = FormWindowState.Minimized;
         }
 
         private void InteractionCoeff_Click(object sender, EventArgs e)
         {
-            //活度相互作用系数计算窗口
-            if (ActivityInteractionCoefficientFm.IsDisposed)
-            {
-                ActivityInteractionCoefficientFm = new ActivityInteractionCoefficientFm();
-                ActivityInteractionCoefficientFm.Show();
-            }
-            else
-            {
-                if (!ActivityInteractionCoefficientFm.Visible)
-
-                {
-                    ActivityInteractionCoefficientFm.Show();
-                }
-                else if (ActivityInteractionCoefficientFm.WindowState == FormWindowState.Minimized)
-                {
-                    ActivityInteractionCoefficientFm.WindowState = FormWindowState.Normal;
-                }
-            }
+            // 娲诲害鐩镐簰浣滅敤绯绘暟璁＄畻绐椾綋
+            UIHelper.ShowOrActivateForm(ref _interactionCoefficientFm);
             this.WindowState = FormWindowState.Minimized;
         }
 
         private void ActivityCoefficientAtInfinitely_Click(object sender, EventArgs e)
         {
-            if (activityCoefficientAtInfiniteDilution.IsDisposed)
-            {
-                ActivityCoefficientAtInfiniteDilution activityCoefficientAtInfiniteDilution = new ActivityCoefficientAtInfiniteDilution();
-                activityCoefficientAtInfiniteDilution.Show();
-            }
-            else
-            {
-                if (!activityCoefficientAtInfiniteDilution.Visible)
-                {
-                    activityCoefficientAtInfiniteDilution.Show();
-                }
-                else if (activityCoefficientAtInfiniteDilution.WindowState == FormWindowState.Minimized)
-                {
-                    activityCoefficientAtInfiniteDilution.WindowState = FormWindowState.Normal;
-                }
-            }
+            // 鏃犻檺绋�娲诲害绯绘暟璁＄畻绐椾綋
+            UIHelper.ShowOrActivateForm(ref _infiniteDilutionFm);
             this.WindowState = FormWindowState.Minimized;
-
         }
     }
 }

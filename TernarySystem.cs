@@ -373,8 +373,6 @@
 
             double chemical_term = omaga_ij - omaga_jk - omaga_ik + d_omaga_ik_j + d_omaga_jk_i;
 
-            System.GC.Collect();
-
             return 1000 * chemical_term / (R * Tem);
 
 

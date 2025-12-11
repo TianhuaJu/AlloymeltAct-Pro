@@ -1,17 +1,37 @@
-﻿namespace AlloyAct_Pro
+namespace AlloyAct_Pro
 {
     public partial class ActivityInteractionCoefficientFm : Form
     {
-        UnitConvertFm unit_conversionFm = new UnitConvertFm();
-
+        private UnitConvertFm _unitConvertFm;
+        private Help_activityinteractioncoefficient _helpForm;
 
         public ActivityInteractionCoefficientFm()
         {
             InitializeComponent();
+            InitializeControls();
         }
 
+        /// <summary>
+        /// 初始化控件，预填充常用元素
+        /// </summary>
+        private void InitializeControls()
+        {
+            // 初始化基体ComboBox
+            UIHelper.InitializeComboBox(k_comboBox1, UIHelper.CommonMetals);
+            k_comboBox1.SelectedItem = "Fe";
 
+            // 初始化溶质i和j的ComboBox
+            UIHelper.InitializeComboBox(i_comboBox2, UIHelper.CommonSolutes);
+            UIHelper.InitializeComboBox(j_comboBox3, UIHelper.CommonSolutes);
 
+            // 初始化温度ComboBox
+            UIHelper.InitializeComboBox(T_comboBox4, UIHelper.CommonTemperatures);
+            T_comboBox4.SelectedItem = "1873";
+
+            // 默认液态
+            Solid_checkBox1.Checked = false;
+            liquid_checkBox1.Checked = true;
+        }
 
 
         private void Solid_checkBox1_Click_1(object sender, EventArgs e)
@@ -29,25 +49,41 @@
         int row = 0;
         private void Cal_btn_Click(object sender, EventArgs e)
         {
-            string k = k_comboBox1.Text.Trim();
-            bool t1;
-            double Tem;
-
-            t1 = double.TryParse(T_comboBox4.Text, out Tem);
-            if (!t1) { Tem = 1873.0; }
-
-            if (k == string.Empty)
+            // 输入验证
+            if (!UIHelper.ValidateRequiredFields(
+                (k_comboBox1, "基体(k)"),
+                (i_comboBox2, "溶质(i)"),
+                (j_comboBox3, "溶质(j)")))
             {
-                k = "Fe";
+                return;
             }
-            string i, j;
-            i = i_comboBox2.Text.Trim();
-            j = j_comboBox3.Text.Trim();
 
-            display(k, i, j);//显示各元素的Miedema参数
-            (string phase, bool entropy, double Tem) info = (getState(), entropy_Judge(k, i, j), Tem);
+            string k = k_comboBox1.Text.Trim();
+            string i = i_comboBox2.Text.Trim();
+            string j = j_comboBox3.Text.Trim();
+
+            // 温度验证
+            if (!UIHelper.ValidateTemperature(T_comboBox4.Text, out double temperature))
+            {
+                return;
+            }
+
+            // 验证i和j不能相同
+            if (i == j)
+            {
+                MessageBox.Show(
+                    "溶质i和溶质j不能相同，请重新选择。",
+                    "输入错误",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 显示各元素的Miedema参数
+            display(k, i, j);
+
+            (string phase, bool entropy, double Tem) info = (getState(), entropy_Judge(k, i, j), temperature);
             filldata_dgV(k, i, j, info, ref row);
-
         }
         private void display(string k, string i, string j)
         {
@@ -71,15 +107,7 @@
         }
         private string getState()
         {
-            if (Solid_checkBox1.Checked)
-            {
-                return "solid";
-            }
-            else
-            {
-                return "liquid";
-            }
-
+            return Solid_checkBox1.Checked ? "solid" : "liquid";
         }
 
 
@@ -128,15 +156,7 @@
                 dataGridView1["Temperature", row].Value = info.Tem;
 
                 dataGridView1.Update();
-
-                m1 = null;
-                solv = null;
-                solui = null;
-                soluj = null;
-                System.GC.Collect();
-
             }
-
         }
 
         /// <summary>
@@ -215,61 +235,47 @@
         private void Clear_btn_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
-            k_comboBox1.Text = string.Empty;
+            // 重置为默认值
+            k_comboBox1.SelectedItem = "Fe";
             i_comboBox2.Text = string.Empty;
-            T_comboBox4.Text = string.Empty;
             j_comboBox3.Text = string.Empty;
+            T_comboBox4.SelectedItem = "1873";
+
+            // 重置控件背景色
+            k_comboBox1.BackColor = SystemColors.Window;
+            i_comboBox2.BackColor = SystemColors.Window;
+            j_comboBox3.BackColor = SystemColors.Window;
+
+            // 清空Miedema参数显示
+            iphi.Text = string.Empty;
+            inws.Text = string.Empty;
+            iV.Text = string.Empty;
+            jphi.Text = string.Empty;
+            jnws.Text = string.Empty;
+            jV.Text = string.Empty;
+            kphi.Text = string.Empty;
+            knws.Text = string.Empty;
+            kV.Text = string.Empty;
         }
 
         private void unitConversionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (unit_conversionFm.IsDisposed)
-            {
-                UnitConvertFm unit_conversionFm = new UnitConvertFm();
-                unit_conversionFm.Show();
-
-            }
-            else
-            {
-                if (unit_conversionFm.Visible == false)
-                {
-                    unit_conversionFm.Visible = true;
-                    unit_conversionFm.Show();
-                }
-                if (unit_conversionFm.WindowState == FormWindowState.Minimized)
-                {
-                    unit_conversionFm.WindowState = FormWindowState.Normal;
-                }
-            }
+            UIHelper.ShowOrActivateForm(ref _unitConvertFm);
         }
 
         private void ActivityInteractionCoefficientFm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            helpFM.Close();
-            unit_conversionFm.Close();
-            Program.F1.WindowState = FormWindowState.Normal;
+            UIHelper.SafeCloseForm(_helpForm);
+            UIHelper.SafeCloseForm(_unitConvertFm);
+            if (Program.F1 != null)
+            {
+                Program.F1.WindowState = FormWindowState.Normal;
+            }
         }
-        Help_activityinteractioncoefficient helpFM = new Help_activityinteractioncoefficient();
+
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            if (helpFM.IsDisposed)
-            {
-                Help_activityinteractioncoefficient helpFM = new Help_activityinteractioncoefficient();
-                helpFM.Show();
-            }
-            else
-            {
-                if (helpFM.Visible == false)
-                {
-                    helpFM.Visible = true;
-                    helpFM.Show();
-                }
-                if (helpFM.WindowState == FormWindowState.Minimized)
-                {
-                    helpFM.WindowState = FormWindowState.Normal;
-                }
-            }
+            UIHelper.ShowOrActivateForm(ref _helpForm);
         }
 
         private void secondorderToolStripMenuItem_Click(object sender, EventArgs e)

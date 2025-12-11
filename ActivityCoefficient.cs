@@ -1,68 +1,203 @@
-﻿using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using Match = System.Text.RegularExpressions.Match;
 
 namespace AlloyAct_Pro
 {
     public partial class ActivityCoefficientFm : Form
     {
+        private HelpActCoeffFM _helpForm;
+        private int _row = 0;
+
         public ActivityCoefficientFm()
         {
             InitializeComponent();
+            InitializeControls();
+            SetupEventHandlers();
         }
 
-        private void groupBox1_Enter(object sender, EventArgs e)
+        /// <summary>
+        /// 初始化控件
+        /// </summary>
+        private void InitializeControls()
         {
+            // 初始化基体ComboBox - 允许输入和选择
+            UIHelper.InitializeComboBox(k_comboBox2, UIHelper.CommonMetals);
+            k_comboBox2.SelectedItem = "Fe";
 
+            // 初始化温度ComboBox - 允许输入和选择
+            UIHelper.InitializeComboBox(temp_comboBox4, UIHelper.CommonTemperatures);
+            temp_comboBox4.SelectedItem = "1873";
+
+            // 溶质ComboBox - 只能从列表选择（DropDownList样式）
+            i_comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+            i_comboBox3.Items.Clear();
+            i_comboBox3.Items.Add("-- 请先输入合金组成 --");
+            i_comboBox3.SelectedIndex = 0;
+            i_comboBox3.Enabled = false;
+
+            // 默认液态
+            checkBox1.Checked = true;
+            checkBox2.Checked = false;
+
+            // 设置提示信息
+            toolTip1.SetToolTip(i_comboBox3, "溶质只能从合金组成中选择");
         }
+
+        /// <summary>
+        /// 设置事件处理
+        /// </summary>
+        private void SetupEventHandlers()
+        {
+            // 当合金组成改变时，自动更新溶质列表
+            alloy_comboBox1.TextChanged += AlloyComposition_TextChanged;
+            alloy_comboBox1.Leave += AlloyComposition_Leave;
+            k_comboBox2.TextChanged += Matrix_TextChanged;
+        }
+
+        /// <summary>
+        /// 合金组成文本改变时更新溶质列表
+        /// </summary>
+        private void AlloyComposition_TextChanged(object sender, EventArgs e)
+        {
+            UpdateSoluteList();
+        }
+
+        /// <summary>
+        /// 离开合金组成输入框时更新
+        /// </summary>
+        private void AlloyComposition_Leave(object sender, EventArgs e)
+        {
+            UpdateSoluteList();
+        }
+
+        /// <summary>
+        /// 基体改变时更新溶质列表
+        /// </summary>
+        private void Matrix_TextChanged(object sender, EventArgs e)
+        {
+            UpdateSoluteList();
+        }
+
+        /// <summary>
+        /// 更新溶质下拉列表
+        /// </summary>
+        private void UpdateSoluteList()
+        {
+            string matrix = k_comboBox2.Text.Trim();
+            string composition = alloy_comboBox1.Text.Trim();
+
+            i_comboBox3.Items.Clear();
+
+            if (string.IsNullOrEmpty(composition))
+            {
+                i_comboBox3.Items.Add("-- 请先输入合金组成 --");
+                i_comboBox3.SelectedIndex = 0;
+                i_comboBox3.Enabled = false;
+                i_comboBox3.BackColor = Color.LightGray;
+                return;
+            }
+
+            // 解析组成，获取所有溶质元素
+            Dictionary<string, double> compDict = ParseCompositionElements(composition);
+
+            if (compDict.Count == 0)
+            {
+                i_comboBox3.Items.Add("-- 无有效溶质 --");
+                i_comboBox3.SelectedIndex = 0;
+                i_comboBox3.Enabled = false;
+                i_comboBox3.BackColor = Color.LightGray;
+                return;
+            }
+
+            // 添加溶质元素（排除基体）
+            foreach (string element in compDict.Keys)
+            {
+                if (element != matrix)
+                {
+                    i_comboBox3.Items.Add(element);
+                }
+            }
+
+            if (i_comboBox3.Items.Count > 0)
+            {
+                i_comboBox3.Enabled = true;
+                i_comboBox3.BackColor = SystemColors.Window;
+                i_comboBox3.SelectedIndex = 0;
+            }
+            else
+            {
+                i_comboBox3.Items.Add("-- 无可选溶质 --");
+                i_comboBox3.SelectedIndex = 0;
+                i_comboBox3.Enabled = false;
+                i_comboBox3.BackColor = Color.LightGray;
+            }
+        }
+
+        /// <summary>
+        /// 解析组成字符串中的元素
+        /// </summary>
+        private Dictionary<string, double> ParseCompositionElements(string composition)
+        {
+            Dictionary<string, double> result = new Dictionary<string, double>();
+            Regex re = new Regex(@"([A-Z]{1}[a-z]?)(\d+[\.]?\d*)?");
+            MatchCollection matches = re.Matches(composition);
+
+            foreach (Match match in matches)
+            {
+                string element = match.Groups[1].Value;
+                double fraction = 1.0;
+                if (!string.IsNullOrEmpty(match.Groups[2].Value))
+                {
+                    double.TryParse(match.Groups[2].Value, out fraction);
+                }
+
+                if (!result.ContainsKey(element))
+                {
+                    result.Add(element, fraction);
+                }
+            }
+            return result;
+        }
+
         private void filldata_gv(string matrix, string composition, string solutei, double Tem, string state, Geo_Model geo_Model, string GeoModel, ref int row)
         {
-
             double Darken_acf, Wagner_acf, Elloit_acf;
             string alloy_melts = matrix + composition;
 
             Dictionary<string, double> comp_dict = get_Compositions(matrix, alloy_melts);
-            Activity_Coefficient activity_ = new Activity_Coefficient();//活度系数计算模块
+            Activity_Coefficient activity_ = new Activity_Coefficient();
 
-
-
+            // 计算三种模型的活度系数
             Wagner_acf = activity_.activity_Coefficient_Wagner(comp_dict, matrix, solutei, geo_Model, GeoModel, (state, Tem));
-
             Darken_acf = activity_.activity_coefficient_Pelton(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
             Elloit_acf = activity_.activity_coefficient_Elloit(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
 
+            // 格式化组成显示
             string compostion_new = "";
-
             comp_dict.Remove(matrix);
             foreach (var item in comp_dict.Keys)
             {
                 compostion_new += item + Math.Round(comp_dict[item], 3);
             }
 
-            row = +dataGridView1.Rows.Add();
+            row = dataGridView1.Rows.Add();
+            dataGridView1["k_name", row].Value = matrix;
             dataGridView1["Melt_composition", row].Value = compostion_new;
             dataGridView1["solute_i", row].Value = solutei;
+            dataGridView1["acf_wagner", row].Value = Math.Round(Wagner_acf, 3);
+            dataGridView1["activityCoefficient", row].Value = Math.Round(Darken_acf, 3);
+            dataGridView1["acf_elloit", row].Value = Math.Round(Elloit_acf, 3);
             dataGridView1["Tem", row].Value = Tem;
-
             dataGridView1["state", row].Value = state;
 
-            dataGridView1["activityCoefficient", row].Value = Math.Round(Darken_acf, 3);
-            dataGridView1["acf_wagner", row].Value = Math.Round(Wagner_acf, 3);
-            dataGridView1["acf_elloit", row].Value = Math.Round(Elloit_acf, 3);
-
-            dataGridView1["k_name", row].Value = matrix;
             dataGridView1.Update();
-
         }
 
         /// <summary>
-        /// 以键对形式存储熔体的组成，1mol的熔体
+        /// 以键对形式存储熔体的组成，标准化为1mol
         /// </summary>
-        /// <param name="alloyComposition">从输入读取的组成 </param>
-        /// <returns></returns>
         private Dictionary<string, double> get_Compositions(string solv, string alloyComposition)
         {
-            //以键对形式存储熔体的组成，1mol的形式
             Dictionary<string, double> compo_dict = new Dictionary<string, double>();
             Regex re = new Regex(@"([A-Z]{1}[a-z]?)(\d+[\.]?\d*)?");
 
@@ -72,14 +207,16 @@ namespace AlloyAct_Pro
             foreach (Match match in matchs)
             {
                 double x = 1.0;
-                string A = "";
-                GroupCollection groups = match.Groups;
-                A = groups[1].Value;
-                if (double.TryParse(groups[2].Value, out x))
+                string A = match.Groups[1].Value;
+                if (double.TryParse(match.Groups[2].Value, out x))
                 {
-                    double.TryParse(groups[2].Value, out x);
+                    // 成功解析
                 }
-                else { x = 1.0; }
+                else
+                {
+                    x = 1.0;
+                }
+
                 if (compo_dict.ContainsKey(A))
                 {
                     compo_dict[A] = x;
@@ -88,154 +225,136 @@ namespace AlloyAct_Pro
                 {
                     compo_dict.Add(A, x);
                 }
-
             }
 
-            double sumx = 0;
-            foreach (var item in compo_dict.Keys)
+            // 标准化为摩尔分数
+            double sumx = compo_dict.Values.Sum();
+            if (sumx > 0)
             {
-                sumx += compo_dict[item];
-            }
-
-            foreach (var item in compo_dict.Keys)
-            {
-                compo_dict[item] = compo_dict[item] / sumx;
+                foreach (var key in compo_dict.Keys.ToList())
+                {
+                    compo_dict[key] = compo_dict[key] / sumx;
+                }
             }
 
             return compo_dict;
-
-
-
-
-
         }
 
-        int row = 0;
         private void Cal_btn_Click(object sender, EventArgs e)
         {
-            string slov = k_comboBox2.Text.Trim();
-            string alloy_melts = alloy_comboBox1.Text.Trim();
-            string solute_i = i_comboBox3.Text.Trim();
-            double T = 0;
-            string state;
-            double.TryParse(temp_comboBox4.Text.Trim(), out T);
+            // 输入验证
+            string matrix = k_comboBox2.Text.Trim();
+            string composition = alloy_comboBox1.Text.Trim();
 
-            if (slov != string.Empty && alloy_melts != string.Empty && solute_i != string.Empty)
+            if (string.IsNullOrEmpty(matrix))
             {
-
-                Dictionary<string, double> compositions_dict = get_Compositions(slov, alloy_melts);
-                state = get_State();
-                Binary_model binary_Model = new Binary_model();
-                binary_Model.setState(state);
-                binary_Model.setTemperature(T);
-
-                if (compositions_dict.ContainsKey(solute_i) && slov != solute_i)
-                {
-                    filldata_gv(slov, alloy_melts, solute_i, T, state, binary_Model.UEM1, "UEM1", ref row);
-
-                }
-                else
-                {
-                    MessageBox.Show("重新输入溶质i");
-                }
-
+                MessageBox.Show("请输入基体元素", "输入验证", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                k_comboBox2.Focus();
+                return;
             }
 
+            if (string.IsNullOrEmpty(composition))
+            {
+                MessageBox.Show("请输入合金组成", "输入验证", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                alloy_comboBox1.Focus();
+                return;
+            }
 
+            if (!i_comboBox3.Enabled || i_comboBox3.SelectedItem == null ||
+                i_comboBox3.SelectedItem.ToString().StartsWith("--"))
+            {
+                MessageBox.Show("请从列表中选择溶质元素", "输入验证", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            string soluteI = i_comboBox3.SelectedItem.ToString();
+
+            // 温度验证
+            if (!UIHelper.ValidateTemperature(temp_comboBox4.Text, out double temperature))
+            {
+                temp_comboBox4.Focus();
+                return;
+            }
+
+            string state = get_State();
+
+            // 执行计算
+            Binary_model binaryModel = new Binary_model();
+            binaryModel.setState(state);
+            binaryModel.setTemperature(temperature);
+            filldata_gv(matrix, composition, soluteI, temperature, state, binaryModel.UEM1, "UEM1", ref _row);
         }
 
         private string get_State()
         {
-            if (checkBox1.Checked)
-            {
-                return "liquid";
-            }
-            else
-            {
-                return "solid";
-            }
+            return checkBox1.Checked ? "liquid" : "solid";
         }
+
         private void checkBox1_Click(object sender, EventArgs e)
         {
-            //熔体状态为液态
             checkBox1.Checked = true;
             checkBox2.Checked = false;
         }
 
         private void checkBox2_Click(object sender, EventArgs e)
         {
-            //熔体状态为固态
             checkBox1.Checked = false;
             checkBox2.Checked = true;
         }
 
         private void i_comboBox3_Click(object sender, EventArgs e)
         {
-            string text = alloy_comboBox1.Text;
-            Dictionary<string, double> dict = get_Compositions(k_comboBox2.Text, text);
-            if (dict.Count >= 1)
+            // 点击时确保列表是最新的
+            if (!i_comboBox3.Enabled)
             {
-                foreach (string item in dict.Keys)
-                {
-                    if (!i_comboBox3.Items.Contains(item))
-                    {
-
-                        if (item != k_comboBox2.Text)
-                        {
-                            i_comboBox3.Items.Add(item);
-
-                        }
-
-
-                    }
-
-
-                }
+                MessageBox.Show("请先输入合金组成，溶质将自动从组成中提取", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                alloy_comboBox1.Focus();
             }
-
         }
 
         private void reset_btn_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
-            k_comboBox2.Text = string.Empty;
-            i_comboBox3.Text = string.Empty;
-            temp_comboBox4.Text = string.Empty;
+            _row = 0;
+
+            // 重置为默认值
+            k_comboBox2.SelectedItem = "Fe";
+            temp_comboBox4.SelectedItem = "1873";
             alloy_comboBox1.Text = string.Empty;
+
+            // 重置溶质列表
+            i_comboBox3.Items.Clear();
+            i_comboBox3.Items.Add("-- 请先输入合金组成 --");
+            i_comboBox3.SelectedIndex = 0;
+            i_comboBox3.Enabled = false;
+            i_comboBox3.BackColor = Color.LightGray;
+
+            // 重置控件背景色
+            k_comboBox2.BackColor = SystemColors.Window;
+            alloy_comboBox1.BackColor = SystemColors.Window;
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             myFunctions.saveToExcel(dataGridView1);
         }
-        HelpActCoeffFM helpActCoeffFM = new HelpActCoeffFM();
+
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            if (helpActCoeffFM.IsDisposed)
-            {
-                HelpActCoeffFM helpActCoeffFM = new HelpActCoeffFM();
-                helpActCoeffFM.Show();
-            }
-            else
-            {
-                if (helpActCoeffFM.Visible == false)
-                {
-                    helpActCoeffFM.Visible = true;
-                    helpActCoeffFM.Show();
-                }
-                if (helpActCoeffFM.WindowState == FormWindowState.Minimized)
-                {
-                    helpActCoeffFM.WindowState = FormWindowState.Normal;
-                }
-            }
+            UIHelper.ShowOrActivateForm(ref _helpForm);
         }
 
         private void ActivityCoefficientFm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            helpActCoeffFM.Close();
-            Program.F1.WindowState = FormWindowState.Normal;
+            UIHelper.SafeCloseForm(_helpForm);
+            if (Program.F1 != null)
+            {
+                Program.F1.WindowState = FormWindowState.Normal;
+            }
         }
     }
 }

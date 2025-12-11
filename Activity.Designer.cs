@@ -90,6 +90,7 @@
             // 
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Margin = new Padding(2, 2, 2, 2);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Orientation = Orientation.Horizontal;
             // 
@@ -101,8 +102,9 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
-            splitContainer1.Size = new Size(1280, 822);
-            splitContainer1.SplitterDistance = 172;
+            splitContainer1.Size = new Size(996, 638);
+            splitContainer1.SplitterDistance = 133;
+            splitContainer1.SplitterWidth = 3;
             splitContainer1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -112,12 +114,13 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel4, 0, 1);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel1, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(0, 28);
+            tableLayoutPanel2.Location = new Point(0, 24);
+            tableLayoutPanel2.Margin = new Padding(2, 2, 2, 2);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 64F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 36F));
-            tableLayoutPanel2.Size = new Size(1073, 144);
+            tableLayoutPanel2.Size = new Size(996, 109);
             tableLayoutPanel2.TabIndex = 2;
             // 
             // tableLayoutPanel4
@@ -130,11 +133,12 @@
             tableLayoutPanel4.Controls.Add(Cal_btn, 1, 0);
             tableLayoutPanel4.Controls.Add(reset_btn, 2, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(3, 95);
+            tableLayoutPanel4.Location = new Point(2, 71);
+            tableLayoutPanel4.Margin = new Padding(2, 2, 2, 2);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(1067, 46);
+            tableLayoutPanel4.Size = new Size(992, 36);
             tableLayoutPanel4.TabIndex = 1;
             // 
             // Cal_btn
@@ -142,9 +146,10 @@
             Cal_btn.Dock = DockStyle.Fill;
             Cal_btn.Font = new Font("隶书", 18F, FontStyle.Regular, GraphicsUnit.Point);
             Cal_btn.ForeColor = Color.Maroon;
-            Cal_btn.Location = new Point(269, 3);
+            Cal_btn.Location = new Point(250, 2);
+            Cal_btn.Margin = new Padding(2, 2, 2, 2);
             Cal_btn.Name = "Cal_btn";
-            Cal_btn.Size = new Size(260, 40);
+            Cal_btn.Size = new Size(244, 32);
             Cal_btn.TabIndex = 0;
             Cal_btn.Text = "计算";
             Cal_btn.UseVisualStyleBackColor = true;
@@ -155,9 +160,10 @@
             reset_btn.Dock = DockStyle.Fill;
             reset_btn.Font = new Font("隶书", 18F, FontStyle.Regular, GraphicsUnit.Point);
             reset_btn.ForeColor = Color.Maroon;
-            reset_btn.Location = new Point(535, 3);
+            reset_btn.Location = new Point(498, 2);
+            reset_btn.Margin = new Padding(2, 2, 2, 2);
             reset_btn.Name = "reset_btn";
-            reset_btn.Size = new Size(260, 40);
+            reset_btn.Size = new Size(244, 32);
             reset_btn.TabIndex = 1;
             reset_btn.Text = "清除";
             reset_btn.UseVisualStyleBackColor = true;
@@ -178,27 +184,30 @@
             tableLayoutPanel1.Controls.Add(i_groupBox3, 2, 0);
             tableLayoutPanel1.Controls.Add(groupBox2, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(3, 3);
+            tableLayoutPanel1.Location = new Point(2, 2);
+            tableLayoutPanel1.Margin = new Padding(2, 2, 2, 2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1067, 86);
+            tableLayoutPanel1.Size = new Size(992, 65);
             tableLayoutPanel1.TabIndex = 0;
-            //
+            // 
             // groupBox5
-            //
+            // 
             groupBox5.Controls.Add(tableLayoutPanel3);
             groupBox5.Dock = DockStyle.Fill;
             groupBox5.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox5.Location = new Point(908, 6);
+            groupBox5.Location = new Point(844, 5);
+            groupBox5.Margin = new Padding(2, 2, 2, 2);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(153, 74);
+            groupBox5.Padding = new Padding(2, 2, 2, 2);
+            groupBox5.Size = new Size(143, 55);
             groupBox5.TabIndex = 5;
             groupBox5.TabStop = false;
             groupBox5.Text = "相态";
-            //
+            // 
             // tableLayoutPanel3
-            //
+            // 
             tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
             tableLayoutPanel3.ColumnCount = 2;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -206,134 +215,149 @@
             tableLayoutPanel3.Controls.Add(checkBox1, 0, 0);
             tableLayoutPanel3.Controls.Add(checkBox2, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(3, 25);
+            tableLayoutPanel3.Location = new Point(2, 24);
+            tableLayoutPanel3.Margin = new Padding(2, 2, 2, 2);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel3.Size = new Size(147, 46);
+            tableLayoutPanel3.Size = new Size(139, 29);
             tableLayoutPanel3.TabIndex = 0;
-            //
+            // 
             // checkBox1
-            //
+            // 
             checkBox1.AutoSize = true;
             checkBox1.Checked = true;
             checkBox1.CheckState = CheckState.Checked;
             checkBox1.Dock = DockStyle.Fill;
             checkBox1.Font = new Font("微软雅黑", 11F, FontStyle.Bold, GraphicsUnit.Point);
-            checkBox1.Location = new Point(6, 6);
+            checkBox1.Location = new Point(4, 4);
+            checkBox1.Margin = new Padding(2, 2, 2, 2);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(63, 34);
+            checkBox1.Size = new Size(62, 21);
             checkBox1.TabIndex = 0;
             checkBox1.Text = "液";
             toolTip1.SetToolTip(checkBox1, "液态 Liquid");
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.Click += checkBox1_Click;
-            //
+            // 
             // checkBox2
-            //
+            // 
             checkBox2.AutoSize = true;
             checkBox2.Dock = DockStyle.Fill;
             checkBox2.Font = new Font("微软雅黑", 11F, FontStyle.Bold, GraphicsUnit.Point);
-            checkBox2.Location = new Point(78, 6);
+            checkBox2.Location = new Point(72, 4);
+            checkBox2.Margin = new Padding(2, 2, 2, 2);
             checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(63, 34);
+            checkBox2.Size = new Size(63, 21);
             checkBox2.TabIndex = 1;
             checkBox2.Text = "固";
             toolTip1.SetToolTip(checkBox2, "固态 Solid");
             checkBox2.UseVisualStyleBackColor = true;
             checkBox2.Click += checkBox2_Click;
-            //
+            // 
             // compositions
-            //
+            // 
             compositions.Controls.Add(alloy_comboBox1);
             compositions.Dock = DockStyle.Fill;
             compositions.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            compositions.Location = new Point(166, 6);
+            compositions.Location = new Point(154, 5);
+            compositions.Margin = new Padding(2, 2, 2, 2);
             compositions.Name = "compositions";
-            compositions.Size = new Size(413, 74);
+            compositions.Padding = new Padding(2, 2, 2, 2);
+            compositions.Size = new Size(385, 55);
             compositions.TabIndex = 2;
             compositions.TabStop = false;
             compositions.Text = "合金组成 (AxByCz...)";
             toolTip1.SetToolTip(compositions, "不包含基体元素的合金元素的组成，其中xA = x/(1+x+y+z+……)");
-            //
+            // 
             // alloy_comboBox1
-            //
+            // 
             alloy_comboBox1.Dock = DockStyle.Fill;
             alloy_comboBox1.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             alloy_comboBox1.FormattingEnabled = true;
-            alloy_comboBox1.Location = new Point(3, 25);
+            alloy_comboBox1.Location = new Point(2, 24);
+            alloy_comboBox1.Margin = new Padding(2, 2, 2, 2);
             alloy_comboBox1.Name = "alloy_comboBox1";
-            alloy_comboBox1.Size = new Size(407, 32);
+            alloy_comboBox1.Size = new Size(381, 33);
             alloy_comboBox1.TabIndex = 0;
-            //
+            // 
             // Temp_groupBox4
-            //
+            // 
             Temp_groupBox4.Controls.Add(temp_comboBox4);
             Temp_groupBox4.Dock = DockStyle.Fill;
             Temp_groupBox4.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            Temp_groupBox4.Location = new Point(748, 6);
+            Temp_groupBox4.Location = new Point(695, 5);
+            Temp_groupBox4.Margin = new Padding(2, 2, 2, 2);
             Temp_groupBox4.Name = "Temp_groupBox4";
-            Temp_groupBox4.Size = new Size(151, 74);
+            Temp_groupBox4.Padding = new Padding(2, 2, 2, 2);
+            Temp_groupBox4.Size = new Size(142, 55);
             Temp_groupBox4.TabIndex = 4;
             Temp_groupBox4.TabStop = false;
             Temp_groupBox4.Text = "温度(K)";
-            //
+            // 
             // temp_comboBox4
-            //
+            // 
             temp_comboBox4.Dock = DockStyle.Fill;
             temp_comboBox4.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             temp_comboBox4.FormattingEnabled = true;
             temp_comboBox4.Items.AddRange(new object[] { "1873", "1273" });
-            temp_comboBox4.Location = new Point(3, 25);
+            temp_comboBox4.Location = new Point(2, 24);
+            temp_comboBox4.Margin = new Padding(2, 2, 2, 2);
             temp_comboBox4.Name = "temp_comboBox4";
-            temp_comboBox4.Size = new Size(145, 32);
+            temp_comboBox4.Size = new Size(138, 33);
             temp_comboBox4.TabIndex = 3;
-            //
+            // 
             // i_groupBox3
-            //
+            // 
             i_groupBox3.Controls.Add(i_comboBox3);
             i_groupBox3.Dock = DockStyle.Fill;
             i_groupBox3.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            i_groupBox3.Location = new Point(588, 6);
+            i_groupBox3.Location = new Point(546, 5);
+            i_groupBox3.Margin = new Padding(2, 2, 2, 2);
             i_groupBox3.Name = "i_groupBox3";
-            i_groupBox3.Size = new Size(151, 74);
+            i_groupBox3.Padding = new Padding(2, 2, 2, 2);
+            i_groupBox3.Size = new Size(142, 55);
             i_groupBox3.TabIndex = 3;
             i_groupBox3.TabStop = false;
             i_groupBox3.Text = "溶质(i)";
-            //
+            // 
             // i_comboBox3
-            //
+            // 
             i_comboBox3.Dock = DockStyle.Fill;
             i_comboBox3.DropDownHeight = 110;
             i_comboBox3.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             i_comboBox3.FormattingEnabled = true;
             i_comboBox3.IntegralHeight = false;
-            i_comboBox3.Location = new Point(3, 25);
+            i_comboBox3.Location = new Point(2, 24);
+            i_comboBox3.Margin = new Padding(2, 2, 2, 2);
             i_comboBox3.Name = "i_comboBox3";
-            i_comboBox3.Size = new Size(145, 32);
+            i_comboBox3.Size = new Size(138, 33);
             i_comboBox3.TabIndex = 2;
             i_comboBox3.Click += i_comboBox3_Click;
-            //
+            // 
             // groupBox2
-            //
+            // 
             groupBox2.Controls.Add(k_comboBox2);
             groupBox2.Dock = DockStyle.Fill;
             groupBox2.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox2.Location = new Point(6, 6);
+            groupBox2.Location = new Point(5, 5);
+            groupBox2.Margin = new Padding(2, 2, 2, 2);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(151, 74);
+            groupBox2.Padding = new Padding(2, 2, 2, 2);
+            groupBox2.Size = new Size(142, 55);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "基体(k)";
-            //
+            // 
             // k_comboBox2
-            //
+            // 
             k_comboBox2.Dock = DockStyle.Fill;
             k_comboBox2.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             k_comboBox2.FormattingEnabled = true;
-            k_comboBox2.Location = new Point(3, 25);
+            k_comboBox2.Location = new Point(2, 24);
+            k_comboBox2.Margin = new Padding(2, 2, 2, 2);
             k_comboBox2.Name = "k_comboBox2";
-            k_comboBox2.Size = new Size(145, 32);
+            k_comboBox2.Size = new Size(138, 33);
             k_comboBox2.TabIndex = 0;
             // 
             // menuStrip1
@@ -342,7 +366,8 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { optionToolStripMenuItem, settingToolStripMenuItem, helpToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1073, 28);
+            menuStrip1.Padding = new Padding(5, 2, 0, 2);
+            menuStrip1.Size = new Size(996, 24);
             menuStrip1.TabIndex = 3;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -350,32 +375,32 @@
             // 
             optionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, exitToolStripMenuItem });
             optionToolStripMenuItem.Name = "optionToolStripMenuItem";
-            optionToolStripMenuItem.Size = new Size(72, 24);
+            optionToolStripMenuItem.Size = new Size(56, 20);
             optionToolStripMenuItem.Text = "Option";
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(112, 24);
+            saveToolStripMenuItem.Size = new Size(98, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(112, 24);
+            exitToolStripMenuItem.Size = new Size(98, 22);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // settingToolStripMenuItem
             // 
             settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            settingToolStripMenuItem.Size = new Size(74, 24);
+            settingToolStripMenuItem.Size = new Size(56, 20);
             settingToolStripMenuItem.Text = "Setting";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(56, 24);
+            helpToolStripMenuItem.Size = new Size(44, 20);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 
@@ -404,10 +429,11 @@
             dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
+            dataGridView1.Margin = new Padding(2, 2, 2, 2);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(1073, 540);
+            dataGridView1.Size = new Size(996, 502);
             dataGridView1.TabIndex = 1;
             // 
             // k_name
@@ -439,26 +465,26 @@
             xi.Name = "xi";
             // 
             // activity
-            //
+            // 
             dataGridViewCellStyle3.NullValue = null;
             activity.DefaultCellStyle = dataGridViewCellStyle3;
             activity.FillWeight = 120F;
-            activity.HeaderText = "ai(Darken)";
+            activity.HeaderText = "ai(D)";
             activity.MinimumWidth = 6;
             activity.Name = "activity";
             activity.ToolTipText = "Darken模型：采用Darken二次式计算活度";
-            //
+            // 
             // ai_elloit
-            //
+            // 
             ai_elloit.FillWeight = 120F;
-            ai_elloit.HeaderText = "ai(Elliott)";
+            ai_elloit.HeaderText = "ai(E)";
             ai_elloit.Name = "ai_elloit";
             ai_elloit.ToolTipText = "Elliott模型：考虑二阶相互作用系数";
-            //
+            // 
             // ai_wagner
-            //
+            // 
             ai_wagner.FillWeight = 120F;
-            ai_wagner.HeaderText = "ai(Wagner)";
+            ai_wagner.HeaderText = "ai(W)";
             ai_wagner.Name = "ai_wagner";
             ai_wagner.ToolTipText = "Wagner模型：仅考虑一阶相互作用参数";
             // 
@@ -479,17 +505,17 @@
             remark.HeaderText = "Remark";
             remark.MinimumWidth = 6;
             remark.Name = "remark";
-            //
+            // 
             // ActivityFm
-            //
-            AutoScaleDimensions = new SizeF(9F, 20F);
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(245, 250, 255);
-            ClientSize = new Size(1280, 850);
+            ClientSize = new Size(996, 638);
             Controls.Add(splitContainer1);
-            FormBorderStyle = FormBorderStyle.Sizable;
             MainMenuStrip = menuStrip1;
-            MinimumSize = new Size(900, 600);
+            Margin = new Padding(2, 2, 2, 2);
+            MinimumSize = new Size(704, 460);
             Name = "ActivityFm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "活度计算 - Activity";

@@ -432,7 +432,6 @@
             BackColor = Color.FromArgb(245, 250, 255);
             ClientSize = new Size(856, 600);
             Controls.Add(splitContainer1);
-            FormBorderStyle = FormBorderStyle.Sizable;
             MainMenuStrip = menuStrip1;
             Margin = new Padding(2, 3, 2, 3);
             MinimumSize = new Size(800, 550);

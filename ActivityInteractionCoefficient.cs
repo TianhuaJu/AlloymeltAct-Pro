@@ -68,17 +68,6 @@ namespace AlloyAct_Pro
                 return;
             }
 
-            // 验证i和j不能相同
-            if (i == j)
-            {
-                MessageBox.Show(
-                    "溶质i和溶质j不能相同，请重新选择。",
-                    "输入错误",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                return;
-            }
-
             // 显示各元素的Miedema参数
             display(k, i, j);
 

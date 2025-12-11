@@ -126,9 +126,9 @@
             BackColor = Color.FromArgb(240, 248, 255);
             ClientSize = new Size(800, 600);
             Controls.Add(tableLayoutPanel1);
-            FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormBorderStyle = FormBorderStyle.Sizable;
             Margin = new Padding(3, 4, 3, 4);
-            MaximizeBox = false;
+            MinimumSize = new Size(600, 450);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "合金熔体活度计算器 Pro";

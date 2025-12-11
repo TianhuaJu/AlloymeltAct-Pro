@@ -161,9 +161,10 @@
             button9.UseVisualStyleBackColor = true;
             // 
             // iphi
-            // 
+            //
             iphi.BackColor = Color.FromArgb(255, 224, 192);
             iphi.Dock = DockStyle.Fill;
+            iphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             iphi.Location = new Point(49, 3);
             iphi.Name = "iphi";
             iphi.Size = new Size(104, 35);
@@ -172,9 +173,10 @@
             iphi.UseVisualStyleBackColor = false;
             // 
             // inws
-            // 
+            //
             inws.BackColor = Color.FromArgb(255, 224, 192);
             inws.Dock = DockStyle.Fill;
+            inws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             inws.Location = new Point(49, 44);
             inws.Name = "inws";
             inws.Size = new Size(104, 35);
@@ -183,9 +185,10 @@
             inws.UseVisualStyleBackColor = false;
             // 
             // jphi
-            // 
+            //
             jphi.BackColor = Color.FromArgb(255, 224, 192);
             jphi.Dock = DockStyle.Fill;
+            jphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jphi.Location = new Point(57, 3);
             jphi.Name = "jphi";
             jphi.Size = new Size(121, 35);
@@ -194,9 +197,10 @@
             jphi.UseVisualStyleBackColor = false;
             // 
             // jnws
-            // 
+            //
             jnws.BackColor = Color.FromArgb(255, 224, 192);
             jnws.Dock = DockStyle.Fill;
+            jnws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jnws.Location = new Point(57, 44);
             jnws.Name = "jnws";
             jnws.Size = new Size(121, 35);
@@ -205,9 +209,10 @@
             jnws.UseVisualStyleBackColor = false;
             // 
             // jV
-            // 
+            //
             jV.BackColor = Color.FromArgb(255, 224, 192);
             jV.Dock = DockStyle.Fill;
+            jV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             jV.Location = new Point(57, 85);
             jV.Name = "jV";
             jV.Size = new Size(121, 38);
@@ -312,9 +317,10 @@
             Cal_btn.Click += Cal_btn_Click;
             // 
             // iV
-            // 
+            //
             iV.BackColor = Color.FromArgb(255, 224, 192);
             iV.Dock = DockStyle.Fill;
+            iV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             iV.Location = new Point(49, 85);
             iV.Name = "iV";
             iV.Size = new Size(104, 38);
@@ -327,7 +333,7 @@
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.Font = new Font("Microsoft YaHei UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
@@ -340,6 +346,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.Font = new Font("Microsoft YaHei UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(1219, 555);
@@ -413,19 +420,19 @@
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
             splitContainer1.Size = new Size(1300, 872);
-            splitContainer1.SplitterDistance = 229;
+            splitContainer1.SplitterDistance = 260;
             splitContainer1.TabIndex = 2;
             // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
             tableLayoutPanel1.ColumnCount = 6;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17.01521F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.5893536F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.043684F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19.7530861F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.5346622F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 158F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19F));
             tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 2, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 1, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 0);
@@ -442,8 +449,8 @@
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 40.2654877F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 59.7345123F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 38F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 62F));
             tableLayoutPanel1.Size = new Size(1219, 229);
             tableLayoutPanel1.TabIndex = 0;
             // 
@@ -562,8 +569,8 @@
             // 
             tableLayoutPanel6.BackColor = Color.FromArgb(192, 192, 255);
             tableLayoutPanel6.ColumnCount = 2;
-            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
             tableLayoutPanel6.Controls.Add(button1, 0, 0);
             tableLayoutPanel6.Controls.Add(button2, 0, 1);
             tableLayoutPanel6.Controls.Add(button3, 0, 2);
@@ -613,9 +620,10 @@
             button3.UseVisualStyleBackColor = true;
             // 
             // kphi
-            // 
+            //
             kphi.BackColor = Color.FromArgb(255, 224, 192);
             kphi.Dock = DockStyle.Fill;
+            kphi.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             kphi.Location = new Point(54, 3);
             kphi.Name = "kphi";
             kphi.Size = new Size(114, 35);
@@ -624,9 +632,10 @@
             kphi.UseVisualStyleBackColor = false;
             // 
             // knws
-            // 
+            //
             knws.BackColor = Color.FromArgb(255, 224, 192);
             knws.Dock = DockStyle.Fill;
+            knws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             knws.Location = new Point(54, 44);
             knws.Name = "knws";
             knws.Size = new Size(114, 35);
@@ -635,9 +644,10 @@
             knws.UseVisualStyleBackColor = false;
             // 
             // kV
-            // 
+            //
             kV.BackColor = Color.FromArgb(255, 224, 192);
             kV.Dock = DockStyle.Fill;
+            kV.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             kV.Location = new Point(54, 85);
             kV.Name = "kV";
             kV.Size = new Size(114, 38);
@@ -649,8 +659,8 @@
             // 
             tableLayoutPanel7.BackColor = Color.FromArgb(192, 192, 255);
             tableLayoutPanel7.ColumnCount = 2;
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
             tableLayoutPanel7.Controls.Add(button7, 0, 0);
             tableLayoutPanel7.Controls.Add(button8, 0, 1);
             tableLayoutPanel7.Controls.Add(button9, 0, 2);
@@ -671,8 +681,8 @@
             // 
             tableLayoutPanel8.BackColor = Color.FromArgb(192, 192, 255);
             tableLayoutPanel8.ColumnCount = 2;
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
             tableLayoutPanel8.Controls.Add(button13, 0, 0);
             tableLayoutPanel8.Controls.Add(button14, 0, 1);
             tableLayoutPanel8.Controls.Add(button15, 0, 2);
@@ -775,8 +785,8 @@
             // tableLayoutPanel13
             // 
             tableLayoutPanel13.ColumnCount = 2;
-            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
             tableLayoutPanel13.Controls.Add(button6, 0, 2);
             tableLayoutPanel13.Controls.Add(button4, 0, 0);
             tableLayoutPanel13.Controls.Add(button5, 0, 1);
@@ -836,17 +846,21 @@
             k_btn.UseVisualStyleBackColor = true;
             // 
             // k_nws
-            // 
+            //
+            k_nws.BackColor = Color.FromArgb(255, 224, 192);
             k_nws.Dock = DockStyle.Fill;
+            k_nws.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             k_nws.Location = new Point(62, 45);
             k_nws.Name = "k_nws";
             k_nws.Size = new Size(134, 36);
             k_nws.TabIndex = 5;
-            k_nws.UseVisualStyleBackColor = true;
+            k_nws.UseVisualStyleBackColor = false;
             // 
             // k_V
-            // 
+            //
+            k_V.BackColor = Color.FromArgb(255, 224, 192);
             k_V.Dock = DockStyle.Fill;
+            k_V.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             k_V.Location = new Point(62, 87);
             k_V.Name = "k_V";
             k_V.Size = new Size(134, 36);
@@ -907,7 +921,8 @@
             BackColor = Color.FromArgb(245, 250, 255);
             ClientSize = new Size(1300, 900);
             Controls.Add(splitContainer1);
-            FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormBorderStyle = FormBorderStyle.Sizable;
+            MinimumSize = new Size(950, 650);
             Name = "SecondorderForm2";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "二阶活度相互作用系数计算 - Second Order Interaction Coefficients";

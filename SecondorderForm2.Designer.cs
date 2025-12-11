@@ -420,7 +420,7 @@
             // 
             splitContainer1.Panel2.Controls.Add(dataGridView1);
             splitContainer1.Size = new Size(1300, 872);
-            splitContainer1.SplitterDistance = 229;
+            splitContainer1.SplitterDistance = 260;
             splitContainer1.TabIndex = 2;
             // 
             // tableLayoutPanel1
@@ -449,8 +449,8 @@
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 40.2654877F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 59.7345123F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 38F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 62F));
             tableLayoutPanel1.Size = new Size(1219, 229);
             tableLayoutPanel1.TabIndex = 0;
             // 

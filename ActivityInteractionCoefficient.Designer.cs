@@ -198,7 +198,7 @@
             // 
             label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label4.AutoSize = true;
-            label4.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            label4.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             label4.Location = new Point(3, 18);
             label4.Name = "label4";
             label4.Size = new Size(79, 19);
@@ -223,19 +223,19 @@
             // j_comboBox3
             // 
             j_comboBox3.Dock = DockStyle.Fill;
-            j_comboBox3.Font = new Font("Times New Roman", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
+            j_comboBox3.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             j_comboBox3.FormattingEnabled = true;
             j_comboBox3.Items.AddRange(new object[] { "Al", "Si", "V", "Ti", "Cr", "Mn", "C", "B" });
             j_comboBox3.Location = new Point(3, 40);
             j_comboBox3.Name = "j_comboBox3";
             j_comboBox3.Size = new Size(122, 32);
             j_comboBox3.TabIndex = 2;
-            // 
+            //
             // label3
-            // 
+            //
             label3.AutoSize = true;
             label3.Dock = DockStyle.Bottom;
-            label3.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            label3.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             label3.Location = new Point(3, 18);
             label3.Name = "label3";
             label3.Size = new Size(122, 19);
@@ -260,19 +260,19 @@
             // i_comboBox2
             // 
             i_comboBox2.Dock = DockStyle.Fill;
-            i_comboBox2.Font = new Font("Times New Roman", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
+            i_comboBox2.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             i_comboBox2.FormattingEnabled = true;
             i_comboBox2.Items.AddRange(new object[] { "Al", "Si", "C", "Ti", "Mn", "V" });
             i_comboBox2.Location = new Point(3, 40);
             i_comboBox2.Name = "i_comboBox2";
             i_comboBox2.Size = new Size(122, 32);
             i_comboBox2.TabIndex = 2;
-            // 
+            //
             // label2
-            // 
+            //
             label2.AutoSize = true;
             label2.Dock = DockStyle.Bottom;
-            label2.Font = new Font("隶书", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            label2.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             label2.Location = new Point(3, 18);
             label2.Name = "label2";
             label2.Size = new Size(122, 19);
@@ -598,17 +598,17 @@
             label5.Anchor = AnchorStyles.Right;
             label5.AutoSize = true;
             label5.FlatStyle = FlatStyle.System;
-            label5.Font = new Font("Times New Roman", 20F, FontStyle.Bold, GraphicsUnit.Point);
+            label5.Font = new Font("微软雅黑", 16F, FontStyle.Bold, GraphicsUnit.Point);
             label5.Location = new Point(28, 31);
             label5.Name = "label5";
             label5.Size = new Size(73, 31);
             label5.TabIndex = 0;
-            label5.Text = "State";
+            label5.Text = "相态";
             label5.TextAlign = ContentAlignment.MiddleCenter;
-            // 
+            //
             // tableLayoutPanel10
-            // 
-            tableLayoutPanel10.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
+            //
+            tableLayoutPanel10.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
             tableLayoutPanel10.ColumnCount = 1;
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel10.Controls.Add(liquid_checkBox1, 0, 0);
@@ -621,32 +621,32 @@
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel10.Size = new Size(146, 82);
             tableLayoutPanel10.TabIndex = 1;
-            // 
+            //
             // liquid_checkBox1
-            // 
+            //
             liquid_checkBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             liquid_checkBox1.AutoSize = true;
             liquid_checkBox1.Checked = true;
             liquid_checkBox1.CheckState = CheckState.Checked;
-            liquid_checkBox1.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
+            liquid_checkBox1.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             liquid_checkBox1.Location = new Point(6, 7);
             liquid_checkBox1.Name = "liquid_checkBox1";
             liquid_checkBox1.Size = new Size(87, 29);
             liquid_checkBox1.TabIndex = 0;
-            liquid_checkBox1.Text = "Liquid";
+            liquid_checkBox1.Text = "液态";
             liquid_checkBox1.UseVisualStyleBackColor = true;
             liquid_checkBox1.Click += liquid_checkBox1_Click;
-            // 
+            //
             // Solid_checkBox1
-            // 
+            //
             Solid_checkBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             Solid_checkBox1.AutoSize = true;
-            Solid_checkBox1.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Italic, GraphicsUnit.Point);
+            Solid_checkBox1.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             Solid_checkBox1.Location = new Point(6, 47);
             Solid_checkBox1.Name = "Solid_checkBox1";
             Solid_checkBox1.Size = new Size(76, 29);
             Solid_checkBox1.TabIndex = 1;
-            Solid_checkBox1.Text = "Solid";
+            Solid_checkBox1.Text = "固态";
             Solid_checkBox1.UseVisualStyleBackColor = true;
             Solid_checkBox1.Click += Solid_checkBox1_Click_1;
             // 

@@ -184,22 +184,22 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Size = new Size(1067, 86);
             tableLayoutPanel1.TabIndex = 0;
-            // 
+            //
             // groupBox5
-            // 
+            //
             groupBox5.Controls.Add(tableLayoutPanel3);
             groupBox5.Dock = DockStyle.Fill;
-            groupBox5.Font = new Font("Times New Roman", 14F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox5.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox5.Location = new Point(908, 6);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(153, 74);
             groupBox5.TabIndex = 5;
             groupBox5.TabStop = false;
-            groupBox5.Text = "State";
-            // 
+            groupBox5.Text = "相态";
+            //
             // tableLayoutPanel3
-            // 
-            tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
+            //
+            tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
             tableLayoutPanel3.ColumnCount = 2;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -212,100 +212,100 @@
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.Size = new Size(147, 46);
             tableLayoutPanel3.TabIndex = 0;
-            // 
+            //
             // checkBox1
-            // 
+            //
             checkBox1.AutoSize = true;
             checkBox1.Checked = true;
             checkBox1.CheckState = CheckState.Checked;
             checkBox1.Dock = DockStyle.Fill;
-            checkBox1.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            checkBox1.Font = new Font("微软雅黑", 11F, FontStyle.Bold, GraphicsUnit.Point);
             checkBox1.Location = new Point(6, 6);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(63, 34);
             checkBox1.TabIndex = 0;
-            checkBox1.Text = "L";
-            toolTip1.SetToolTip(checkBox1, "液态");
+            checkBox1.Text = "液";
+            toolTip1.SetToolTip(checkBox1, "液态 Liquid");
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.Click += checkBox1_Click;
-            // 
+            //
             // checkBox2
-            // 
+            //
             checkBox2.AutoSize = true;
             checkBox2.Dock = DockStyle.Fill;
-            checkBox2.Font = new Font("Times New Roman", 14F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            checkBox2.Font = new Font("微软雅黑", 11F, FontStyle.Bold, GraphicsUnit.Point);
             checkBox2.Location = new Point(78, 6);
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(63, 34);
             checkBox2.TabIndex = 1;
-            checkBox2.Text = "S";
-            toolTip1.SetToolTip(checkBox2, "固态");
+            checkBox2.Text = "固";
+            toolTip1.SetToolTip(checkBox2, "固态 Solid");
             checkBox2.UseVisualStyleBackColor = true;
             checkBox2.Click += checkBox2_Click;
-            // 
+            //
             // compositions
-            // 
+            //
             compositions.Controls.Add(alloy_comboBox1);
             compositions.Dock = DockStyle.Fill;
-            compositions.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
+            compositions.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             compositions.Location = new Point(166, 6);
             compositions.Name = "compositions";
             compositions.Size = new Size(413, 74);
             compositions.TabIndex = 2;
             compositions.TabStop = false;
-            compositions.Text = "合金元素组成(AxByCz...)";
+            compositions.Text = "合金组成 (AxByCz...)";
             toolTip1.SetToolTip(compositions, "不包含基体元素的合金元素的组成，其中xA = x/(1+x+y+z+……)");
-            // 
+            //
             // alloy_comboBox1
-            // 
+            //
             alloy_comboBox1.Dock = DockStyle.Fill;
-            alloy_comboBox1.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            alloy_comboBox1.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             alloy_comboBox1.FormattingEnabled = true;
             alloy_comboBox1.Location = new Point(3, 25);
             alloy_comboBox1.Name = "alloy_comboBox1";
             alloy_comboBox1.Size = new Size(407, 32);
             alloy_comboBox1.TabIndex = 0;
-            // 
+            //
             // Temp_groupBox4
-            // 
+            //
             Temp_groupBox4.Controls.Add(temp_comboBox4);
             Temp_groupBox4.Dock = DockStyle.Fill;
-            Temp_groupBox4.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
+            Temp_groupBox4.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             Temp_groupBox4.Location = new Point(748, 6);
             Temp_groupBox4.Name = "Temp_groupBox4";
             Temp_groupBox4.Size = new Size(151, 74);
             Temp_groupBox4.TabIndex = 4;
             Temp_groupBox4.TabStop = false;
             Temp_groupBox4.Text = "温度(K)";
-            // 
+            //
             // temp_comboBox4
-            // 
+            //
             temp_comboBox4.Dock = DockStyle.Fill;
-            temp_comboBox4.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            temp_comboBox4.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             temp_comboBox4.FormattingEnabled = true;
             temp_comboBox4.Items.AddRange(new object[] { "1873", "1273" });
             temp_comboBox4.Location = new Point(3, 25);
             temp_comboBox4.Name = "temp_comboBox4";
             temp_comboBox4.Size = new Size(145, 32);
             temp_comboBox4.TabIndex = 3;
-            // 
+            //
             // i_groupBox3
-            // 
+            //
             i_groupBox3.Controls.Add(i_comboBox3);
             i_groupBox3.Dock = DockStyle.Fill;
-            i_groupBox3.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
+            i_groupBox3.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             i_groupBox3.Location = new Point(588, 6);
             i_groupBox3.Name = "i_groupBox3";
             i_groupBox3.Size = new Size(151, 74);
             i_groupBox3.TabIndex = 3;
             i_groupBox3.TabStop = false;
             i_groupBox3.Text = "溶质(i)";
-            // 
+            //
             // i_comboBox3
-            // 
+            //
             i_comboBox3.Dock = DockStyle.Fill;
             i_comboBox3.DropDownHeight = 110;
-            i_comboBox3.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            i_comboBox3.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             i_comboBox3.FormattingEnabled = true;
             i_comboBox3.IntegralHeight = false;
             i_comboBox3.Location = new Point(3, 25);
@@ -313,23 +313,23 @@
             i_comboBox3.Size = new Size(145, 32);
             i_comboBox3.TabIndex = 2;
             i_comboBox3.Click += i_comboBox3_Click;
-            // 
+            //
             // groupBox2
-            // 
+            //
             groupBox2.Controls.Add(k_comboBox2);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Font = new Font("宋体", 14F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox2.Font = new Font("微软雅黑", 12F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox2.Location = new Point(6, 6);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(151, 74);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "基体(k)";
-            // 
+            //
             // k_comboBox2
-            // 
+            //
             k_comboBox2.Dock = DockStyle.Fill;
-            k_comboBox2.Font = new Font("宋体", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            k_comboBox2.Font = new Font("微软雅黑", 14F, FontStyle.Regular, GraphicsUnit.Point);
             k_comboBox2.FormattingEnabled = true;
             k_comboBox2.Location = new Point(3, 25);
             k_comboBox2.Name = "k_comboBox2";

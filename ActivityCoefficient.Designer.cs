@@ -479,8 +479,9 @@
             BackColor = Color.FromArgb(245, 250, 255);
             ClientSize = new Size(1280, 850);
             Controls.Add(splitContainer1);
-            FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormBorderStyle = FormBorderStyle.Sizable;
             MainMenuStrip = menuStrip1;
+            MinimumSize = new Size(900, 600);
             Name = "ActivityCoefficientFm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "活度系数计算 - Activity Coefficients";

@@ -907,7 +907,8 @@
             BackColor = Color.FromArgb(245, 250, 255);
             ClientSize = new Size(1300, 900);
             Controls.Add(splitContainer1);
-            FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormBorderStyle = FormBorderStyle.Sizable;
+            MinimumSize = new Size(950, 650);
             Name = "SecondorderForm2";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "二阶活度相互作用系数计算 - Second Order Interaction Coefficients";

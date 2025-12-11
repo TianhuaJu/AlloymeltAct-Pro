@@ -432,9 +432,10 @@
             BackColor = Color.FromArgb(245, 250, 255);
             ClientSize = new Size(856, 600);
             Controls.Add(splitContainer1);
-            FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormBorderStyle = FormBorderStyle.Sizable;
             MainMenuStrip = menuStrip1;
             Margin = new Padding(2, 3, 2, 3);
+            MinimumSize = new Size(800, 550);
             Name = "ActivityCoefficientAtInfiniteDilution";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "无限稀活度系数计算 - Activity Coefficient At Infinite Dilution";

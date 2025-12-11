@@ -802,7 +802,8 @@
             ClientSize = new Size(1200, 850);
             Controls.Add(splitContainer1);
             Controls.Add(menuStrip1);
-            FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormBorderStyle = FormBorderStyle.Sizable;
+            MinimumSize = new Size(900, 600);
             Name = "ActivityInteractionCoefficientFm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "活度相互作用系数计算 - Activity Interaction Coefficients";

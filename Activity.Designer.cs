@@ -442,6 +442,7 @@
             //
             dataGridViewCellStyle3.NullValue = null;
             activity.DefaultCellStyle = dataGridViewCellStyle3;
+            activity.FillWeight = 120F;
             activity.HeaderText = "ai(Darken)";
             activity.MinimumWidth = 6;
             activity.Name = "activity";
@@ -449,12 +450,14 @@
             //
             // ai_elloit
             //
+            ai_elloit.FillWeight = 120F;
             ai_elloit.HeaderText = "ai(Elliott)";
             ai_elloit.Name = "ai_elloit";
             ai_elloit.ToolTipText = "Elliott模型：考虑二阶相互作用系数";
             //
             // ai_wagner
             //
+            ai_wagner.FillWeight = 120F;
             ai_wagner.HeaderText = "ai(Wagner)";
             ai_wagner.Name = "ai_wagner";
             ai_wagner.ToolTipText = "Wagner模型：仅考虑一阶相互作用参数";

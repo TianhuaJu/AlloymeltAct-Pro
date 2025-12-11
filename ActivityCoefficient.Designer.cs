@@ -444,6 +444,7 @@
             // 
             // acf_wagner
             //
+            acf_wagner.FillWeight = 130F;
             acf_wagner.HeaderText = "lnγ_i(Wagner)";
             acf_wagner.Name = "acf_wagner";
             acf_wagner.ToolTipText = "Wagner模型：仅考虑一阶相互作用参数";
@@ -452,6 +453,7 @@
             //
             dataGridViewCellStyle2.NullValue = null;
             activityCoefficient.DefaultCellStyle = dataGridViewCellStyle2;
+            activityCoefficient.FillWeight = 130F;
             activityCoefficient.HeaderText = "lnγ_i(Darken)";
             activityCoefficient.MinimumWidth = 6;
             activityCoefficient.Name = "activityCoefficient";
@@ -459,6 +461,7 @@
             //
             // acf_elloit
             //
+            acf_elloit.FillWeight = 130F;
             acf_elloit.HeaderText = "lnγ_i(Elliott)";
             acf_elloit.Name = "acf_elloit";
             acf_elloit.ToolTipText = "Elliott模型：考虑二阶相互作用系数";

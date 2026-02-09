@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dir:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(xargs -I {} git show {}:Activity.cs)",
+      "Bash(csc:*)",
+      "Bash(dotnet-script:*)",
+      "Bash(dotnet run:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(sort:*)",
+      "Bash(dotnet publish:*)",
+      "Bash(where:*)",
+      "Bash(where \"C:\\\\Program Files \\(x86\\)\\\\Inno Setup 6\\\\ISCC.exe\")",
+      "Bash(where \"C:\\\\Program Files\\\\Inno Setup 6\\\\ISCC.exe\")",
+      "Bash(winget install:*)",
+      "Bash(reg query \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\" /s)",
+      "Bash(cmd.exe /c \"dir \"\"C:\\\\Program Files \\(x86\\)\\\\Inno Setup 6\\\\ISCC.exe\"\" 2>nul\")",
+      "Bash(cmd.exe /c \"dir \"\"C:\\\\Program Files\\\\Inno Setup 6\\\\ISCC.exe\"\" 2>nul\")",
+      "Bash(powershell -Command:*)",
+      "Bash(powershell.exe -NoProfile -Command 'Get-ChildItem \"\"C:\\\\Program Files \\(x86\\)\\\\Inno Setup*\"\" -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }; Get-ChildItem \"\"C:\\\\Program Files\\\\Inno Setup*\"\" -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }')",
+      "Bash(powershell.exe -NoProfile -Command 'winget list --name \"\"Inno Setup\"\" 2>$null')",
+      "Bash(powershell.exe -NoProfile -Command 'winget show JRSoftware.InnoSetup 2>$null | Select-String \"\"Install\"\"')",
+      "Bash(powershell.exe -NoProfile -Command 'Test-Path \"\"C:\\\\Users\\\\jthua\\\\AppData\\\\Local\\\\Programs\\\\Inno Setup 6\\\\ISCC.exe\"\"')",
+      "Bash(powershell.exe -NoProfile -Command:*)",
+      "Bash(\"C:\\\\InnoSetup6\\\\ISCC.exe\" installer.iss)"
+    ]
+  }
+}

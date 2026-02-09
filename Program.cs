@@ -5,50 +5,36 @@ namespace AlloyAct_Pro
 
     internal static class Program
     {
-        public static Form1 F1 = new Form1();
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-
             release_Resource();
             ApplicationConfiguration.Initialize();
-            Application.Run(F1);
+            Application.Run(new Form1());
         }
 
         private static void release_Resource()
         {
-
             byte[] dataBase = global::AlloyAct_Pro.Properties.Resources.DataBase;
             byte[] NPOI = global::AlloyAct_Pro.Properties.Resources.NPOI;
 
-
             string strPath_dataBase = Application.StartupPath + @"\data\DataBase.db";
-
             string NPOI_path = Application.StartupPath + @"\NPOI.dll";
 
-
-
             create_file_path(dataBase, strPath_dataBase);
-
             create_file_path(NPOI, NPOI_path);
 
             void create_file_path(byte[] file, string filepath)
             {
-
                 if (!File.Exists(filepath))
                 {
-                    //判断文件是否存在，不存在执行以下操作
                     if (Directory.Exists(Path.GetDirectoryName(filepath)))
-                    {//文件夹存在
-
+                    {
                         using (FileStream fs = new FileStream(filepath, FileMode.CreateNew))
                         {
-
                             fs.Write(file, 0, file.Length);
                             fs.Flush();
                             fs.Close();
@@ -56,10 +42,7 @@ namespace AlloyAct_Pro
                     }
                     else
                     {
-                        //文件夹不存在
                         Directory.CreateDirectory(Path.GetDirectoryName(filepath));
-
-
                         using (FileStream fs = new FileStream(filepath, FileMode.CreateNew))
                         {
                             fs.Write(file, 0, file.Length);
@@ -68,10 +51,7 @@ namespace AlloyAct_Pro
                         }
                     }
                 }
-
             }
-
-
         }
     }
 }

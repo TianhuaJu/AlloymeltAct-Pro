@@ -1,106 +1,331 @@
+using AlloyAct_Pro.Controls;
+
 namespace AlloyAct_Pro
 {
     public partial class Form1 : Form
     {
-        ActivityFm actFm = new ActivityFm();
-        ActivityCoefficientFm coefficientFm = new ActivityCoefficientFm();
-        ActivityInteractionCoefficientFm ActivityInteractionCoefficientFm = new ActivityInteractionCoefficientFm();
-        ActivityCoefficientAtInfiniteDilution activityCoefficientAtInfiniteDilution = new ActivityCoefficientAtInfiniteDilution();
+        // Panels
+        private readonly ActivityPanel activityPanel = new ActivityPanel();
+        private readonly ActivityCoefficientPanel coefficientPanel = new ActivityCoefficientPanel();
+        private readonly InteractionCoefficientPanel interactionPanel = new InteractionCoefficientPanel();
+        private readonly InfiniteDilutionPanel infiniteDilutionPanel = new InfiniteDilutionPanel();
+        private readonly SecondOrderPanel secondOrderPanel = new SecondOrderPanel();
+        private readonly UnitConvertPanel unitConvertPanel = new UnitConvertPanel();
+        private readonly DatabasePanel databasePanel = new DatabasePanel();
+
+        private UserControl activePanel;
+        private Button activeNavButton;
+
         public Form1()
         {
             InitializeComponent();
+            SetupPanels();
+            // Navigate to Activity by default
+            NavigateTo(activityPanel, btnActivity);
         }
 
-        private void Activity_Click(object sender, EventArgs e)
+        private void SetupPanels()
         {
-            //ªÓ∂»º∆À„¥∞ø⁄
-
-            if (actFm.IsDisposed)
+            UserControl[] panels = { activityPanel, coefficientPanel, interactionPanel,
+                                     infiniteDilutionPanel, secondOrderPanel, unitConvertPanel, databasePanel };
+            foreach (var p in panels)
             {
-                actFm = new ActivityFm();
-                actFm.Show();
+                p.Dock = DockStyle.Fill;
+                p.Visible = false;
+                contentPanel.Controls.Add(p);
+            }
+        }
+
+        private void NavigateTo(UserControl panel, Button navButton)
+        {
+            // Hide current
+            if (activePanel != null)
+                activePanel.Visible = false;
+
+            // Deactivate previous nav button
+            if (activeNavButton != null)
+            {
+                activeNavButton.BackColor = AppTheme.SidebarBg;
+                activeNavButton.ForeColor = AppTheme.SidebarText;
+            }
+
+            // Show new panel
+            panel.Visible = true;
+            activePanel = panel;
+
+            // Activate nav button
+            navButton.BackColor = AppTheme.SidebarActiveBg;
+            navButton.ForeColor = AppTheme.SidebarActiveText;
+            activeNavButton = navButton;
+
+            // Update page title
+            string title = panel switch
+            {
+                ActivityPanel p => p.PageTitle,
+                ActivityCoefficientPanel p => p.PageTitle,
+                InteractionCoefficientPanel p => p.PageTitle,
+                InfiniteDilutionPanel p => p.PageTitle,
+                SecondOrderPanel p => p.PageTitle,
+                UnitConvertPanel p => p.PageTitle,
+                DatabasePanel p => p.PageTitle,
+                _ => "AlloyAct Pro"
+            };
+            lblPageTitle.Text = title;
+        }
+
+        private void BtnActivity_Click(object sender, EventArgs e)
+        {
+            NavigateTo(activityPanel, btnActivity);
+        }
+
+        private void BtnCoefficient_Click(object sender, EventArgs e)
+        {
+            NavigateTo(coefficientPanel, btnCoefficient);
+        }
+
+        private void BtnInteraction_Click(object sender, EventArgs e)
+        {
+            NavigateTo(interactionPanel, btnInteraction);
+        }
+
+        private void BtnInfiniteDilution_Click(object sender, EventArgs e)
+        {
+            NavigateTo(infiniteDilutionPanel, btnInfiniteDilution);
+        }
+
+        private void BtnSecondOrder_Click(object sender, EventArgs e)
+        {
+            NavigateTo(secondOrderPanel, btnSecondOrder);
+        }
+
+        private void BtnUnitConvert_Click(object sender, EventArgs e)
+        {
+            NavigateTo(unitConvertPanel, btnUnitConvert);
+        }
+
+        private void BtnDatabase_Click(object sender, EventArgs e)
+        {
+            NavigateTo(databasePanel, btnDatabase);
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            if (activePanel is ActivityPanel ap) ap.ExportToExcel();
+            else if (activePanel is ActivityCoefficientPanel acp) acp.ExportToExcel();
+            else if (activePanel is InteractionCoefficientPanel icp) icp.ExportToExcel();
+            else if (activePanel is InfiniteDilutionPanel idp) idp.ExportToExcel();
+            else if (activePanel is SecondOrderPanel sop) sop.ExportToExcel();
+            else if (activePanel is UnitConvertPanel ucp) ucp.ExportToExcel();
+            else if (activePanel is DatabasePanel dbp) dbp.ExportToExcel();
+        }
+
+        private void BtnHelp_Click(object sender, EventArgs e)
+        {
+            // Show context-sensitive help based on active panel
+            Image? helpImage = null;
+            string helpTitle = "Help";
+
+            if (activePanel is ActivityPanel)
+            {
+                helpImage = Properties.Resources.Ê¥ªÂ∫¶;
+                helpTitle = "Activity Calculation - Help";
+            }
+            else if (activePanel is ActivityCoefficientPanel)
+            {
+                helpImage = Properties.Resources.Ê¥ªÂ∫¶Á≥ªÊï∞;
+                helpTitle = "Activity Coefficient - Help";
+            }
+            else if (activePanel is InteractionCoefficientPanel)
+            {
+                helpImage = Properties.Resources.Ê¥ªÂ∫¶Áõ∏‰∫í‰ΩúÁî®Á≥ªÊï∞;
+                helpTitle = "Interaction Coefficient - Help";
+            }
+            else if (activePanel is InfiniteDilutionPanel)
+            {
+                helpImage = Properties.Resources.Êó†ÈôêÁ®ÄÊ¥ªÂ∫¶Á≥ªÊï∞;
+                helpTitle = "Infinite Dilution - Help";
+            }
+            else if (activePanel is SecondOrderPanel)
+            {
+                // No dedicated help image for second-order; show interaction help
+                helpImage = Properties.Resources.Ê¥ªÂ∫¶Áõ∏‰∫í‰ΩúÁî®Á≥ªÊï∞;
+                helpTitle = "Second-Order Interaction - Help";
+            }
+
+            if (helpImage != null)
+            {
+                ShowHelpDialog(helpTitle, helpImage);
+            }
+            else if (activePanel is DatabasePanel)
+            {
+                MessageBox.Show(
+                    "Database Management:\n\n" +
+                    "View and edit the underlying Miedema model parameters and experimental values.\n\n" +
+                    "\u2022  Miedema Parameters \u2014 Element properties (\u03C6, nws, V, u, etc.)\n" +
+                    "\u2022  Interaction Coeff. \u2014 1st-order experimental values (\u03B5\u1D62\u02B2 / e\u1D62\u02B2)\n" +
+                    "\u2022  Infinite Dilution \u2014 Activity coefficients at infinite dilution (ln\u03B3\u1D62\u2070)\n\n" +
+                    "Use Filter to search by element symbol.\n" +
+                    "Click Save Changes to write edits back to the database.",
+                    "Database Management - Help",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
             else
             {
-                if (!actFm.Visible)
-
-                {
-                    actFm.Show();
-                }
-                else if (actFm.WindowState == FormWindowState.Minimized)
-                {
-                    actFm.WindowState = FormWindowState.Normal;
-                }
+                MessageBox.Show(
+                    "Unit Conversion:\n\n" +
+                    "Convert between weight percentage (wt%) and atom fraction (mole fraction).\n\n" +
+                    "\u2022  Select matrix and solute elements\n" +
+                    "\u2022  Choose conversion direction\n" +
+                    "\u2022  Enter value and click Convert",
+                    "Unit Conversion - Help",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
-            this.WindowState = FormWindowState.Minimized;
         }
 
-        private void ActivityCoeff_Click(object sender, EventArgs e)
+        private void ShowHelpDialog(string title, Image image)
         {
-            //ªÓ∂»œµ ˝º∆À„¥∞ø⁄
-            if (coefficientFm.IsDisposed)
-            {
-                coefficientFm = new ActivityCoefficientFm();
-                coefficientFm.Show();
-            }
-            else
-            {
-                if (!coefficientFm.Visible)
+            var helpForm = new Form();
+            helpForm.Text = title;
+            helpForm.StartPosition = FormStartPosition.CenterParent;
+            helpForm.Size = new Size(image.Width + 40, image.Height + 60);
+            helpForm.MinimizeBox = false;
+            helpForm.MaximizeBox = false;
+            helpForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+            helpForm.BackColor = Color.White;
 
-                {
-                    coefficientFm.Show();
-                }
-                else if (coefficientFm.WindowState == FormWindowState.Minimized)
-                {
-                    coefficientFm.WindowState = FormWindowState.Normal;
-                }
-            }
-            this.WindowState = FormWindowState.Minimized;
+            var pictureBox = new PictureBox();
+            pictureBox.Image = image;
+            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox.Dock = DockStyle.Fill;
+            pictureBox.Padding = new Padding(10);
+
+            helpForm.Controls.Add(pictureBox);
+            helpForm.ShowDialog(this);
         }
 
-        private void InteractionCoeff_Click(object sender, EventArgs e)
+        private void BtnAbout_Click(object sender, EventArgs e)
         {
-            //ªÓ∂»œ‡ª•◊˜”√œµ ˝º∆À„¥∞ø⁄
-            if (ActivityInteractionCoefficientFm.IsDisposed)
-            {
-                ActivityInteractionCoefficientFm = new ActivityInteractionCoefficientFm();
-                ActivityInteractionCoefficientFm.Show();
-            }
-            else
-            {
-                if (!ActivityInteractionCoefficientFm.Visible)
+            var aboutForm = new Form();
+            aboutForm.Text = "About AlloyAct Pro";
+            aboutForm.Size = new Size(520, 540);
+            aboutForm.StartPosition = FormStartPosition.CenterParent;
+            aboutForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+            aboutForm.MinimizeBox = false;
+            aboutForm.MaximizeBox = false;
+            aboutForm.BackColor = Color.White;
+            aboutForm.Icon = this.Icon;
 
-                {
-                    ActivityInteractionCoefficientFm.Show();
-                }
-                else if (ActivityInteractionCoefficientFm.WindowState == FormWindowState.Minimized)
-                {
-                    ActivityInteractionCoefficientFm.WindowState = FormWindowState.Normal;
-                }
-            }
-            this.WindowState = FormWindowState.Minimized;
-        }
+            var mainPanel = new Panel();
+            mainPanel.Dock = DockStyle.Fill;
+            mainPanel.AutoScroll = true;
+            mainPanel.Padding = new Padding(28, 20, 28, 10);
 
-        private void ActivityCoefficientAtInfinitely_Click(object sender, EventArgs e)
-        {
-            if (activityCoefficientAtInfiniteDilution.IsDisposed)
-            {
-                ActivityCoefficientAtInfiniteDilution activityCoefficientAtInfiniteDilution = new ActivityCoefficientAtInfiniteDilution();
-                activityCoefficientAtInfiniteDilution.Show();
-            }
-            else
-            {
-                if (!activityCoefficientAtInfiniteDilution.Visible)
-                {
-                    activityCoefficientAtInfiniteDilution.Show();
-                }
-                else if (activityCoefficientAtInfiniteDilution.WindowState == FormWindowState.Minimized)
-                {
-                    activityCoefficientAtInfiniteDilution.WindowState = FormWindowState.Normal;
-                }
-            }
-            this.WindowState = FormWindowState.Minimized;
+            // App name
+            var lblAppName = new Label();
+            lblAppName.Text = "AlloyAct Pro";
+            lblAppName.Font = new Font("Microsoft YaHei UI", 18F, FontStyle.Bold);
+            lblAppName.ForeColor = Color.FromArgb(44, 62, 80);
+            lblAppName.AutoSize = true;
+            lblAppName.Location = new Point(28, 20);
 
+            // Subtitle
+            var lblSubtitle = new Label();
+            lblSubtitle.Text = "Alloy Melt Activity Calculator   v2.0";
+            lblSubtitle.Font = new Font("Microsoft YaHei UI", 11F);
+            lblSubtitle.ForeColor = Color.FromArgb(100, 100, 100);
+            lblSubtitle.AutoSize = true;
+            lblSubtitle.Location = new Point(30, 56);
+
+            // Model name - prominent
+            var lblModel = new Label();
+            lblModel.Text = "Based on UEM-Miedema Framework Model";
+            lblModel.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
+            lblModel.ForeColor = Color.FromArgb(41, 128, 185);
+            lblModel.AutoSize = true;
+            lblModel.Location = new Point(28, 96);
+
+            // Separator
+            var sep1 = new Label();
+            sep1.BorderStyle = BorderStyle.Fixed3D;
+            sep1.Location = new Point(28, 130);
+            sep1.Size = new Size(440, 2);
+
+            // Parameters section
+            var lblParams = new Label();
+            lblParams.Text = "Thermodynamic Parameters:";
+            lblParams.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            lblParams.ForeColor = Color.FromArgb(44, 62, 80);
+            lblParams.AutoSize = true;
+            lblParams.Location = new Point(28, 144);
+
+            var lblParamList = new Label();
+            lblParamList.Text =
+                "\u2022  Infinite Dilution Activity Coefficient  (ln\u03B3\u1D62\u2070)\n" +
+                "\u2022  1st-order Interaction Coefficient  (\u03B5\u1D62\u02B2)\n" +
+                "\u2022  2nd-order Interaction Coefficient  (\u03C1\u1D62\u02B2\u1D4F)\n" +
+                "\u2022  Activity Coefficient  (ln\u03B3\u1D62)\n" +
+                "\u2022  Activity  (a\u1D62)";
+            lblParamList.Font = new Font("Microsoft YaHei UI", 10.5F);
+            lblParamList.ForeColor = Color.FromArgb(60, 60, 60);
+            lblParamList.AutoSize = true;
+            lblParamList.Location = new Point(36, 174);
+
+            // Tools section
+            var lblTools = new Label();
+            lblTools.Text = "Tools:";
+            lblTools.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            lblTools.ForeColor = Color.FromArgb(44, 62, 80);
+            lblTools.AutoSize = true;
+            lblTools.Location = new Point(28, 316);
+
+            var lblToolList = new Label();
+            lblToolList.Text = "\u2022  Unit Conversion  (wt% \u2194 atom fraction)";
+            lblToolList.Font = new Font("Microsoft YaHei UI", 10.5F);
+            lblToolList.ForeColor = Color.FromArgb(60, 60, 60);
+            lblToolList.AutoSize = true;
+            lblToolList.Location = new Point(36, 346);
+
+            // Separator 2
+            var sep2 = new Label();
+            sep2.BorderStyle = BorderStyle.Fixed3D;
+            sep2.Location = new Point(28, 380);
+            sep2.Size = new Size(440, 2);
+
+            // References
+            var lblRef = new Label();
+            lblRef.Text = "References:";
+            lblRef.Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold);
+            lblRef.ForeColor = Color.FromArgb(44, 62, 80);
+            lblRef.AutoSize = true;
+            lblRef.Location = new Point(28, 392);
+
+            var lblRefList = new Label();
+            lblRefList.Text =
+                "[1] Ju T H, Ding X Y, Zhang L, et al. ISIJ International, 2020, 60(11): 2416-2424.\n" +
+                "[2] \u5C45\u5929\u534E, \u7B49. \u91D1\u5C5E\u5B66\u62A5, 2023, 59(11): 1533-1540.\n" +
+                "[3] Kang Y-B. Metall. Mater. Trans. B, 2020, 51(2): 795-804.";
+            lblRefList.Font = new Font("Microsoft YaHei UI", 9F);
+            lblRefList.ForeColor = Color.FromArgb(100, 100, 100);
+            lblRefList.AutoSize = true;
+            lblRefList.MaximumSize = new Size(440, 0);
+            lblRefList.Location = new Point(30, 418);
+
+            mainPanel.Controls.Add(lblAppName);
+            mainPanel.Controls.Add(lblSubtitle);
+            mainPanel.Controls.Add(lblModel);
+            mainPanel.Controls.Add(sep1);
+            mainPanel.Controls.Add(lblParams);
+            mainPanel.Controls.Add(lblParamList);
+            mainPanel.Controls.Add(lblTools);
+            mainPanel.Controls.Add(lblToolList);
+            mainPanel.Controls.Add(sep2);
+            mainPanel.Controls.Add(lblRef);
+            mainPanel.Controls.Add(lblRefList);
+
+            aboutForm.Controls.Add(mainPanel);
+            aboutForm.ShowDialog(this);
         }
     }
 }

@@ -1,16 +1,9 @@
-﻿namespace AlloyAct_Pro
+namespace AlloyAct_Pro
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,120 +15,208 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            tableLayoutPanel1 = new TableLayoutPanel();
-            Activity = new Button();
-            ActivityCoeff = new Button();
-            InteractionCoeff = new Button();
-            ActivityCoefficientAtInfinitely = new Button();
-            tableLayoutPanel1.SuspendLayout();
+            sidebarPanel = new Panel();
+            sidebarLogo = new Label();
+            lblCalcSection = new Label();
+            btnActivity = AppTheme.CreateNavButton("  Activity");
+            btnCoefficient = AppTheme.CreateNavButton("  Activity Coeff.");
+            btnInteraction = AppTheme.CreateNavButton("  Interaction Coeff.");
+            btnInfiniteDilution = AppTheme.CreateNavButton("  Infinite Dilution");
+            btnSecondOrder = AppTheme.CreateNavButton("  Second-Order");
+            lblToolsSection = new Label();
+            btnUnitConvert = AppTheme.CreateNavButton("  Unit Conversion");
+            lblAdvancedSection = new Label();
+            btnDatabase = AppTheme.CreateNavButton("  Database");
+
+            headerPanel = new Panel();
+            lblPageTitle = new Label();
+            headerBtnPanel = new FlowLayoutPanel();
+            btnExport = new Button();
+            btnHelp = new Button();
+            btnAbout = new Button();
+
+            contentPanel = new Panel();
+
             SuspendLayout();
-            // 
-            // tableLayoutPanel1
-            // 
-            tableLayoutPanel1.BackColor = Color.FromArgb(128, 255, 255);
-            tableLayoutPanel1.BackgroundImage = Properties.Resources.R;
-            tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
-            tableLayoutPanel1.ColumnCount = 2;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3F));
-            tableLayoutPanel1.Controls.Add(Activity, 0, 0);
-            tableLayoutPanel1.Controls.Add(ActivityCoeff, 1, 0);
-            tableLayoutPanel1.Controls.Add(InteractionCoeff, 1, 1);
-            tableLayoutPanel1.Controls.Add(ActivityCoefficientAtInfinitely, 0, 1);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(633, 611);
-            tableLayoutPanel1.TabIndex = 0;
-            // 
-            // Activity
-            // 
-            Activity.BackColor = Color.FromArgb(128, 255, 255);
-            Activity.Dock = DockStyle.Fill;
-            Activity.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            Activity.Location = new Point(6, 7);
-            Activity.Margin = new Padding(3, 4, 3, 4);
-            Activity.Name = "Activity";
-            Activity.Size = new Size(306, 293);
-            Activity.TabIndex = 3;
-            Activity.Text = "活度";
-            Activity.UseVisualStyleBackColor = false;
-            Activity.Click += Activity_Click;
-            // 
-            // ActivityCoeff
-            // 
-            ActivityCoeff.BackColor = Color.Cyan;
-            ActivityCoeff.Dock = DockStyle.Fill;
-            ActivityCoeff.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            ActivityCoeff.Location = new Point(321, 7);
-            ActivityCoeff.Margin = new Padding(3, 4, 3, 4);
-            ActivityCoeff.Name = "ActivityCoeff";
-            ActivityCoeff.Size = new Size(306, 293);
-            ActivityCoeff.TabIndex = 1;
-            ActivityCoeff.Text = "活度系数";
-            ActivityCoeff.UseVisualStyleBackColor = false;
-            ActivityCoeff.Click += ActivityCoeff_Click;
-            // 
-            // InteractionCoeff
-            // 
-            InteractionCoeff.BackColor = Color.MediumSpringGreen;
-            InteractionCoeff.Dock = DockStyle.Fill;
-            InteractionCoeff.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            InteractionCoeff.Location = new Point(321, 311);
-            InteractionCoeff.Margin = new Padding(3, 4, 3, 4);
-            InteractionCoeff.Name = "InteractionCoeff";
-            InteractionCoeff.Size = new Size(306, 293);
-            InteractionCoeff.TabIndex = 2;
-            InteractionCoeff.Text = "活度相互作用系数";
-            InteractionCoeff.UseVisualStyleBackColor = false;
-            InteractionCoeff.Click += InteractionCoeff_Click;
-            // 
-            // ActivityCoefficientAtInfinitely
-            // 
-            ActivityCoefficientAtInfinitely.BackColor = Color.Cyan;
-            ActivityCoefficientAtInfinitely.Dock = DockStyle.Fill;
-            ActivityCoefficientAtInfinitely.Font = new Font("楷体", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            ActivityCoefficientAtInfinitely.ForeColor = SystemColors.ActiveCaptionText;
-            ActivityCoefficientAtInfinitely.Location = new Point(6, 311);
-            ActivityCoefficientAtInfinitely.Margin = new Padding(3, 4, 3, 4);
-            ActivityCoefficientAtInfinitely.Name = "ActivityCoefficientAtInfinitely";
-            ActivityCoefficientAtInfinitely.Size = new Size(306, 293);
-            ActivityCoefficientAtInfinitely.TabIndex = 4;
-            ActivityCoefficientAtInfinitely.Text = "无限稀活度系数";
-            ActivityCoefficientAtInfinitely.UseVisualStyleBackColor = false;
-            ActivityCoefficientAtInfinitely.Click += ActivityCoefficientAtInfinitely_Click;
-            // 
-            // Form1
-            // 
+
+            // ===== Sidebar =====
+            sidebarPanel.BackColor = AppTheme.SidebarBg;
+            sidebarPanel.Dock = DockStyle.Left;
+            sidebarPanel.Width = 220;
+
+            // Logo at top
+            sidebarLogo.Text = "AlloyAct Pro";
+            sidebarLogo.Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Bold);
+            sidebarLogo.ForeColor = Color.White;
+            sidebarLogo.BackColor = Color.FromArgb(35, 50, 68);
+            sidebarLogo.Dock = DockStyle.Top;
+            sidebarLogo.Height = 56;
+            sidebarLogo.TextAlign = ContentAlignment.MiddleCenter;
+
+            // Section labels
+            lblCalcSection.Text = "  CALCULATIONS";
+            lblCalcSection.Font = AppTheme.SidebarSectionFont;
+            lblCalcSection.ForeColor = Color.FromArgb(127, 140, 141);
+            lblCalcSection.BackColor = AppTheme.SidebarBg;
+            lblCalcSection.Dock = DockStyle.Top;
+            lblCalcSection.Height = 30;
+            lblCalcSection.TextAlign = ContentAlignment.BottomLeft;
+            lblCalcSection.Padding = new Padding(14, 0, 0, 4);
+
+            lblToolsSection.Text = "  TOOLS";
+            lblToolsSection.Font = AppTheme.SidebarSectionFont;
+            lblToolsSection.ForeColor = Color.FromArgb(127, 140, 141);
+            lblToolsSection.BackColor = AppTheme.SidebarBg;
+            lblToolsSection.Dock = DockStyle.Top;
+            lblToolsSection.Height = 30;
+            lblToolsSection.TextAlign = ContentAlignment.BottomLeft;
+            lblToolsSection.Padding = new Padding(14, 0, 0, 4);
+
+            lblAdvancedSection.Text = "  ADVANCED";
+            lblAdvancedSection.Font = AppTheme.SidebarSectionFont;
+            lblAdvancedSection.ForeColor = Color.FromArgb(127, 140, 141);
+            lblAdvancedSection.BackColor = AppTheme.SidebarBg;
+            lblAdvancedSection.Dock = DockStyle.Top;
+            lblAdvancedSection.Height = 30;
+            lblAdvancedSection.TextAlign = ContentAlignment.BottomLeft;
+            lblAdvancedSection.Padding = new Padding(14, 0, 0, 4);
+
+            // Nav button click events
+            btnActivity.Click += BtnActivity_Click;
+            btnCoefficient.Click += BtnCoefficient_Click;
+            btnInteraction.Click += BtnInteraction_Click;
+            btnInfiniteDilution.Click += BtnInfiniteDilution_Click;
+            btnSecondOrder.Click += BtnSecondOrder_Click;
+            btnUnitConvert.Click += BtnUnitConvert_Click;
+            btnDatabase.Click += BtnDatabase_Click;
+
+            // Add in REVERSE order because Dock=Top stacks top-down
+            // ADVANCED section: Database
+            sidebarPanel.Controls.Add(btnDatabase);
+            sidebarPanel.Controls.Add(lblAdvancedSection);
+            // TOOLS section: only Unit Conversion
+            sidebarPanel.Controls.Add(btnUnitConvert);
+            sidebarPanel.Controls.Add(lblToolsSection);
+            // CALCULATIONS section (top to bottom): Infinite Dilution, Interaction, Second-Order, Activity Coeff., Activity
+            sidebarPanel.Controls.Add(btnActivity);
+            sidebarPanel.Controls.Add(btnCoefficient);
+            sidebarPanel.Controls.Add(btnSecondOrder);
+            sidebarPanel.Controls.Add(btnInteraction);
+            sidebarPanel.Controls.Add(btnInfiniteDilution);
+            sidebarPanel.Controls.Add(lblCalcSection);
+            sidebarPanel.Controls.Add(sidebarLogo);
+
+            // ===== Header =====
+            headerPanel.BackColor = AppTheme.HeaderBg;
+            headerPanel.Dock = DockStyle.Top;
+            headerPanel.Height = 52;
+            headerPanel.Padding = new Padding(16, 0, 12, 0);
+
+            lblPageTitle.Text = "Activity Calculation";
+            lblPageTitle.Font = AppTheme.PageTitleFont;
+            lblPageTitle.ForeColor = Color.FromArgb(44, 62, 80);
+            lblPageTitle.Dock = DockStyle.Fill;
+            lblPageTitle.TextAlign = ContentAlignment.MiddleLeft;
+
+            // Header button panel (FlowLayout, right-aligned)
+            headerBtnPanel.Dock = DockStyle.Right;
+            headerBtnPanel.FlowDirection = FlowDirection.RightToLeft;
+            headerBtnPanel.WrapContents = false;
+            headerBtnPanel.AutoSize = true;
+            headerBtnPanel.BackColor = AppTheme.HeaderBg;
+            headerBtnPanel.Padding = new Padding(0, 9, 0, 9);
+
+            btnExport.Text = "Export";
+            btnExport.FlatStyle = FlatStyle.Flat;
+            btnExport.FlatAppearance.BorderSize = 0;
+            btnExport.BackColor = Color.FromArgb(39, 174, 96);
+            btnExport.ForeColor = Color.White;
+            btnExport.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold);
+            btnExport.Size = new Size(80, 32);
+            btnExport.Margin = new Padding(6, 0, 0, 0);
+            btnExport.Cursor = Cursors.Hand;
+            btnExport.Click += BtnExport_Click;
+
+            btnHelp.Text = "Help";
+            btnHelp.FlatStyle = FlatStyle.Flat;
+            btnHelp.FlatAppearance.BorderColor = Color.FromArgb(52, 152, 219);
+            btnHelp.FlatAppearance.BorderSize = 1;
+            btnHelp.BackColor = Color.White;
+            btnHelp.ForeColor = Color.FromArgb(52, 152, 219);
+            btnHelp.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold);
+            btnHelp.Size = new Size(70, 32);
+            btnHelp.Margin = new Padding(6, 0, 0, 0);
+            btnHelp.Cursor = Cursors.Hand;
+            btnHelp.Click += BtnHelp_Click;
+
+            btnAbout.Text = "About";
+            btnAbout.FlatStyle = FlatStyle.Flat;
+            btnAbout.FlatAppearance.BorderColor = Color.FromArgb(189, 195, 199);
+            btnAbout.FlatAppearance.BorderSize = 1;
+            btnAbout.BackColor = Color.White;
+            btnAbout.ForeColor = Color.FromArgb(100, 100, 100);
+            btnAbout.Font = new Font("Microsoft YaHei UI", 9F);
+            btnAbout.Size = new Size(70, 32);
+            btnAbout.Margin = new Padding(6, 0, 0, 0);
+            btnAbout.Cursor = Cursors.Hand;
+            btnAbout.Click += BtnAbout_Click;
+
+            headerBtnPanel.Controls.Add(btnAbout);
+            headerBtnPanel.Controls.Add(btnHelp);
+            headerBtnPanel.Controls.Add(btnExport);
+
+            headerPanel.Controls.Add(lblPageTitle);
+            headerPanel.Controls.Add(headerBtnPanel);
+
+            // ===== Content Panel =====
+            contentPanel.BackColor = AppTheme.ContentBg;
+            contentPanel.Dock = DockStyle.Fill;
+            contentPanel.Padding = new Padding(0);
+
+            // ===== Form1 =====
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(633, 611);
-            Controls.Add(tableLayoutPanel1);
-            Margin = new Padding(3, 4, 3, 4);
-            MaximizeBox = false;
+            BackColor = AppTheme.ContentBg;
+            ClientSize = new Size(1400, 860);
+            MinimumSize = new Size(1200, 750);
+            Controls.Add(contentPanel);
+            Controls.Add(headerPanel);
+            Controls.Add(sidebarPanel);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Alloy melt Activity Calculator Pro";
-            tableLayoutPanel1.ResumeLayout(false);
+            Text = "AlloyAct Pro - Alloy Melt Activity Calculator";
+            try
+            {
+                string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                if (!string.IsNullOrEmpty(exePath) && System.IO.File.Exists(exePath))
+                    Icon = Icon.ExtractAssociatedIcon(exePath);
+            }
+            catch { }
             ResumeLayout(false);
         }
 
         #endregion
 
-        private TableLayoutPanel tableLayoutPanel1;
-        private Button ActivityCoeff;
-        private Button InteractionCoeff;
-        private Button Activity;
-        private Button ActivityCoefficientAtInfinitely;
+        private Panel sidebarPanel;
+        private Panel headerPanel;
+        private FlowLayoutPanel headerBtnPanel;
+        private Panel contentPanel;
+        private Label sidebarLogo;
+        private Label lblCalcSection;
+        private Label lblToolsSection;
+        private Label lblPageTitle;
+        private Button btnActivity;
+        private Button btnCoefficient;
+        private Button btnInteraction;
+        private Button btnInfiniteDilution;
+        private Button btnSecondOrder;
+        private Button btnUnitConvert;
+        private Label lblAdvancedSection;
+        private Button btnDatabase;
+        private Button btnExport;
+        private Button btnHelp;
+        private Button btnAbout;
     }
 }

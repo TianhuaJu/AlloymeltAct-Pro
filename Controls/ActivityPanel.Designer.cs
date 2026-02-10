@@ -87,11 +87,11 @@ namespace AlloyAct_Pro.Controls
             Melt_composition.HeaderText = "Composition"; Melt_composition.Name = "Melt_composition"; Melt_composition.FillWeight = 130; Melt_composition.MinimumWidth = 80;
             solute_i.HeaderText = "Solute"; solute_i.Name = "solute_i"; solute_i.FillWeight = 50; solute_i.MinimumWidth = 50;
             xi.HeaderText = "x\u1D62"; xi.Name = "xi"; xi.FillWeight = 60; xi.MinimumWidth = 40; xi.DefaultCellStyle = new DataGridViewCellStyle { Format = "N4" };
-            activity.HeaderText = "a\u1D62 (Darken)"; activity.Name = "activity"; activity.FillWeight = 90; activity.MinimumWidth = 70; activity.DefaultCellStyle = new DataGridViewCellStyle { Format = "N4" };
+            activity.HeaderText = "ln a\u1D62 (Darken)"; activity.Name = "activity"; activity.FillWeight = 90; activity.MinimumWidth = 70; activity.DefaultCellStyle = new DataGridViewCellStyle { Format = "N4" };
             activity.ToolTipText = "Darken quadratic formalism";
-            ai_elloit.HeaderText = "a\u1D62 (Elliot)"; ai_elloit.Name = "ai_elloit"; ai_elloit.FillWeight = 90; ai_elloit.MinimumWidth = 70; ai_elloit.DefaultCellStyle = new DataGridViewCellStyle { Format = "N4" };
+            ai_elloit.HeaderText = "ln a\u1D62 (Elliot)"; ai_elloit.Name = "ai_elloit"; ai_elloit.FillWeight = 90; ai_elloit.MinimumWidth = 70; ai_elloit.DefaultCellStyle = new DataGridViewCellStyle { Format = "N4" };
             ai_elloit.ToolTipText = "Wagner model + 2nd-order interaction coefficients (\u03C1, experimental)";
-            ai_wagner.HeaderText = "a\u1D62 (Wagner)"; ai_wagner.Name = "ai_wagner"; ai_wagner.FillWeight = 90; ai_wagner.MinimumWidth = 70; ai_wagner.DefaultCellStyle = new DataGridViewCellStyle { Format = "N4" };
+            ai_wagner.HeaderText = "ln a\u1D62 (Wagner)"; ai_wagner.Name = "ai_wagner"; ai_wagner.FillWeight = 90; ai_wagner.MinimumWidth = 70; ai_wagner.DefaultCellStyle = new DataGridViewCellStyle { Format = "N4" };
             ai_wagner.ToolTipText = "Wagner dilute solution model (1st-order interaction coefficients)";
             Tem.HeaderText = "T (K)"; Tem.Name = "Tem"; Tem.FillWeight = 50; Tem.MinimumWidth = 45;
             state.HeaderText = "State"; state.Name = "state"; state.FillWeight = 50; state.MinimumWidth = 45;

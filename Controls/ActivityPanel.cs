@@ -36,11 +36,11 @@ namespace AlloyAct_Pro.Controls
 
             Pelton_acf = activity_.activity_coefficient_Pelton(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
             xi = comp_dict[solutei];
-            acf = Math.Exp(Pelton_acf) * xi;
+            acf = Pelton_acf + Math.Log(xi);            // ln(a_i) = lnγ_i + ln(x_i)
             Wagner_act = activity_.activity_Coefficient_Wagner(comp_dict, matrix, solutei, geo_Model, GeoModel, (state, Tem));
-            Wagner_act = Math.Exp(Wagner_act) * xi;
+            Wagner_act = Wagner_act + Math.Log(xi);     // ln(a_i) = lnγ_i + ln(x_i)
             Elloit_act = activity_.activity_coefficient_Elloit(comp_dict, solutei, matrix, Tem, geo_Model, GeoModel, state);
-            Elloit_act = Math.Exp(Elloit_act) * xi;
+            Elloit_act = Elloit_act + Math.Log(xi);     // ln(a_i) = lnγ_i + ln(x_i)
 
             string compostion_new = "";
             comp_dict.Remove(matrix);

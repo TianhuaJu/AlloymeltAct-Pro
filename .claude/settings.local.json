@@ -26,7 +26,14 @@
       "Bash(powershell.exe -NoProfile -Command 'winget show JRSoftware.InnoSetup 2>$null | Select-String \"\"Install\"\"')",
       "Bash(powershell.exe -NoProfile -Command 'Test-Path \"\"C:\\\\Users\\\\jthua\\\\AppData\\\\Local\\\\Programs\\\\Inno Setup 6\\\\ISCC.exe\"\"')",
       "Bash(powershell.exe -NoProfile -Command:*)",
-      "Bash(\"C:\\\\InnoSetup6\\\\ISCC.exe\" installer.iss)"
+      "Bash(\"C:\\\\InnoSetup6\\\\ISCC.exe\" installer.iss)",
+      "Bash(ls:*)",
+      "Bash(sqlite3:*)",
+      "Bash(findstr:*)",
+      "Bash(Select-String -Pattern \"error|succeeded|failed|Build\")",
+      "Bash(powershell:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)"
     ]
   }
 }

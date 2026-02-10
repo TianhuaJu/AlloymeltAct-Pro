@@ -29,6 +29,7 @@ namespace AlloyAct_Pro
             btnUnitConvert = AppTheme.CreateNavButton("  Unit Conversion");
             lblAdvancedSection = new Label();
             btnDatabase = AppTheme.CreateNavButton("  Database");
+            btnLiquidus = AppTheme.CreateNavButton("  Liquidus Temp.");
 
             headerPanel = new Panel();
             lblPageTitle = new Label();
@@ -91,15 +92,19 @@ namespace AlloyAct_Pro
             btnSecondOrder.Click += BtnSecondOrder_Click;
             btnUnitConvert.Click += BtnUnitConvert_Click;
             btnDatabase.Click += BtnDatabase_Click;
+            btnLiquidus.Click += BtnLiquidus_Click;
 
             // Add in REVERSE order because Dock=Top stacks top-down
-            // ADVANCED section: Database
-            sidebarPanel.Controls.Add(btnDatabase);
-            sidebarPanel.Controls.Add(lblAdvancedSection);
-            // TOOLS section: only Unit Conversion
+            // Visual order: CALCULATIONS → ADVANCED → TOOLS
+
+            // TOOLS section (bottom): Database, Unit Conversion
             sidebarPanel.Controls.Add(btnUnitConvert);
+            sidebarPanel.Controls.Add(btnDatabase);
             sidebarPanel.Controls.Add(lblToolsSection);
-            // CALCULATIONS section (top to bottom): Infinite Dilution, Interaction, Second-Order, Activity Coeff., Activity
+            // ADVANCED section (middle): Liquidus Temp.
+            sidebarPanel.Controls.Add(btnLiquidus);
+            sidebarPanel.Controls.Add(lblAdvancedSection);
+            // CALCULATIONS section (top): Infinite Dilution, Interaction, Second-Order, Activity Coeff., Activity
             sidebarPanel.Controls.Add(btnActivity);
             sidebarPanel.Controls.Add(btnCoefficient);
             sidebarPanel.Controls.Add(btnSecondOrder);
@@ -215,6 +220,7 @@ namespace AlloyAct_Pro
         private Button btnUnitConvert;
         private Label lblAdvancedSection;
         private Button btnDatabase;
+        private Button btnLiquidus;
         private Button btnExport;
         private Button btnHelp;
         private Button btnAbout;

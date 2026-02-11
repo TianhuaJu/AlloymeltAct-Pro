@@ -11,6 +11,7 @@ namespace AlloyAct_Pro
         private readonly InfiniteDilutionPanel infiniteDilutionPanel = new InfiniteDilutionPanel();
         private readonly SecondOrderPanel secondOrderPanel = new SecondOrderPanel();
         private readonly UnitConvertPanel unitConvertPanel = new UnitConvertPanel();
+        private readonly LiquidusPanel liquidusPanel = new LiquidusPanel();
         private readonly DatabasePanel databasePanel = new DatabasePanel();
 
         private UserControl activePanel;
@@ -27,7 +28,8 @@ namespace AlloyAct_Pro
         private void SetupPanels()
         {
             UserControl[] panels = { activityPanel, coefficientPanel, interactionPanel,
-                                     infiniteDilutionPanel, secondOrderPanel, unitConvertPanel, databasePanel };
+                                     infiniteDilutionPanel, secondOrderPanel,
+                                     liquidusPanel, unitConvertPanel, databasePanel };
             foreach (var p in panels)
             {
                 p.Dock = DockStyle.Fill;
@@ -66,6 +68,7 @@ namespace AlloyAct_Pro
                 InteractionCoefficientPanel p => p.PageTitle,
                 InfiniteDilutionPanel p => p.PageTitle,
                 SecondOrderPanel p => p.PageTitle,
+                LiquidusPanel p => p.PageTitle,
                 UnitConvertPanel p => p.PageTitle,
                 DatabasePanel p => p.PageTitle,
                 _ => "AlloyAct Pro"
@@ -103,6 +106,11 @@ namespace AlloyAct_Pro
             NavigateTo(unitConvertPanel, btnUnitConvert);
         }
 
+        private void BtnLiquidus_Click(object sender, EventArgs e)
+        {
+            NavigateTo(liquidusPanel, btnLiquidus);
+        }
+
         private void BtnDatabase_Click(object sender, EventArgs e)
         {
             NavigateTo(databasePanel, btnDatabase);
@@ -115,6 +123,7 @@ namespace AlloyAct_Pro
             else if (activePanel is InteractionCoefficientPanel icp) icp.ExportToExcel();
             else if (activePanel is InfiniteDilutionPanel idp) idp.ExportToExcel();
             else if (activePanel is SecondOrderPanel sop) sop.ExportToExcel();
+            else if (activePanel is LiquidusPanel lp) lp.ExportToExcel();
             else if (activePanel is UnitConvertPanel ucp) ucp.ExportToExcel();
             else if (activePanel is DatabasePanel dbp) dbp.ExportToExcel();
         }
@@ -155,6 +164,22 @@ namespace AlloyAct_Pro
             if (helpImage != null)
             {
                 ShowHelpDialog(helpTitle, helpImage);
+            }
+            else if (activePanel is LiquidusPanel)
+            {
+                MessageBox.Show(
+                    "Liquidus Temperature Prediction:\n\n" +
+                    "Predicts the liquidus temperature of an alloy melt based on the\n" +
+                    "Schr\u00f6der-van Laar equation combined with activity interaction models.\n\n" +
+                    "\u2022  Select the matrix (solvent) element\n" +
+                    "\u2022  Enter alloy composition in mole fraction (e.g., Mn0.02Si0.01)\n" +
+                    "\u2022  Reference temperature is used for initial activity estimation\n\n" +
+                    "Output: T_liquidus from Wagner, Darken and Elliot models,\n" +
+                    "freezing point depression (\u0394T), and solvent activity.\n\n" +
+                    "Theory: ln(a_solvent) = (\u0394Hf/R) \u00d7 (1/Tm \u2212 1/T)",
+                    "Liquidus Temperature - Help",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
             else if (activePanel is DatabasePanel)
             {
@@ -209,7 +234,7 @@ namespace AlloyAct_Pro
         {
             var aboutForm = new Form();
             aboutForm.Text = "About AlloyAct Pro";
-            aboutForm.Size = new Size(520, 540);
+            aboutForm.Size = new Size(520, 600);
             aboutForm.StartPosition = FormStartPosition.CenterParent;
             aboutForm.FormBorderStyle = FormBorderStyle.FixedDialog;
             aboutForm.MinimizeBox = false;
@@ -272,25 +297,42 @@ namespace AlloyAct_Pro
             lblParamList.AutoSize = true;
             lblParamList.Location = new Point(36, 174);
 
+            // Advanced section
+            var lblAdvanced = new Label();
+            lblAdvanced.Text = "Advanced:";
+            lblAdvanced.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            lblAdvanced.ForeColor = Color.FromArgb(44, 62, 80);
+            lblAdvanced.AutoSize = true;
+            lblAdvanced.Location = new Point(28, 298);
+
+            var lblAdvancedList = new Label();
+            lblAdvancedList.Text = "\u2022  Liquidus Temperature  (T\u2097\u1D62\u2091)";
+            lblAdvancedList.Font = new Font("Microsoft YaHei UI", 10.5F);
+            lblAdvancedList.ForeColor = Color.FromArgb(60, 60, 60);
+            lblAdvancedList.AutoSize = true;
+            lblAdvancedList.Location = new Point(36, 328);
+
             // Tools section
             var lblTools = new Label();
             lblTools.Text = "Tools:";
             lblTools.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
             lblTools.ForeColor = Color.FromArgb(44, 62, 80);
             lblTools.AutoSize = true;
-            lblTools.Location = new Point(28, 316);
+            lblTools.Location = new Point(28, 358);
 
             var lblToolList = new Label();
-            lblToolList.Text = "\u2022  Unit Conversion  (wt% \u2194 atom fraction)";
+            lblToolList.Text =
+                "\u2022  Database Management\n" +
+                "\u2022  Unit Conversion  (wt% \u2194 atom fraction)";
             lblToolList.Font = new Font("Microsoft YaHei UI", 10.5F);
             lblToolList.ForeColor = Color.FromArgb(60, 60, 60);
             lblToolList.AutoSize = true;
-            lblToolList.Location = new Point(36, 346);
+            lblToolList.Location = new Point(36, 388);
 
             // Separator 2
             var sep2 = new Label();
             sep2.BorderStyle = BorderStyle.Fixed3D;
-            sep2.Location = new Point(28, 380);
+            sep2.Location = new Point(28, 432);
             sep2.Size = new Size(440, 2);
 
             // References
@@ -299,7 +341,7 @@ namespace AlloyAct_Pro
             lblRef.Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold);
             lblRef.ForeColor = Color.FromArgb(44, 62, 80);
             lblRef.AutoSize = true;
-            lblRef.Location = new Point(28, 392);
+            lblRef.Location = new Point(28, 444);
 
             var lblRefList = new Label();
             lblRefList.Text =
@@ -310,7 +352,7 @@ namespace AlloyAct_Pro
             lblRefList.ForeColor = Color.FromArgb(100, 100, 100);
             lblRefList.AutoSize = true;
             lblRefList.MaximumSize = new Size(440, 0);
-            lblRefList.Location = new Point(30, 418);
+            lblRefList.Location = new Point(30, 470);
 
             mainPanel.Controls.Add(lblAppName);
             mainPanel.Controls.Add(lblSubtitle);
@@ -318,6 +360,8 @@ namespace AlloyAct_Pro
             mainPanel.Controls.Add(sep1);
             mainPanel.Controls.Add(lblParams);
             mainPanel.Controls.Add(lblParamList);
+            mainPanel.Controls.Add(lblAdvanced);
+            mainPanel.Controls.Add(lblAdvancedList);
             mainPanel.Controls.Add(lblTools);
             mainPanel.Controls.Add(lblToolList);
             mainPanel.Controls.Add(sep2);

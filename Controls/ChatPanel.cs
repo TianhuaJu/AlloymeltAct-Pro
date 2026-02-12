@@ -13,6 +13,7 @@ namespace AlloyAct_Pro.Controls
         // Config controls
         private ComboBox cboProvider = null!;
         private ComboBox cboModel = null!;
+        private TextBox txtBaseUrl = null!;
         private TextBox txtApiKey = null!;
         private Button btnConnect = null!;
         private Label lblStatus = null!;
@@ -143,6 +144,24 @@ namespace AlloyAct_Pro.Controls
             };
             UpdateModelList();
 
+            // Base URL
+            var lblUrl = new Label
+            {
+                Text = "地址:",
+                Font = AppTheme.BodyFont,
+                AutoSize = true,
+                Margin = new Padding(0, 8, 4, 0)
+            };
+
+            txtBaseUrl = new TextBox
+            {
+                Font = AppTheme.BodyFont,
+                Width = 200,
+                Margin = new Padding(0, 4, 8, 0)
+            };
+            txtBaseUrl.PlaceholderText = "默认使用官方地址";
+            txtBaseUrl.Text = "http://localhost:11434/v1";
+
             // API Key
             var lblKey = new Label
             {
@@ -156,7 +175,7 @@ namespace AlloyAct_Pro.Controls
             {
                 Font = AppTheme.BodyFont,
                 UseSystemPasswordChar = true,
-                Width = 180,
+                Width = 150,
                 Margin = new Padding(0, 4, 8, 0)
             };
             txtApiKey.PlaceholderText = "本地模型无需填写";
@@ -188,7 +207,7 @@ namespace AlloyAct_Pro.Controls
 
             flow.Controls.AddRange(new Control[] {
                 lblProvider, cboProvider, lblModel, cboModel,
-                lblKey, txtApiKey, btnConnect, lblStatus
+                lblUrl, txtBaseUrl, lblKey, txtApiKey, btnConnect, lblStatus
             });
 
             panel.Controls.Add(flow);
@@ -625,6 +644,9 @@ namespace AlloyAct_Pro.Controls
                 if (cboModel.Items.Count > 0)
                     cboModel.SelectedIndex = 0;
                 txtApiKey.PlaceholderText = config.ApiKeyHint;
+                // Show default base URL for current provider
+                txtBaseUrl.Text = config.BaseUrl;
+                txtBaseUrl.PlaceholderText = config.BaseUrl;
             }
         }
 
@@ -632,11 +654,12 @@ namespace AlloyAct_Pro.Controls
         {
             var provider = cboProvider.SelectedItem?.ToString() ?? "ollama";
             var model = cboModel.Text;
+            var baseUrl = string.IsNullOrWhiteSpace(txtBaseUrl.Text) ? null : txtBaseUrl.Text.Trim();
             var apiKey = string.IsNullOrWhiteSpace(txtApiKey.Text) ? null : txtApiKey.Text.Trim();
 
             try
             {
-                _agent = new ChatAgent(provider, apiKey, model);
+                _agent = new ChatAgent(provider, apiKey, model, baseUrl);
                 _agent.OnToolCall = (name, args) =>
                 {
                     if (InvokeRequired)

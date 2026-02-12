@@ -72,9 +72,9 @@ namespace AlloyAct_Pro.LLM
         /// </summary>
         public Action<Dictionary<string, object>>? OnChartRequested { get; set; }
 
-        public ChatAgent(string provider, string? apiKey = null, string? model = null, int maxToolIterations = 5)
+        public ChatAgent(string provider, string? apiKey = null, string? model = null, string? baseUrl = null, int maxToolIterations = 5)
         {
-            _backend = LlmBackend.Create(provider, apiKey, model);
+            _backend = LlmBackend.Create(provider, apiKey, model, baseUrl);
             _maxToolIterations = maxToolIterations;
             _history.Add(new ChatMessage { Role = "system", Content = SYSTEM_PROMPT });
         }

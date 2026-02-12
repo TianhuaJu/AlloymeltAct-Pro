@@ -141,13 +141,14 @@ namespace AlloyAct_Pro.LLM
             List<ToolDefinition>? tools = null,
             CancellationToken ct = default);
 
-        public static LlmBackend Create(string provider, string? apiKey = null, string? model = null)
+        public static LlmBackend Create(string provider, string? apiKey = null, string? model = null, string? baseUrl = null)
         {
             if (!ProviderRegistry.Providers.TryGetValue(provider, out var config))
                 throw new ArgumentException($"不支持的提供商: {provider}");
 
             var key = apiKey ?? Environment.GetEnvironmentVariable(config.EnvKey) ?? "";
             var mdl = model ?? config.DefaultModel;
+            var url = string.IsNullOrWhiteSpace(baseUrl) ? config.BaseUrl : baseUrl.Trim();
 
             if (provider == "claude")
                 return new ClaudeBackend(key, mdl);
@@ -155,7 +156,7 @@ namespace AlloyAct_Pro.LLM
                 return new GeminiBackend(key, mdl);
 
             // OpenAI-compatible: openai, deepseek, kimichat, ollama
-            return new OpenAICompatibleBackend(key, config.BaseUrl, mdl);
+            return new OpenAICompatibleBackend(key, url, mdl);
         }
     }
 

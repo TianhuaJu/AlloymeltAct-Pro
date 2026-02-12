@@ -30,6 +30,8 @@ namespace AlloyAct_Pro
             lblAdvancedSection = new Label();
             btnDatabase = AppTheme.CreateNavButton("  Database");
             btnLiquidus = AppTheme.CreateNavButton("  Liquidus Temp.");
+            lblAISection = new Label();
+            btnChat = AppTheme.CreateNavButton("  AI Assistant");
 
             headerPanel = new Panel();
             lblPageTitle = new Label();
@@ -93,11 +95,25 @@ namespace AlloyAct_Pro
             btnUnitConvert.Click += BtnUnitConvert_Click;
             btnDatabase.Click += BtnDatabase_Click;
             btnLiquidus.Click += BtnLiquidus_Click;
+            btnChat.Click += BtnChat_Click;
+
+            // AI section label
+            lblAISection.Text = "  AI";
+            lblAISection.Font = AppTheme.SidebarSectionFont;
+            lblAISection.ForeColor = Color.FromArgb(127, 140, 141);
+            lblAISection.BackColor = AppTheme.SidebarBg;
+            lblAISection.Dock = DockStyle.Top;
+            lblAISection.Height = 30;
+            lblAISection.TextAlign = ContentAlignment.BottomLeft;
+            lblAISection.Padding = new Padding(14, 0, 0, 4);
 
             // Add in REVERSE order because Dock=Top stacks top-down
             // Visual order: CALCULATIONS → ADVANCED → TOOLS
 
-            // TOOLS section (bottom): Database, Unit Conversion
+            // AI section (bottom-most): AI Assistant
+            sidebarPanel.Controls.Add(btnChat);
+            sidebarPanel.Controls.Add(lblAISection);
+            // TOOLS section: Database, Unit Conversion
             sidebarPanel.Controls.Add(btnUnitConvert);
             sidebarPanel.Controls.Add(btnDatabase);
             sidebarPanel.Controls.Add(lblToolsSection);
@@ -224,5 +240,7 @@ namespace AlloyAct_Pro
         private Button btnExport;
         private Button btnHelp;
         private Button btnAbout;
+        private Label lblAISection;
+        private Button btnChat;
     }
 }

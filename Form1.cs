@@ -13,6 +13,7 @@ namespace AlloyAct_Pro
         private readonly UnitConvertPanel unitConvertPanel = new UnitConvertPanel();
         private readonly LiquidusPanel liquidusPanel = new LiquidusPanel();
         private readonly DatabasePanel databasePanel = new DatabasePanel();
+        private readonly ChatPanel chatPanel = new ChatPanel();
 
         private UserControl activePanel;
         private Button activeNavButton;
@@ -29,7 +30,7 @@ namespace AlloyAct_Pro
         {
             UserControl[] panels = { activityPanel, coefficientPanel, interactionPanel,
                                      infiniteDilutionPanel, secondOrderPanel,
-                                     liquidusPanel, unitConvertPanel, databasePanel };
+                                     liquidusPanel, unitConvertPanel, databasePanel, chatPanel };
             foreach (var p in panels)
             {
                 p.Dock = DockStyle.Fill;
@@ -71,6 +72,7 @@ namespace AlloyAct_Pro
                 LiquidusPanel p => p.PageTitle,
                 UnitConvertPanel p => p.PageTitle,
                 DatabasePanel p => p.PageTitle,
+                ChatPanel p => p.PageTitle,
                 _ => "AlloyAct Pro"
             };
             lblPageTitle.Text = title;
@@ -116,6 +118,11 @@ namespace AlloyAct_Pro
             NavigateTo(databasePanel, btnDatabase);
         }
 
+        private void BtnChat_Click(object sender, EventArgs e)
+        {
+            NavigateTo(chatPanel, btnChat);
+        }
+
         private void BtnExport_Click(object sender, EventArgs e)
         {
             if (activePanel is ActivityPanel ap) ap.ExportToExcel();
@@ -126,6 +133,7 @@ namespace AlloyAct_Pro
             else if (activePanel is LiquidusPanel lp) lp.ExportToExcel();
             else if (activePanel is UnitConvertPanel ucp) ucp.ExportToExcel();
             else if (activePanel is DatabasePanel dbp) dbp.ExportToExcel();
+            else if (activePanel is ChatPanel cp) cp.ExportToExcel();
         }
 
         private void BtnHelp_Click(object sender, EventArgs e)
@@ -192,6 +200,21 @@ namespace AlloyAct_Pro
                     "Use Filter to search by element symbol.\n" +
                     "Click Save Changes to write edits back to the database.",
                     "Database Management - Help",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            else if (activePanel is ChatPanel)
+            {
+                MessageBox.Show(
+                    "AI Assistant:\n\n" +
+                    "Use natural language to perform thermodynamic calculations.\n\n" +
+                    "\u2022  Select LLM provider and model\n" +
+                    "\u2022  Enter API key (not needed for local Ollama)\n" +
+                    "\u2022  Click Connect to initialize\n" +
+                    "\u2022  Type your question and press Ctrl+Enter or click Send\n\n" +
+                    "Supported: Activity, activity coefficient, interaction coefficient,\n" +
+                    "infinite dilution, liquidus temperature, unit conversion, and chart plotting.",
+                    "AI Assistant - Help",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }

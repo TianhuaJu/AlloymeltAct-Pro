@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -40,6 +41,21 @@ namespace AlloyAct_Pro.LLM
         public string Content { get; set; } = "";
         public List<ToolCall> ToolCalls { get; set; } = new();
         public string FinishReason { get; set; } = "stop";
+    }
+
+    public enum StreamChunkType
+    {
+        TextDelta,         // 增量文本 token
+        ToolCallComplete,  // 完整的工具调用已组装完毕
+        Done               // 流结束
+    }
+
+    public class StreamChunk
+    {
+        public StreamChunkType Type { get; set; }
+        public string TextDelta { get; set; } = "";
+        public ToolCall? CompletedToolCall { get; set; }
+        public string FinishReason { get; set; } = "";
     }
 
     #endregion
@@ -118,6 +134,48 @@ namespace AlloyAct_Pro.LLM
         };
 
         public static string[] GetProviderNames() => Providers.Keys.ToArray();
+
+        /// <summary>
+        /// 从 Ollama 服务器动态获取已安装的模型列表
+        /// </summary>
+        public static async Task<string[]> FetchOllamaModelsAsync(string baseUrl, CancellationToken ct = default)
+        {
+            try
+            {
+                var url = baseUrl.TrimEnd('/');
+                if (url.EndsWith("/v1", StringComparison.OrdinalIgnoreCase))
+                    url = url.Substring(0, url.Length - 3);
+
+                var apiUrl = $"{url}/api/tags";
+
+                using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+                var response = await client.GetAsync(apiUrl, ct);
+                if (!response.IsSuccessStatusCode) return Array.Empty<string>();
+
+                var json = await response.Content.ReadAsStringAsync(ct);
+                using var doc = JsonDocument.Parse(json);
+
+                if (!doc.RootElement.TryGetProperty("models", out var modelsArray))
+                    return Array.Empty<string>();
+
+                var models = new List<string>();
+                foreach (var model in modelsArray.EnumerateArray())
+                {
+                    if (model.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.String)
+                    {
+                        var modelName = name.GetString();
+                        if (!string.IsNullOrEmpty(modelName))
+                            models.Add(modelName);
+                    }
+                }
+
+                return models.ToArray();
+            }
+            catch
+            {
+                return Array.Empty<string>();
+            }
+        }
     }
 
     #endregion
@@ -128,7 +186,8 @@ namespace AlloyAct_Pro.LLM
     {
         protected string ApiKey;
         protected string Model;
-        protected static readonly HttpClient SharedHttpClient = new() { Timeout = TimeSpan.FromSeconds(120) };
+        protected static readonly HttpClient SharedHttpClient = new() { Timeout = TimeSpan.FromSeconds(600) };
+        protected static readonly HttpClient StreamingHttpClient = new() { Timeout = Timeout.InfiniteTimeSpan };
 
         protected LlmBackend(string apiKey, string model)
         {
@@ -140,6 +199,98 @@ namespace AlloyAct_Pro.LLM
             List<ChatMessage> messages,
             List<ToolDefinition>? tools = null,
             CancellationToken ct = default);
+
+        /// <summary>
+        /// 流式对话（默认回退到非流式）
+        /// </summary>
+        public virtual async IAsyncEnumerable<StreamChunk> ChatStreamAsync(
+            List<ChatMessage> messages,
+            List<ToolDefinition>? tools = null,
+            [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            var response = await ChatAsync(messages, tools, ct);
+            if (!string.IsNullOrEmpty(response.Content))
+                yield return new StreamChunk { Type = StreamChunkType.TextDelta, TextDelta = response.Content };
+            foreach (var tc in response.ToolCalls)
+                yield return new StreamChunk { Type = StreamChunkType.ToolCallComplete, CompletedToolCall = tc };
+            yield return new StreamChunk { Type = StreamChunkType.Done, FinishReason = response.FinishReason };
+        }
+
+        /// <summary>
+        /// 从远程 API 获取可用模型列表
+        /// Ollama: GET {baseUrl}/../api/tags  → models[].name
+        /// OpenAI兼容: GET {baseUrl}/models   → data[].id
+        /// </summary>
+        public static async Task<string[]> FetchModelsAsync(string provider, string? baseUrl = null, string? apiKey = null, CancellationToken ct = default)
+        {
+            if (!ProviderRegistry.Providers.TryGetValue(provider, out var config))
+                return Array.Empty<string>();
+
+            var url = string.IsNullOrWhiteSpace(baseUrl) ? config.BaseUrl : baseUrl.Trim();
+            var key = apiKey ?? "";
+
+            try
+            {
+                if (provider == "ollama")
+                {
+                    // Ollama: baseUrl is like "http://host:11434/v1", api/tags is at "http://host:11434/api/tags"
+                    var ollamaBase = url.TrimEnd('/');
+                    if (ollamaBase.EndsWith("/v1"))
+                        ollamaBase = ollamaBase.Substring(0, ollamaBase.Length - 3);
+                    var tagsUrl = ollamaBase.TrimEnd('/') + "/api/tags";
+
+                    var request = new HttpRequestMessage(HttpMethod.Get, tagsUrl);
+                    var response = await SharedHttpClient.SendAsync(request, ct);
+                    var body = await response.Content.ReadAsStringAsync(ct);
+                    if (!response.IsSuccessStatusCode) return Array.Empty<string>();
+
+                    using var doc = JsonDocument.Parse(body);
+                    var models = new List<string>();
+                    if (doc.RootElement.TryGetProperty("models", out var arr))
+                    {
+                        foreach (var m in arr.EnumerateArray())
+                        {
+                            var name = m.TryGetProperty("name", out var n) ? n.GetString() : null;
+                            if (!string.IsNullOrEmpty(name))
+                                models.Add(name);
+                        }
+                    }
+                    return models.Count > 0 ? models.ToArray() : config.ModelList;
+                }
+
+                if (provider is "openai" or "deepseek" or "kimichat")
+                {
+                    // OpenAI-compatible: GET /models
+                    var modelsUrl = url.TrimEnd('/') + "/models";
+                    var request = new HttpRequestMessage(HttpMethod.Get, modelsUrl);
+                    if (!string.IsNullOrEmpty(key))
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", key);
+                    var response = await SharedHttpClient.SendAsync(request, ct);
+                    var body = await response.Content.ReadAsStringAsync(ct);
+                    if (!response.IsSuccessStatusCode) return config.ModelList;
+
+                    using var doc = JsonDocument.Parse(body);
+                    var models = new List<string>();
+                    if (doc.RootElement.TryGetProperty("data", out var data))
+                    {
+                        foreach (var m in data.EnumerateArray())
+                        {
+                            var id = m.TryGetProperty("id", out var idVal) ? idVal.GetString() : null;
+                            if (!string.IsNullOrEmpty(id))
+                                models.Add(id);
+                        }
+                    }
+                    return models.Count > 0 ? models.ToArray() : config.ModelList;
+                }
+
+                // Claude / Gemini — no standard models endpoint, use hardcoded list
+                return config.ModelList;
+            }
+            catch
+            {
+                return config.ModelList;
+            }
+        }
 
         public static LlmBackend Create(string provider, string? apiKey = null, string? model = null, string? baseUrl = null)
         {
@@ -254,6 +405,145 @@ namespace AlloyAct_Pro.LLM
             }
 
             return result;
+        }
+
+        private class ToolCallAccumulator
+        {
+            public string Id = "";
+            public string Name = "";
+            public StringBuilder Arguments = new();
+        }
+
+        public override async IAsyncEnumerable<StreamChunk> ChatStreamAsync(
+            List<ChatMessage> messages, List<ToolDefinition>? tools,
+            [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            // Build request body (same as ChatAsync but with stream: true)
+            var apiMessages = new List<object>();
+            foreach (var msg in messages)
+            {
+                var m = new Dictionary<string, object> { ["role"] = msg.Role, ["content"] = msg.Content ?? "" };
+                if (msg.ToolCallId != null) m["tool_call_id"] = msg.ToolCallId;
+                if (msg.ToolCalls != null && msg.ToolCalls.Count > 0)
+                {
+                    m["tool_calls"] = msg.ToolCalls.Select(tc => new
+                    {
+                        id = tc.Id,
+                        type = tc.Type,
+                        function = new { name = tc.Function.Name, arguments = tc.Function.Arguments }
+                    }).ToList();
+                }
+                apiMessages.Add(m);
+            }
+
+            var body = new Dictionary<string, object>
+            {
+                ["model"] = Model,
+                ["messages"] = apiMessages,
+                ["stream"] = true
+            };
+
+            if (tools != null && tools.Count > 0)
+            {
+                body["tools"] = tools.Select(t => new
+                {
+                    type = "function",
+                    function = new { name = t.Name, description = t.Description, parameters = t.Parameters }
+                }).ToList();
+                body["tool_choice"] = "auto";
+            }
+
+            var json = JsonSerializer.Serialize(body);
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/chat/completions")
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
+            if (!string.IsNullOrEmpty(ApiKey))
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", ApiKey);
+
+            var response = await StreamingHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                throw new Exception($"API error ({response.StatusCode}): {errBody}");
+            }
+
+            var toolAccumulators = new Dictionary<int, ToolCallAccumulator>();
+            string finishReason = "stop";
+
+            await foreach (var sse in SseReader.ReadAsync(response, ct))
+            {
+                if (sse.Data == "[DONE]") break;
+
+                JsonElement root;
+                try { root = JsonDocument.Parse(sse.Data).RootElement; }
+                catch { continue; }
+
+                if (!root.TryGetProperty("choices", out var choices) || choices.GetArrayLength() == 0)
+                    continue;
+
+                var choice = choices[0];
+                if (choice.TryGetProperty("finish_reason", out var fr) && fr.ValueKind == JsonValueKind.String)
+                    finishReason = fr.GetString() ?? "stop";
+
+                if (!choice.TryGetProperty("delta", out var delta))
+                    continue;
+
+                // Text content delta
+                if (delta.TryGetProperty("content", out var contentVal) && contentVal.ValueKind == JsonValueKind.String)
+                {
+                    var text = contentVal.GetString();
+                    if (!string.IsNullOrEmpty(text))
+                        yield return new StreamChunk { Type = StreamChunkType.TextDelta, TextDelta = text };
+                }
+
+                // Tool call deltas
+                if (delta.TryGetProperty("tool_calls", out var tcArr) && tcArr.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var tcDelta in tcArr.EnumerateArray())
+                    {
+                        int index = tcDelta.TryGetProperty("index", out var idx) ? idx.GetInt32() : 0;
+                        if (!toolAccumulators.TryGetValue(index, out var acc))
+                        {
+                            acc = new ToolCallAccumulator();
+                            toolAccumulators[index] = acc;
+                        }
+
+                        if (tcDelta.TryGetProperty("id", out var idVal) && idVal.ValueKind == JsonValueKind.String)
+                            acc.Id = idVal.GetString() ?? "";
+
+                        if (tcDelta.TryGetProperty("function", out var fn))
+                        {
+                            if (fn.TryGetProperty("name", out var nameVal) && nameVal.ValueKind == JsonValueKind.String)
+                                acc.Name = nameVal.GetString() ?? "";
+                            if (fn.TryGetProperty("arguments", out var argsVal) && argsVal.ValueKind == JsonValueKind.String)
+                                acc.Arguments.Append(argsVal.GetString() ?? "");
+                        }
+                    }
+                }
+            }
+
+            // Emit accumulated tool calls
+            foreach (var kvp in toolAccumulators.OrderBy(k => k.Key))
+            {
+                var acc = kvp.Value;
+                yield return new StreamChunk
+                {
+                    Type = StreamChunkType.ToolCallComplete,
+                    CompletedToolCall = new ToolCall
+                    {
+                        Id = acc.Id,
+                        Type = "function",
+                        Function = new ToolCallFunction
+                        {
+                            Name = acc.Name,
+                            Arguments = acc.Arguments.ToString()
+                        }
+                    }
+                };
+            }
+
+            yield return new StreamChunk { Type = StreamChunkType.Done, FinishReason = finishReason };
         }
     }
 
@@ -378,6 +668,181 @@ namespace AlloyAct_Pro.LLM
 
             return result;
         }
+
+        public override async IAsyncEnumerable<StreamChunk> ChatStreamAsync(
+            List<ChatMessage> messages, List<ToolDefinition>? tools,
+            [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            // Build request body (same as ChatAsync but with stream: true)
+            string systemMsg = "";
+            var apiMessages = new List<object>();
+            foreach (var msg in messages)
+            {
+                if (msg.Role == "system") { systemMsg = msg.Content; continue; }
+                if (msg.Role == "tool")
+                {
+                    apiMessages.Add(new
+                    {
+                        role = "user",
+                        content = new object[]
+                        {
+                            new { type = "tool_result", tool_use_id = msg.ToolCallId ?? "", content = msg.Content ?? "" }
+                        }
+                    });
+                    continue;
+                }
+                if (msg.Role == "assistant" && msg.ToolCalls != null && msg.ToolCalls.Count > 0)
+                {
+                    var contentBlocks = new List<object>();
+                    if (!string.IsNullOrEmpty(msg.Content))
+                        contentBlocks.Add(new { type = "text", text = msg.Content });
+                    foreach (var tc in msg.ToolCalls)
+                    {
+                        contentBlocks.Add(new
+                        {
+                            type = "tool_use",
+                            id = tc.Id,
+                            name = tc.Function.Name,
+                            input = JsonSerializer.Deserialize<JsonElement>(tc.Function.Arguments)
+                        });
+                    }
+                    apiMessages.Add(new { role = "assistant", content = contentBlocks });
+                    continue;
+                }
+                apiMessages.Add(new { role = msg.Role, content = msg.Content ?? "" });
+            }
+
+            var body = new Dictionary<string, object>
+            {
+                ["model"] = Model,
+                ["max_tokens"] = 4096,
+                ["messages"] = apiMessages,
+                ["stream"] = true
+            };
+            if (!string.IsNullOrEmpty(systemMsg))
+                body["system"] = systemMsg;
+            if (tools != null && tools.Count > 0)
+            {
+                body["tools"] = tools.Select(t => new
+                {
+                    name = t.Name,
+                    description = t.Description,
+                    input_schema = t.Parameters
+                }).ToList();
+            }
+
+            var json = JsonSerializer.Serialize(body);
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.anthropic.com/v1/messages")
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
+            request.Headers.Add("x-api-key", ApiKey);
+            request.Headers.Add("anthropic-version", "2023-06-01");
+
+            var response = await StreamingHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                throw new Exception($"Claude API error ({response.StatusCode}): {errBody}");
+            }
+
+            // Track current content block
+            bool inToolUse = false;
+            string currentToolId = "";
+            string currentToolName = "";
+            var toolArgsBuilder = new StringBuilder();
+            string finishReason = "end_turn";
+
+            await foreach (var sse in SseReader.ReadAsync(response, ct))
+            {
+                JsonElement root;
+                try { root = JsonDocument.Parse(sse.Data).RootElement; }
+                catch { continue; }
+
+                var eventType = sse.Event;
+                if (string.IsNullOrEmpty(eventType) && root.TryGetProperty("type", out var typeVal))
+                    eventType = typeVal.GetString() ?? "";
+
+                switch (eventType)
+                {
+                    case "content_block_start":
+                        if (root.TryGetProperty("content_block", out var block))
+                        {
+                            var blockType = block.TryGetProperty("type", out var bt) ? bt.GetString() : "";
+                            if (blockType == "tool_use")
+                            {
+                                inToolUse = true;
+                                currentToolId = block.TryGetProperty("id", out var id) ? id.GetString() ?? "" : "";
+                                currentToolName = block.TryGetProperty("name", out var name) ? name.GetString() ?? "" : "";
+                                toolArgsBuilder.Clear();
+                            }
+                            else
+                            {
+                                inToolUse = false;
+                            }
+                        }
+                        break;
+
+                    case "content_block_delta":
+                        if (root.TryGetProperty("delta", out var delta))
+                        {
+                            var deltaType = delta.TryGetProperty("type", out var dt) ? dt.GetString() : "";
+                            if (deltaType == "text_delta")
+                            {
+                                var text = delta.TryGetProperty("text", out var tv) ? tv.GetString() ?? "" : "";
+                                if (!string.IsNullOrEmpty(text))
+                                    yield return new StreamChunk { Type = StreamChunkType.TextDelta, TextDelta = text };
+                            }
+                            else if (deltaType == "input_json_delta")
+                            {
+                                var partial = delta.TryGetProperty("partial_json", out var pj) ? pj.GetString() ?? "" : "";
+                                toolArgsBuilder.Append(partial);
+                            }
+                        }
+                        break;
+
+                    case "content_block_stop":
+                        if (inToolUse)
+                        {
+                            yield return new StreamChunk
+                            {
+                                Type = StreamChunkType.ToolCallComplete,
+                                CompletedToolCall = new ToolCall
+                                {
+                                    Id = currentToolId,
+                                    Type = "function",
+                                    Function = new ToolCallFunction
+                                    {
+                                        Name = currentToolName,
+                                        Arguments = toolArgsBuilder.ToString()
+                                    }
+                                }
+                            };
+                            inToolUse = false;
+                        }
+                        break;
+
+                    case "message_delta":
+                        if (root.TryGetProperty("delta", out var msgDelta))
+                        {
+                            if (msgDelta.TryGetProperty("stop_reason", out var sr) && sr.ValueKind == JsonValueKind.String)
+                                finishReason = sr.GetString() ?? "end_turn";
+                        }
+                        break;
+
+                    case "message_stop":
+                        break;
+
+                    case "error":
+                        var errMsg = root.TryGetProperty("error", out var err)
+                            ? (err.TryGetProperty("message", out var em) ? em.GetString() ?? "Unknown error" : "Unknown error")
+                            : "Unknown stream error";
+                        throw new Exception($"Claude stream error: {errMsg}");
+                }
+            }
+
+            yield return new StreamChunk { Type = StreamChunkType.Done, FinishReason = finishReason };
+        }
     }
 
     #endregion
@@ -493,6 +958,97 @@ namespace AlloyAct_Pro.LLM
             }
 
             return result;
+        }
+
+        public override async IAsyncEnumerable<StreamChunk> ChatStreamAsync(
+            List<ChatMessage> messages, List<ToolDefinition>? tools,
+            [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            // Build contents (same as ChatAsync)
+            var contents = new List<object>();
+            foreach (var msg in messages)
+            {
+                if (msg.Role == "system") continue;
+                var role = msg.Role == "assistant" ? "model" : "user";
+                contents.Add(new { role, parts = new[] { new { text = msg.Content ?? "" } } });
+            }
+
+            var body = new Dictionary<string, object> { ["contents"] = contents };
+            if (tools != null && tools.Count > 0)
+            {
+                var declarations = tools.Select(t => new
+                {
+                    name = t.Name,
+                    description = t.Description,
+                    parameters = CleanSchemaForGemini(t.Parameters)
+                }).ToList();
+                body["tools"] = new[] { new { function_declarations = declarations } };
+            }
+
+            var systemMsg = messages.FirstOrDefault(m => m.Role == "system");
+            if (systemMsg != null)
+                body["system_instruction"] = new { parts = new[] { new { text = systemMsg.Content } } };
+
+            var json = JsonSerializer.Serialize(body);
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:streamGenerateContent?alt=sse&key={ApiKey}";
+            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
+
+            var response = await StreamingHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errBody = await response.Content.ReadAsStringAsync(ct);
+                throw new Exception($"Gemini API error ({response.StatusCode}): {errBody}");
+            }
+
+            await foreach (var sse in SseReader.ReadAsync(response, ct))
+            {
+                if (string.IsNullOrWhiteSpace(sse.Data)) continue;
+
+                JsonElement root;
+                try { root = JsonDocument.Parse(sse.Data).RootElement; }
+                catch { continue; }
+
+                if (!root.TryGetProperty("candidates", out var candidates) || candidates.GetArrayLength() == 0)
+                    continue;
+
+                var candidate = candidates[0];
+                if (!candidate.TryGetProperty("content", out var content) ||
+                    !content.TryGetProperty("parts", out var parts))
+                    continue;
+
+                foreach (var part in parts.EnumerateArray())
+                {
+                    if (part.TryGetProperty("text", out var text))
+                    {
+                        var t = text.GetString();
+                        if (!string.IsNullOrEmpty(t))
+                            yield return new StreamChunk { Type = StreamChunkType.TextDelta, TextDelta = t };
+                    }
+                    if (part.TryGetProperty("functionCall", out var fc))
+                    {
+                        var name = fc.GetProperty("name").GetString() ?? "";
+                        yield return new StreamChunk
+                        {
+                            Type = StreamChunkType.ToolCallComplete,
+                            CompletedToolCall = new ToolCall
+                            {
+                                Id = $"call_{name}_{Guid.NewGuid():N}".Substring(0, 32),
+                                Type = "function",
+                                Function = new ToolCallFunction
+                                {
+                                    Name = name,
+                                    Arguments = fc.GetProperty("args").GetRawText()
+                                }
+                            }
+                        };
+                    }
+                }
+            }
+
+            yield return new StreamChunk { Type = StreamChunkType.Done, FinishReason = "stop" };
         }
     }
 

@@ -155,8 +155,11 @@ namespace AlloyAct_Pro.Controls
                 Font = AppTheme.BodyFont,
                 DropDownStyle = ComboBoxStyle.DropDown,
                 Width = 200,
-                Margin = new Padding(0, 4, 8, 0)
+                Margin = new Padding(0, 4, 8, 0),
+                DrawMode = DrawMode.OwnerDrawFixed,
+                ItemHeight = 22
             };
+            cboModel.DrawItem += CboModel_DrawItem;
             UpdateModelList();
 
             // Base URL（仅 Ollama 时显示）
@@ -1599,6 +1602,43 @@ namespace AlloyAct_Pro.Controls
         #endregion
 
         #region Event Handlers
+
+        /// <summary>
+        /// 自定义绘制模型下拉列表项：不支持工具调用的模型显示为灰色 + ⚠ 标记
+        /// </summary>
+        private void CboModel_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            e.DrawBackground();
+
+            var modelName = cboModel.Items[e.Index]?.ToString() ?? "";
+            bool unsupported = ChatAgent.IsToolUnsupportedModel(modelName);
+
+            Color textColor;
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                // 选中状态
+                textColor = unsupported ? Color.FromArgb(200, 200, 200) : Color.White;
+            }
+            else
+            {
+                // 普通状态
+                textColor = unsupported ? Color.FromArgb(170, 170, 170) : Color.FromArgb(44, 62, 80);
+            }
+
+            var displayText = unsupported ? $"⚠ {modelName}  (无工具)" : modelName;
+
+            using var brush = new SolidBrush(textColor);
+            var font = unsupported
+                ? new Font(e.Font ?? cboModel.Font, FontStyle.Italic)
+                : (e.Font ?? cboModel.Font);
+            e.Graphics.DrawString(displayText, font, brush, e.Bounds.X + 2, e.Bounds.Y + 2);
+
+            if (unsupported && font != e.Font)
+                font.Dispose();
+
+            e.DrawFocusRectangle();
+        }
 
         private void UpdateModelList()
         {

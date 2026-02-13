@@ -217,8 +217,9 @@ namespace AlloyAct_Pro.LLM
         /// <summary>
         /// 根据模型名称预判是否不支持工具调用
         /// 仅列入确认不支持的模型，未知模型默认支持（运行时自动降级兜底）
+        /// 公开供 UI 层调用（灰显不支持工具的模型）
         /// </summary>
-        private static bool IsToolUnsupportedModel(string modelName)
+        public static bool IsToolUnsupportedModel(string modelName)
         {
             if (string.IsNullOrEmpty(modelName)) return false;
             var name = modelName.ToLowerInvariant();

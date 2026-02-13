@@ -64,7 +64,7 @@ namespace AlloyAct_Pro.Controls
             mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));   // Config
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));   // Chat
-            mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));  // Input
+            mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 150));  // Input
 
             // === Config Row ===
             var configPanel = CreateConfigPanel();
@@ -264,7 +264,7 @@ namespace AlloyAct_Pro.Controls
             txtInput = new TextBox
             {
                 Dock = DockStyle.Fill,
-                Font = new Font("Microsoft YaHei UI", 12F),
+                Font = new Font("Microsoft YaHei UI", 13F),
                 Multiline = true,
                 ScrollBars = ScrollBars.Vertical,
                 PlaceholderText = "输入您的问题... (Ctrl+Enter 发送)"
@@ -281,14 +281,14 @@ namespace AlloyAct_Pro.Controls
             btnSend = new Button
             {
                 Text = "发送",
-                Font = AppTheme.CalcBtnFont,
+                Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold),
                 BackColor = Color.FromArgb(39, 174, 96),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Size = new Size(80, 40),
+                Size = new Size(80, 50),
                 Enabled = true,
                 Cursor = Cursors.Hand,
-                Margin = new Padding(0, 0, 0, 4)
+                Margin = new Padding(0, 0, 0, 6)
             };
             btnSend.FlatAppearance.BorderSize = 0;
             btnSend.Click += BtnSend_Click;
@@ -296,11 +296,11 @@ namespace AlloyAct_Pro.Controls
             btnClear = new Button
             {
                 Text = "清空",
-                Font = AppTheme.BodyFont,
+                Font = new Font("Microsoft YaHei UI", 10F),
                 BackColor = Color.FromArgb(149, 165, 166),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Size = new Size(80, 34),
+                Size = new Size(80, 40),
                 Cursor = Cursors.Hand
             };
             btnClear.FlatAppearance.BorderSize = 0;
@@ -392,7 +392,7 @@ namespace AlloyAct_Pro.Controls
             var roleLabel = new Label
             {
                 Text = "助手",
-                Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold),
+                Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(39, 174, 96),
                 AutoSize = true,
                 Location = new Point(12, 6),
@@ -405,9 +405,9 @@ namespace AlloyAct_Pro.Controls
                 BorderStyle = BorderStyle.None,
                 BackColor = Color.FromArgb(240, 248, 232),
                 ForeColor = Color.FromArgb(44, 62, 80),
-                Font = new Font("Microsoft YaHei UI", 11F),
+                Font = new Font("Microsoft YaHei UI", 12F),
                 Width = panelWidth - 30,
-                Location = new Point(12, 28),
+                Location = new Point(12, 30),
                 ScrollBars = RichTextBoxScrollBars.None,
                 DetectUrls = false,
                 WordWrap = true,
@@ -465,7 +465,7 @@ namespace AlloyAct_Pro.Controls
             {
                 var contentHeight = GetRichTextBoxContentHeight(_streamingRtb);
                 _streamingRtb.Height = contentHeight + 4;
-                _streamingBubble.Height = _streamingRtb.Height + 40;
+                _streamingBubble.Height = _streamingRtb.Height + 42;
                 ScrollToBottom();
             }
             catch (ObjectDisposedException)
@@ -507,7 +507,7 @@ namespace AlloyAct_Pro.Controls
 
                     var contentHeight = GetRichTextBoxContentHeight(rtb);
                     rtb.Height = contentHeight + 4;
-                    bubble.Height = rtb.Height + 40;
+                    bubble.Height = rtb.Height + 42;
 
                     // 定位嵌入的 DataGridView 表格
                     PositionEmbeddedTables(bubble, rtb);
@@ -595,7 +595,7 @@ namespace AlloyAct_Pro.Controls
             var lbl = new Label
             {
                 Text = text,
-                Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Italic),
+                Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Italic),
                 ForeColor = Color.FromArgb(136, 136, 136),
                 BackColor = Color.FromArgb(240, 240, 240),
                 AutoSize = false,
@@ -679,7 +679,7 @@ namespace AlloyAct_Pro.Controls
             var roleLabel = new Label
             {
                 Text = roleText,
-                Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold),
+                Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold),
                 ForeColor = roleColor,
                 AutoSize = true,
                 Location = new Point(12, 6),
@@ -694,9 +694,9 @@ namespace AlloyAct_Pro.Controls
                 BorderStyle = BorderStyle.None,
                 BackColor = bgColor,
                 ForeColor = textColor,
-                Font = new Font("Microsoft YaHei UI", 11F),
+                Font = new Font("Microsoft YaHei UI", 12F),
                 Width = contentWidth,
-                Location = new Point(12, 28),
+                Location = new Point(12, 30),
                 ScrollBars = RichTextBoxScrollBars.None,
                 DetectUrls = false,
                 WordWrap = true,
@@ -713,7 +713,7 @@ namespace AlloyAct_Pro.Controls
             // 自动计算内容高度
             var contentHeight = GetRichTextBoxContentHeight(rtb);
             rtb.Height = contentHeight + 4;
-            bubble.Height = rtb.Height + 40;
+            bubble.Height = rtb.Height + 42;
 
             bubble.Controls.Add(roleLabel);
             bubble.Controls.Add(rtb);
@@ -867,16 +867,16 @@ namespace AlloyAct_Pro.Controls
         private void RenderMarkdownToRtb(RichTextBox rtb, string text, Color defaultColor)
         {
             rtb.Clear();
-            var baseFont = new Font("Microsoft YaHei UI", 11F);
-            var boldFont = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
-            var subFont = new Font("Microsoft YaHei UI", 8.5F);
-            var supFont = new Font("Microsoft YaHei UI", 8.5F);
-            var monoFont = new Font("Consolas", 10F);
-            var tableFont = new Font("Consolas", 10F);
-            var h2Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Bold);
-            var h3Font = new Font("Microsoft YaHei UI", 13F, FontStyle.Bold);
-            var h4Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
-            var h5Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            var baseFont = new Font("Microsoft YaHei UI", 12F);
+            var boldFont = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
+            var subFont = new Font("Microsoft YaHei UI", 9F);
+            var supFont = new Font("Microsoft YaHei UI", 9F);
+            var monoFont = new Font("Consolas", 11F);
+            var tableFont = new Font("Consolas", 11F);
+            var h2Font = new Font("Microsoft YaHei UI", 16F, FontStyle.Bold);
+            var h3Font = new Font("Microsoft YaHei UI", 14F, FontStyle.Bold);
+            var h4Font = new Font("Microsoft YaHei UI", 13F, FontStyle.Bold);
+            var h5Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Bold);
 
             var lines = text.Split('\n');
             bool inTable = false;
@@ -956,7 +956,12 @@ namespace AlloyAct_Pro.Controls
                     var level = headingMatch.Groups[1].Value.Length;
                     var headText = headingMatch.Groups[2].Value;
                     var hFont = level switch { 2 => h2Font, 3 => h3Font, 4 => h4Font, _ => h5Font };
-                    AppendText(rtb, headText, hFont, Color.FromArgb(44, 62, 80));
+                    var hBoldFont = new Font(hFont, FontStyle.Bold);
+                    var hSubFont = new Font(hFont.FontFamily, hFont.Size * 0.75F);
+                    var hSupFont = new Font(hFont.FontFamily, hFont.Size * 0.75F);
+                    // 标题也支持 sub/sup/bold 格式化
+                    AppendFormattedLine(rtb, headText, Color.FromArgb(44, 62, 80),
+                        hFont, hBoldFont, hSubFont, hSupFont, monoFont);
                     continue;
                 }
 
@@ -1181,7 +1186,7 @@ namespace AlloyAct_Pro.Controls
             // 在 RichTextBox 后追加换行占位
             if (rtb.TextLength > 0)
                 rtb.AppendText("\n");
-            AppendText(rtb, "[表格]", new Font("Microsoft YaHei UI", 9F, FontStyle.Italic), Color.FromArgb(160, 160, 160));
+            AppendText(rtb, "[表格]", new Font("Microsoft YaHei UI", 10F, FontStyle.Italic), Color.FromArgb(160, 160, 160));
 
             // 记录需要嵌入的表格数据，在气泡创建完成后插入 DataGridView
             var bubble = rtb.Parent as Panel;
@@ -1216,7 +1221,7 @@ namespace AlloyAct_Pro.Controls
                 CellBorderStyle = DataGridViewCellBorderStyle.Single,
                 SelectionMode = DataGridViewSelectionMode.CellSelect,
                 MultiSelect = false,
-                Font = new Font("Microsoft YaHei UI", 9.5F),
+                Font = new Font("Microsoft YaHei UI", 11F),
                 Dock = DockStyle.None,
                 Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
                 TabStop = false,
@@ -1226,17 +1231,19 @@ namespace AlloyAct_Pro.Controls
             // 阻止选中高亮干扰视觉
             dgv.DefaultCellStyle.SelectionBackColor = Color.White;
             dgv.DefaultCellStyle.SelectionForeColor = Color.FromArgb(44, 62, 80);
-            dgv.DefaultCellStyle.Padding = new Padding(6, 4, 6, 4);
+            dgv.DefaultCellStyle.Padding = new Padding(8, 6, 8, 6);
             dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgv.RowTemplate.Height = 32;
 
             // 表头样式（第一行数据作为表头）
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold);
-            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 5, 6, 5);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 6, 8, 6);
             dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgv.ColumnHeadersHeight = 36;
 
             // 交替行颜色
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 248, 252);
@@ -1304,7 +1311,7 @@ namespace AlloyAct_Pro.Controls
 
             if (extraHeight > 0)
             {
-                bubble.Height = rtb.Height + 40 + extraHeight;
+                bubble.Height = rtb.Height + 42 + extraHeight;
             }
         }
 
@@ -1424,7 +1431,7 @@ namespace AlloyAct_Pro.Controls
                             rtb.Width = targetWidth - 30;
                             var h = GetRichTextBoxContentHeight(rtb);
                             rtb.Height = h + 4;
-                            bubble.Height = rtb.Height + 40;
+                            bubble.Height = rtb.Height + 42;
                             bubbleRtb = rtb;
                         }
                     }

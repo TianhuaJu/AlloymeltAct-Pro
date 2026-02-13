@@ -753,14 +753,24 @@ namespace AlloyAct_Pro.Controls
             // 0. 清理 <think>...</think> 思维链标签（deepseek-r1 等推理模型）
             text = Regex.Replace(text, @"<think>[\s\S]*?</think>", "", RegexOptions.IgnoreCase);
 
-            // 1. LaTeX 希腊字母/符号 → Unicode
+            // 1. LaTeX 公式块和行内公式 → Unicode + sub/sup
             text = ConvertLatexToUnicode(text);
 
             // 2. LaTeX 上下标 → HTML sub/sup （仅匹配变量后的 _x/^x 模式）
             text = ConvertLatexSubscripts(text);
 
-            // 3. 清理残余的 LaTeX 花括号（如 {Si,Mg} → Si,Mg）
+            // 3. 清理残余的独立 LaTeX 命令（如 \ln, \log 等未在公式块中的）
+            text = Regex.Replace(text, @"\\(ln|log|exp|sin|cos|tan|max|min)\b", "$1");
+
+            // 4. 清理残余的 LaTeX 花括号（如 {Si,Mg} → Si,Mg）
             text = Regex.Replace(text, @"(?<!\\)\{([^}]*)\}", "$1");
+
+            // 5. 清理残余的反斜杠命令（如 \, \; \! \quad 等间距命令）
+            text = Regex.Replace(text, @"\\[,;!]", " ");
+            text = Regex.Replace(text, @"\\quad\b", "  ");
+            text = Regex.Replace(text, @"\\qquad\b", "    ");
+            text = Regex.Replace(text, @"\\left[\(\[\{\\|]?", "");
+            text = Regex.Replace(text, @"\\right[\)\]\}\\|]?", "");
 
             return text;
         }
@@ -770,8 +780,14 @@ namespace AlloyAct_Pro.Controls
         /// </summary>
         private string ConvertLatexToUnicode(string text)
         {
-            // 块级公式 $$...$$ → 提取内容（先处理块级，避免被行内匹配）
+            // 块级公式 \[...\] → 提取内容（先处理块级）
+            text = Regex.Replace(text, @"\\\[(.+?)\\\]", m => "\n" + ConvertLatexExpression(m.Groups[1].Value) + "\n", RegexOptions.Singleline);
+
+            // 块级公式 $$...$$ → 提取内容
             text = Regex.Replace(text, @"\$\$([^$]+)\$\$", m => "\n" + ConvertLatexExpression(m.Groups[1].Value) + "\n");
+
+            // 行内公式 \(...\) → 提取内容
+            text = Regex.Replace(text, @"\\\((.+?)\\\)", m => ConvertLatexExpression(m.Groups[1].Value), RegexOptions.Singleline);
 
             // 行内公式 $...$ → 提取内容
             text = Regex.Replace(text, @"\$([^$]+)\$", m => ConvertLatexExpression(m.Groups[1].Value));
@@ -859,8 +875,12 @@ namespace AlloyAct_Pro.Controls
         /// </summary>
         private string ConvertLatexSubscripts(string text)
         {
-            text = Regex.Replace(text, @"(?<=[a-zA-Zγεμρσδαβθλωφπ])_\{([^}]+)\}", "<sub>$1</sub>");
-            text = Regex.Replace(text, @"(?<=[a-zA-Zγεμρσδαβθλωφπ])\^\{([^}]+)\}", "<sup>$1</sup>");
+            // 带花括号的下标/上标：ε_{Zn,Mg} → ε<sub>Zn,Mg</sub>
+            text = Regex.Replace(text, @"(?<=[a-zA-Z0-9γεμρσδαβθλωφπΓΔΣ\)])_\{([^}]+)\}", "<sub>$1</sub>");
+            text = Regex.Replace(text, @"(?<=[a-zA-Z0-9γεμρσδαβθλωφπΓΔΣ\)])\^\{([^}]+)\}", "<sup>$1</sup>");
+            // 单字符下标/上标：ε_i → ε<sub>i</sub>（仅匹配变量/希腊字母后的模式）
+            text = Regex.Replace(text, @"(?<=[a-zA-ZγεμρσδαβθλωφπΓΔΣ\)])_([a-zA-Z0-9])(?![a-zA-Z0-9_])", "<sub>$1</sub>");
+            text = Regex.Replace(text, @"(?<=[a-zA-ZγεμρσδαβθλωφπΓΔΣ\)])\^([a-zA-Z0-9])(?![a-zA-Z0-9^])", "<sup>$1</sup>");
             return text;
         }
 
@@ -1215,8 +1235,9 @@ namespace AlloyAct_Pro.Controls
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
                 AllowUserToResizeRows = false,
+                AllowUserToResizeColumns = false,
                 RowHeadersVisible = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 ScrollBars = ScrollBars.None,
                 BorderStyle = BorderStyle.None,
                 BackgroundColor = Color.White,
@@ -1252,7 +1273,7 @@ namespace AlloyAct_Pro.Controls
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 248, 252);
             dgv.RowsDefaultCellStyle.BackColor = Color.White;
 
-            // 添加列（使用第一行作为表头）
+            // 添加列（使用第一行作为表头），列宽按比例填满整个表格宽度
             string[] headers = rows.Count > 0 ? rows[0] : Array.Empty<string>();
             for (int c = 0; c < colCount; c++)
             {
@@ -1261,8 +1282,8 @@ namespace AlloyAct_Pro.Controls
                 {
                     HeaderText = headerText,
                     SortMode = DataGridViewColumnSortMode.NotSortable,
-                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                    MinimumWidth = 60
+                    FillWeight = 100,
+                    MinimumWidth = 80
                 };
                 dgv.Columns.Add(col);
             }

@@ -59,6 +59,12 @@ namespace AlloyAct_Pro.LLM
         // 记忆系统引用（由 ChatAgent 设置）
         public static MemoryStore? Memory { get; set; }
 
+        // 自定义模型存储引用（由 ChatAgent 设置）
+        public static CustomModelStore? CustomModels { get; set; }
+
+        // DFT 数据引用（由 DftPanel 设置）
+        public static List<DFT.DftResult>? DftResults { get; set; }
+
         #region Tool Definitions (20 tools)
 
         public static List<ToolDefinition> GetToolDefinitions()
@@ -347,6 +353,89 @@ namespace AlloyAct_Pro.LLM
                             ""content"": { ""type"": ""string"", ""description"": ""要删除的记忆内容"" }
                         },
                         ""required"": [""content""]
+                    }"),
+
+                // ===== 自定义模型工具（4个） =====
+                MakeToolDef("create_custom_model",
+                    "创建一个自定义计算模型。用户描述计算公式和参数后，使用此工具保存为可重复使用的模型。模型在重启后仍然可用。支持数学运算(+,-,*,/,^)、函数(ln,log,exp,sqrt,pow,abs,sin,cos,tan)和常数(R=8.314,pi,e)。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {
+                            ""name"": { ""type"": ""string"", ""description"": ""模型名称（英文，如 solubility_product, debye_temperature）"" },
+                            ""display_name"": { ""type"": ""string"", ""description"": ""中文显示名称（如 溶度积计算）"" },
+                            ""description"": { ""type"": ""string"", ""description"": ""模型描述，说明用途和适用范围"" },
+                            ""formula"": { ""type"": ""string"", ""description"": ""数学公式表达式，如 A+B/T、exp(-DG/(R*T))、pow(10,A+B/T)"" },
+                            ""parameters"": {
+                                ""type"": ""array"",
+                                ""description"": ""参数列表"",
+                                ""items"": {
+                                    ""type"": ""object"",
+                                    ""properties"": {
+                                        ""name"": { ""type"": ""string"", ""description"": ""参数名（在公式中使用）"" },
+                                        ""description"": { ""type"": ""string"", ""description"": ""参数描述"" },
+                                        ""default_value"": { ""type"": ""number"", ""description"": ""默认值（可选）"" },
+                                        ""unit"": { ""type"": ""string"", ""description"": ""单位（可选）"" },
+                                        ""is_required"": { ""type"": ""boolean"", ""description"": ""是否必填，默认true"" }
+                                    },
+                                    ""required"": [""name"", ""description""]
+                                }
+                            },
+                            ""result_name"": { ""type"": ""string"", ""description"": ""结果名称（如 溶度积 K）"" },
+                            ""result_unit"": { ""type"": ""string"", ""description"": ""结果单位（如 K, kJ/mol）"" }
+                        },
+                        ""required"": [""name"", ""display_name"", ""description"", ""formula"", ""parameters""]
+                    }"),
+
+                MakeToolDef("execute_custom_model",
+                    "执行一个已创建的自定义模型，传入参数值进行计算。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {
+                            ""model_name"": { ""type"": ""string"", ""description"": ""模型名称"" },
+                            ""parameter_values"": { ""type"": ""object"", ""description"": ""参数值，键为参数名，值为数值"" }
+                        },
+                        ""required"": [""model_name"", ""parameter_values""]
+                    }"),
+
+                MakeToolDef("list_custom_models",
+                    "列出所有已创建的自定义计算模型。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {},
+                        ""required"": []
+                    }"),
+
+                MakeToolDef("delete_custom_model",
+                    "删除一个自定义模型。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {
+                            ""model_name"": { ""type"": ""string"", ""description"": ""要删除的模型名称"" }
+                        },
+                        ""required"": [""model_name""]
+                    }"),
+
+                // ===== DFT 数据工具（2个） =====
+                MakeToolDef("import_dft_result",
+                    "解析并导入 DFT（密度泛函理论）计算结果文件。支持 VASP、Quantum ESPRESSO、ABINIT、CP2K、CASTEP、SIESTA、Wien2k、FHI-aims、Elk、GPAW、FLEUR、OpenMX、Exciting、DFTB+ 等软件的输出文件。自动检测软件类型。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {
+                            ""file_path"": { ""type"": ""string"", ""description"": ""DFT 输出文件的完整路径"" }
+                        },
+                        ""required"": [""file_path""]
+                    }"),
+
+                MakeToolDef("query_dft_data",
+                    "查询已导入的 DFT 计算数据。可按软件类型、化学式或属性进行筛选。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {
+                            ""software"": { ""type"": ""string"", ""description"": ""DFT 软件名称（可选筛选）"" },
+                            ""formula"": { ""type"": ""string"", ""description"": ""化学式筛选（可选）"" },
+                            ""list_all"": { ""type"": ""boolean"", ""description"": ""列出所有已导入数据，默认false"" }
+                        },
+                        ""required"": []
                     }")
             };
         }
@@ -413,6 +502,19 @@ namespace AlloyAct_Pro.LLM
                     "save_memory" => ExecSaveMemory(args),
                     "recall_memories" => ExecRecallMemories(args),
                     "delete_memory" => ExecDeleteMemory(args),
+
+                    // 自定义模型工具
+                    "create_custom_model" => ExecCreateCustomModel(args),
+                    "execute_custom_model" => ExecExecuteCustomModel(args),
+                    "list_custom_models" => ExecListCustomModels(args),
+                    "delete_custom_model" => ExecDeleteCustomModel(args),
+
+                    // DFT 数据工具
+                    "import_dft_result" => ExecImportDft(args),
+                    "query_dft_data" => ExecQueryDft(args),
+
+                    // 动态自定义模型路由（custom_model_xxx）
+                    _ when toolName.StartsWith("custom_model_") => ExecDynamicCustomModel(toolName, args),
 
                     _ => JsonResult(new { status = "error", message = $"未知工具: {toolName}" })
                 };
@@ -1683,6 +1785,209 @@ namespace AlloyAct_Pro.LLM
                     sb.AppendLine($"- {prop.Name}: 否");
             }
             return sb.ToString();
+        }
+
+        #endregion
+
+        #region Custom Model Execution
+
+        private static string ExecCreateCustomModel(JsonElement args)
+        {
+            if (CustomModels == null)
+                return JsonResult(new { status = "error", message = "自定义模型系统未初始化" });
+
+            var model = new CustomModel
+            {
+                Name = args.GetProperty("name").GetString() ?? "",
+                DisplayName = args.GetProperty("display_name").GetString() ?? "",
+                Description = args.GetProperty("description").GetString() ?? "",
+                Formula = args.GetProperty("formula").GetString() ?? "",
+                ResultName = args.TryGetProperty("result_name", out var rn) ? rn.GetString() ?? "" : "",
+                ResultUnit = args.TryGetProperty("result_unit", out var ru) ? ru.GetString() ?? "" : ""
+            };
+
+            if (args.TryGetProperty("parameters", out var paramsArr))
+            {
+                foreach (var p in paramsArr.EnumerateArray())
+                {
+                    model.Parameters.Add(new ModelParameter
+                    {
+                        Name = p.GetProperty("name").GetString() ?? "",
+                        Description = p.GetProperty("description").GetString() ?? "",
+                        DefaultValue = p.TryGetProperty("default_value", out var dv) && dv.ValueKind == JsonValueKind.Number ? dv.GetDouble() : null,
+                        Unit = p.TryGetProperty("unit", out var u) ? u.GetString() ?? "" : "",
+                        IsRequired = !p.TryGetProperty("is_required", out var ir) || ir.ValueKind != JsonValueKind.False
+                    });
+                }
+            }
+
+            return CustomModels.SaveModel(model);
+        }
+
+        private static string ExecExecuteCustomModel(JsonElement args)
+        {
+            if (CustomModels == null)
+                return JsonResult(new { status = "error", message = "自定义模型系统未初始化" });
+
+            var modelName = args.GetProperty("model_name").GetString() ?? "";
+            var paramValues = new Dictionary<string, double>();
+
+            if (args.TryGetProperty("parameter_values", out var pv))
+            {
+                foreach (var prop in pv.EnumerateObject())
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Number)
+                        paramValues[prop.Name] = prop.Value.GetDouble();
+                    else if (prop.Value.ValueKind == JsonValueKind.String &&
+                             double.TryParse(prop.Value.GetString(), out double val))
+                        paramValues[prop.Name] = val;
+                }
+            }
+
+            return CustomModels.ExecuteModel(modelName, paramValues);
+        }
+
+        private static string ExecListCustomModels(JsonElement args)
+        {
+            if (CustomModels == null)
+                return JsonResult(new { status = "error", message = "自定义模型系统未初始化" });
+
+            var models = CustomModels.ListModels();
+            if (models.Count == 0)
+                return JsonResult(new { status = "success", message = "尚未创建任何自定义模型", models = Array.Empty<object>() });
+
+            var list = models.Select(m => new
+            {
+                name = m.Name,
+                display_name = m.DisplayName,
+                description = m.Description,
+                formula = m.Formula,
+                parameters = m.Parameters.Select(p => new { p.Name, p.Description, p.DefaultValue, p.Unit }),
+                result_unit = m.ResultUnit,
+                created_at = m.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+            });
+
+            return JsonResult(new { status = "success", total = models.Count, models = list });
+        }
+
+        private static string ExecDeleteCustomModel(JsonElement args)
+        {
+            if (CustomModels == null)
+                return JsonResult(new { status = "error", message = "自定义模型系统未初始化" });
+
+            var modelName = args.GetProperty("model_name").GetString() ?? "";
+            return CustomModels.DeleteModel(modelName);
+        }
+
+        /// <summary>
+        /// 动态自定义模型执行（工具名格式：custom_model_{name}）
+        /// </summary>
+        private static string ExecDynamicCustomModel(string toolName, JsonElement args)
+        {
+            if (CustomModels == null)
+                return JsonResult(new { status = "error", message = "自定义模型系统未初始化" });
+
+            var modelName = toolName.Substring("custom_model_".Length);
+            var paramValues = new Dictionary<string, double>();
+
+            foreach (var prop in args.EnumerateObject())
+            {
+                if (prop.Value.ValueKind == JsonValueKind.Number)
+                    paramValues[prop.Name] = prop.Value.GetDouble();
+                else if (prop.Value.ValueKind == JsonValueKind.String &&
+                         double.TryParse(prop.Value.GetString(), out double val))
+                    paramValues[prop.Name] = val;
+            }
+
+            return CustomModels.ExecuteModel(modelName, paramValues);
+        }
+
+        #endregion
+
+        #region DFT Tool Execution
+
+        private static string ExecImportDft(JsonElement args)
+        {
+            var filePath = args.GetProperty("file_path").GetString() ?? "";
+            if (string.IsNullOrWhiteSpace(filePath))
+                return JsonResult(new { status = "error", message = "文件路径不能为空" });
+
+            if (!File.Exists(filePath))
+                return JsonResult(new { status = "error", message = $"文件不存在: {filePath}" });
+
+            try
+            {
+                var result = DFT.DftParserRegistry.AutoParse(filePath);
+                if (result == null)
+                    return JsonResult(new { status = "error", message = "无法识别该文件的 DFT 软件类型，支持 VASP、Quantum ESPRESSO、ABINIT、CP2K、CASTEP、SIESTA、Wien2k、FHI-aims、Elk、GPAW、FLEUR、OpenMX、Exciting、DFTB+" });
+
+                // 添加到全局结果列表
+                DftResults ??= new List<DFT.DftResult>();
+                DftResults.Add(result);
+
+                return JsonResult(new
+                {
+                    status = "success",
+                    software = result.SourceSoftware,
+                    formula = result.Formula,
+                    atom_count = result.AtomCount,
+                    total_energy_eV = result.TotalEnergy_eV,
+                    total_energy_kJ_mol = result.TotalEnergy_kJ_mol,
+                    fermi_energy_eV = result.FermiEnergy_eV,
+                    band_gap_eV = result.BandGap_eV,
+                    volume_A3 = result.Volume,
+                    is_converged = result.IsConverged,
+                    method = result.Method,
+                    lattice_parameters = result.LatticeParameters,
+                    pressure_GPa = result.Pressure_GPa,
+                    max_force_eV_A = result.MaxForce_eV_A,
+                    formation_energy_eV_atom = result.FormationEnergy_eV_atom,
+                    mixing_enthalpy_kJ_mol = result.MixingEnthalpy_kJ_mol
+                });
+            }
+            catch (Exception ex)
+            {
+                return JsonResult(new { status = "error", message = $"解析失败: {ex.Message}" });
+            }
+        }
+
+        private static string ExecQueryDft(JsonElement args)
+        {
+            if (DftResults == null || DftResults.Count == 0)
+                return JsonResult(new { status = "success", message = "尚未导入任何 DFT 数据", results = Array.Empty<object>() });
+
+            var results = DftResults.AsEnumerable();
+
+            // 按软件筛选
+            if (args.TryGetProperty("software", out var sw) && sw.ValueKind == JsonValueKind.String)
+            {
+                var software = sw.GetString() ?? "";
+                if (!string.IsNullOrEmpty(software))
+                    results = results.Where(r => r.SourceSoftware.Contains(software, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // 按化学式筛选
+            if (args.TryGetProperty("formula", out var fm) && fm.ValueKind == JsonValueKind.String)
+            {
+                var formula = fm.GetString() ?? "";
+                if (!string.IsNullOrEmpty(formula))
+                    results = results.Where(r => r.Formula.Contains(formula, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var list = results.Select(r => new
+            {
+                software = r.SourceSoftware,
+                formula = r.Formula,
+                total_energy_eV = r.TotalEnergy_eV,
+                total_energy_kJ_mol = r.TotalEnergy_kJ_mol,
+                volume_A3 = r.Volume,
+                is_converged = r.IsConverged,
+                method = r.Method,
+                formation_energy_eV_atom = r.FormationEnergy_eV_atom,
+                source_file = Path.GetFileName(r.SourceFile)
+            }).ToList();
+
+            return JsonResult(new { status = "success", total = list.Count, results = list });
         }
 
         #endregion

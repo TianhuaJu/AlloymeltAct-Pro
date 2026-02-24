@@ -177,8 +177,8 @@ namespace AlloyAct_Pro.Controls
                 Width = 200,
                 Margin = new Padding(0, 4, 4, 0)
             };
-            txtBaseUrl.PlaceholderText = "默认使用官方地址";
-            txtBaseUrl.Text = "http://localhost:11434/v1";
+            txtBaseUrl.PlaceholderText = "http://100.91.243.106:11434/v1";
+            txtBaseUrl.Text = "http://100.91.243.106:11434/v1";
             txtBaseUrl.Leave += async (s, e) => await TryRefreshOllamaModels();
 
             // 刷新模型列表按钮（仅 Ollama 时显示）

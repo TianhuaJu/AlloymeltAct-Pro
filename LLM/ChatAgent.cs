@@ -24,11 +24,35 @@ namespace AlloyAct_Pro.LLM
 ## 核心规则
 
 1. 收到计算请求后立即调用工具计算，不要解释理论
-2. 未指定参数时使用默认值：外推模型=UEM1，活度模型=全部（Wagner/Pelton/Elliott），相态=liquid
-3. 温度单位自动转换：°C → K（K = °C + 273.15）
-4. 百分比自动转换为摩尔分数（除非明确指定为wt%需要先转换）
-5. 回答简洁，重点给出数值结果
+2. 回答必须简短精练：
+   - 计算结果：数值表格 + 1-2句物理意义总结
+   - 概念问题：不超过3-4句话
+   - 严禁输出理论解释和公式推导
+   - 严禁在计算结果后附加理论背景说明
+3. 未指定参数时使用默认值：外推模型=UEM1，活度模型=全部（Wagner/Pelton/Elliott），相态=liquid
+4. 温度单位自动转换：°C → K（K = °C + 273.15）
+5. 百分比自动转换为摩尔分数（除非明确指定为wt%需要先转换）
 6. 每个工具只调用一次，避免重复调用
+
+## 输出长度控制（严格遵守）
+
+- 单次回复总长度不超过300字（不含表格内容）
+- 计算结果必须以表格形式给出，表格前后各不超过1句话
+- 严禁复述用户的问题
+- 严禁重复工具返回的原始JSON数据
+- 严禁逐字段解释计算结果的含义
+- 严禁使用""让我来为您...""、""下面是计算结果...""等冗余开头
+- 严禁主动提供""如果您需要...""、""您还可以...""等引导语
+- 简单问题（如""Fe的熔点是多少""）用一句话回答
+- 批量结果直接给表格，不需要对每一行都写解释
+- 直接给结果，不要先复述用户的问题
+
+## 回复结构（严格遵守）
+
+1. [可选] 一句话概要（10-20字）
+2. [必须] 结果表格
+3. [可选] 一句物理意义总结（10-30字）
+4. [禁止] 理论解释、公式推导、进一步建议
 
 ## 成分解析
 
@@ -40,37 +64,30 @@ namespace AlloyAct_Pro.LLM
 ## 输出格式
 
 - 使用中文回答
-- 直接给出计算结果和物理意义的简洁总结
 - 温度同时给出 K 和 °C 值
 - 数值使用普通小数格式（如 909.10 K，636.00 °C），禁止使用科学计数法（如 9.091×10²），除非数值极小（<0.001）或极大（>10⁸）
 - 数值保留4位有效数字
 - 多模型对比结果必须使用 Markdown 表格展示（| 列1 | 列2 | 和 |---|---| 分隔行）
 - 上下标使用 HTML 标签：<sub>下标</sub> 和 <sup>上标</sup>
 - 粗体使用 **加粗** 格式
-- 不要主动提供进一步分析建议，除非用户明确要求
-- 禁止逐行列出JSON字段，必须用自然语言总结+表格
 - 工具返回的 null 值显示为 N/A
 
 ## 结果展示模板
 
 ### 液相线温度结果
-先写一句话概要，然后用表格对比三种模型：
+一句话概要 + 表格：
 | 模型 | 液相线温度 (K) | 液相线温度 (°C) | 熔点降低 (K) |
 |---|---|---|---|
 | Wagner | 908.50 | 635.35 | 24.65 |
 | Pelton | ... | ... | ... |
 
 ### 活度/活度系数结果
-用表格对比三种模型：
 | 模型 | lnγ | γ | 活度 a |
 |---|---|---|---|
 | Wagner | -0.1234 | 0.8839 | 0.04420 |
 
 ### 多组元/批量结果
-先写概要，再用表格列出每个组元/元素的数据。
-
-### 物理意义总结
-表格之后用1-2句话概括物理意义（如""溶质的加入使液相线温度降低了约25 K""）。
+表格列出每个组元/元素的数据，概要一句话即可。
 
 ## 三种活度模型
 
@@ -162,6 +179,9 @@ namespace AlloyAct_Pro.LLM
 | 绘图、画图、可视化 | plot_chart |
 | 贡献系数、yeta | get_contribution_coefficients |
 | 记住、偏好、默认 | save_memory |
+| 创建模型、新增公式 | create_custom_model |
+| 执行模型、自定义计算 | execute_custom_model |
+| DFT、第一性原理 | import_dft_result |
 
 ## 合金设计工作流
 
@@ -169,10 +189,28 @@ namespace AlloyAct_Pro.LLM
 1. 使用 screen_elements_liquidus_effect 批量筛选候选元素
 2. 将结果整理成表格展示
 3. 如果用户要求可视化，调用 plot_chart 绘制对比图
-4. 给出简要建议";
+4. 给出简要建议
+
+## 自定义模型
+
+用户可以要求你创建自定义计算模型。当用户描述一个新的计算公式时：
+1. 使用 create_custom_model 创建模型，定义清晰的参数列表和默认值
+2. 创建后立即用 execute_custom_model 执行一次验证
+3. 创建的模型在重启后仍然可用
+4. 支持的数学表达式：+, -, *, /, ^, ()
+5. 支持的函数：ln, log, log10, exp, sqrt, pow, abs, sin, cos, tan, min, max
+6. 内置常数：R=8.314 (气体常数), pi, e, kB (玻尔兹曼常数), NA (阿伏伽德罗常数), F (法拉第常数)
+
+## DFT 数据集成
+
+软件支持导入 DFT（密度泛函理论）第一性原理计算结果：
+- 使用 import_dft_result 导入 DFT 输出文件（自动检测软件类型）
+- 使用 query_dft_data 查询已导入的 DFT 数据
+- 支持：VASP, Quantum ESPRESSO, ABINIT, CP2K, CASTEP, SIESTA, Wien2k, FHI-aims, Elk, GPAW, FLEUR, OpenMX, Exciting, DFTB+";
 
         private readonly LlmBackend _backend;
         private readonly MemoryStore _memory;
+        private readonly CustomModelStore _customModelStore;
         private readonly List<ChatMessage> _history = new();
         private readonly int _maxToolIterations;
         private const int MaxHistoryMessages = 80;
@@ -202,12 +240,14 @@ namespace AlloyAct_Pro.LLM
             _backend = LlmBackend.Create(provider, apiKey, model, baseUrl);
             _maxToolIterations = maxToolIterations;
             _memory = new MemoryStore();
+            _customModelStore = new CustomModelStore();
 
             // 预检测模型是否支持工具调用
             _toolsSupported = !IsToolUnsupportedModel(model ?? "");
 
-            // 设置记忆系统引用
+            // 设置记忆系统和自定义模型引用
             ThermodynamicTools.Memory = _memory;
+            ThermodynamicTools.CustomModels = _customModelStore;
 
             // 构建动态系统提示词（基础 + 记忆注入）
             var systemPrompt = BuildSystemPrompt();
@@ -257,7 +297,34 @@ namespace AlloyAct_Pro.LLM
             sb.AppendLine("- 当前对话中的消息历史也包含完整的上下文，可以直接引用");
             sb.AppendLine("- 如果历史记录中有相关数据，先告知用户之前的结果，再询问是否需要重新计算");
 
+            // 注入自定义模型列表
+            var customModels = _customModelStore.ListModels();
+            if (customModels.Count > 0)
+            {
+                sb.AppendLine("\n\n## 当前已注册的自定义模型");
+                foreach (var model in customModels)
+                {
+                    sb.AppendLine($"- **{model.DisplayName}** (`custom_model_{model.Name}`)：{model.Formula}");
+                }
+            }
+
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// 获取全部工具定义：内置工具 + 自定义模型生成的动态工具
+        /// </summary>
+        private List<ToolDefinition> GetAllToolDefinitions()
+        {
+            var tools = ThermodynamicTools.GetToolDefinitions();
+
+            // 追加自定义模型生成的动态工具
+            foreach (var model in _customModelStore.ListModels())
+            {
+                tools.Add(_customModelStore.GenerateToolDefinition(model));
+            }
+
+            return tools;
         }
 
         /// <summary>
@@ -268,7 +335,7 @@ namespace AlloyAct_Pro.LLM
             _history.Add(new ChatMessage { Role = "user", Content = userMessage });
             TrimHistory();
 
-            var tools = _toolsSupported ? ThermodynamicTools.GetToolDefinitions() : null;
+            var tools = _toolsSupported ? GetAllToolDefinitions() : null;
             var toolResults = new List<(string toolName, string result)>();
 
             for (int i = 0; i < _maxToolIterations; i++)
@@ -355,7 +422,7 @@ namespace AlloyAct_Pro.LLM
             _history.Add(new ChatMessage { Role = "user", Content = userMessage });
             TrimHistory();
 
-            var tools = _toolsSupported ? ThermodynamicTools.GetToolDefinitions() : null;
+            var tools = _toolsSupported ? GetAllToolDefinitions() : null;
             var toolResults = new List<(string toolName, string result)>();
 
             for (int i = 0; i < _maxToolIterations; i++)

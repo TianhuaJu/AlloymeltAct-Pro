@@ -79,7 +79,7 @@ namespace AlloyAct_Pro.LLM
             ["ollama"] = new ProviderConfig
             {
                 Name = "Ollama",
-                BaseUrl = "http://localhost:11434/v1",
+                BaseUrl = "http://100.91.243.106:11434/v1",
                 DefaultModel = "qwen2.5:7b",
                 EnvKey = "",
                 ApiKeyHint = "本地模型无需填写",

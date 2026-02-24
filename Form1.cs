@@ -14,6 +14,7 @@ namespace AlloyAct_Pro
         private readonly LiquidusPanel liquidusPanel = new LiquidusPanel();
         private readonly DatabasePanel databasePanel = new DatabasePanel();
         private readonly ChatPanel chatPanel = new ChatPanel();
+        private readonly DftPanel dftPanel = new DftPanel();
 
         private UserControl activePanel;
         private Button activeNavButton;
@@ -30,7 +31,8 @@ namespace AlloyAct_Pro
         {
             UserControl[] panels = { activityPanel, coefficientPanel, interactionPanel,
                                      infiniteDilutionPanel, secondOrderPanel,
-                                     liquidusPanel, unitConvertPanel, databasePanel, chatPanel };
+                                     liquidusPanel, unitConvertPanel, databasePanel,
+                                     dftPanel, chatPanel };
             foreach (var p in panels)
             {
                 p.Dock = DockStyle.Fill;
@@ -73,6 +75,7 @@ namespace AlloyAct_Pro
                 UnitConvertPanel p => p.PageTitle,
                 DatabasePanel p => p.PageTitle,
                 ChatPanel p => p.PageTitle,
+                DftPanel p => p.PageTitle,
                 _ => "AlloyAct Pro"
             };
             lblPageTitle.Text = title;
@@ -123,6 +126,11 @@ namespace AlloyAct_Pro
             NavigateTo(chatPanel, btnChat);
         }
 
+        private void BtnDft_Click(object sender, EventArgs e)
+        {
+            NavigateTo(dftPanel, btnDft);
+        }
+
         private void BtnExport_Click(object sender, EventArgs e)
         {
             if (activePanel is ActivityPanel ap) ap.ExportToExcel();
@@ -133,6 +141,7 @@ namespace AlloyAct_Pro
             else if (activePanel is LiquidusPanel lp) lp.ExportToExcel();
             else if (activePanel is UnitConvertPanel ucp) ucp.ExportToExcel();
             else if (activePanel is DatabasePanel dbp) dbp.ExportToExcel();
+            else if (activePanel is DftPanel dp) dp.ExportToExcel();
             else if (activePanel is ChatPanel cp) cp.ExportToExcel();
         }
 

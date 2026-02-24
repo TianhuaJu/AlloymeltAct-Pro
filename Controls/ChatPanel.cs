@@ -1257,7 +1257,7 @@ namespace AlloyAct_Pro.Controls
             dgv.DefaultCellStyle.SelectionForeColor = Color.FromArgb(44, 62, 80);
             dgv.DefaultCellStyle.Padding = new Padding(8, 6, 8, 6);
             dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            dgv.RowTemplate.Height = 32;
+            dgv.RowTemplate.Height = 42;
 
             // 表头样式（第一行数据作为表头）
             dgv.EnableHeadersVisualStyles = false;
@@ -1267,7 +1267,7 @@ namespace AlloyAct_Pro.Controls
             dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 6, 8, 6);
             dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgv.ColumnHeadersHeight = 36;
+            dgv.ColumnHeadersHeight = 42;
 
             // 交替行颜色
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 248, 252);

@@ -2,8 +2,9 @@
 ; Generates a distributable installer for AlloyAct Pro
 
 #define MyAppName "AlloyAct Pro"
-#define MyAppVersion "1.0.0"
-#define MyAppPublisher "UEM-Thermo"
+#define MyAppVersion "2.1.0"
+#define MyAppPublisher "TianhuaJu"
+#define MyAppURL "https://github.com/TianhuaJu/AlloymeltAct-Pro/releases"
 #define MyAppExeName "AlloyAct Pro.exe"
 
 [Setup]

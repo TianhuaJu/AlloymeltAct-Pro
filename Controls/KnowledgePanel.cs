@@ -4,7 +4,7 @@ using System.Text.Json;
 namespace AlloyAct_Pro.Controls
 {
     /// <summary>
-    /// 知识学习面板 — 管理 AI 助手的记忆/知识条目
+    /// 知识学习面板 — 管理 AI 助手的记忆/知识条目，支持文献导入
     /// </summary>
     public class KnowledgePanel : UserControl
     {
@@ -17,10 +17,14 @@ namespace AlloyAct_Pro.Controls
         private ComboBox cboCategory = null!;
         private TextBox txtContent = null!;
         private Button btnAdd = null!;
+        private Button btnImport = null!;
         private Button btnDelete = null!;
         private Button btnDeleteAll = null!;
         private TextBox txtSearch = null!;
         private Label lblStats = null!;
+
+        // Track selected row index (survives focus change to buttons)
+        private int _lastSelectedRowIndex = -1;
 
         public KnowledgePanel()
         {
@@ -45,7 +49,7 @@ namespace AlloyAct_Pro.Controls
             mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 46));   // Stats + search
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));   // Table
-            mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 160));  // Add form
+            mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 180));  // Add form
 
             // === Row 0: Stats + search ===
             var topPanel = new TableLayoutPanel
@@ -67,7 +71,6 @@ namespace AlloyAct_Pro.Controls
             };
             topPanel.Controls.Add(lblStats, 0, 0);
 
-            // Search
             var searchPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(10, 6, 0, 6) };
             txtSearch = new TextBox
             {
@@ -104,6 +107,17 @@ namespace AlloyAct_Pro.Controls
             dgvMemories.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvMemories.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
+            // Track selection so it survives focus change
+            dgvMemories.CellClick += (s, e) =>
+            {
+                if (e.RowIndex >= 0) _lastSelectedRowIndex = e.RowIndex;
+            };
+            dgvMemories.SelectionChanged += (s, e) =>
+            {
+                if (dgvMemories.CurrentRow != null)
+                    _lastSelectedRowIndex = dgvMemories.CurrentRow.Index;
+            };
+
             dgvMemories.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "colCategory",
@@ -128,13 +142,13 @@ namespace AlloyAct_Pro.Controls
             tablePanel.Controls.Add(dgvMemories);
             mainLayout.Controls.Add(tablePanel, 0, 1);
 
-            // === Row 2: Add / Delete form (2 rows) ===
+            // === Row 2: Add form ===
             var formPanel = new Panel
             {
                 Dock = DockStyle.Fill,
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
-                Padding = new Padding(12, 6, 12, 6)
+                Padding = new Padding(14, 8, 14, 8)
             };
 
             var formLayout = new TableLayoutPanel
@@ -144,9 +158,9 @@ namespace AlloyAct_Pro.Controls
                 RowCount = 3
             };
             formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            formLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 26));  // Title
+            formLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));  // Title
             formLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));  // Content input
-            formLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));  // Category + buttons
+            formLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));  // Buttons row
 
             // Title
             var formTitle = new Label
@@ -159,13 +173,13 @@ namespace AlloyAct_Pro.Controls
             };
             formLayout.Controls.Add(formTitle, 0, 0);
 
-            // Content input (full width)
-            var contentPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 4, 0, 4) };
+            // Content input
+            var contentPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 4, 0, 6) };
             txtContent = new TextBox
             {
                 Dock = DockStyle.Fill,
                 Font = new Font("Microsoft YaHei UI", 10F),
-                PlaceholderText = "输入知识内容，例如：我常用的温度是1873K、默认合金体系是Fe基、计算活度时默认用Wagner模型...",
+                PlaceholderText = "输入知识内容，例如：我常用的温度是1873K、默认合金体系是Fe基...",
                 Multiline = true,
                 ScrollBars = ScrollBars.Vertical
             };
@@ -180,102 +194,101 @@ namespace AlloyAct_Pro.Controls
             contentPanel.Controls.Add(txtContent);
             formLayout.Controls.Add(contentPanel, 0, 1);
 
-            // Bottom row: Category + Add + Delete buttons
-            var bottomRow = new TableLayoutPanel
+            // Button row
+            var btnRow = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                ColumnCount = 5,
+                ColumnCount = 7,
                 RowCount = 1,
                 Padding = new Padding(0)
             };
-            bottomRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));  // Category
-            bottomRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));   // Add btn
-            bottomRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));   // Spacer
-            bottomRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));  // Delete btn
-            bottomRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));  // DeleteAll btn
-            bottomRow.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            btnRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));  // Category
+            btnRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));   // Add
+            btnRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));  // Import
+            btnRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));   // Spacer
+            btnRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));  // Delete
+            btnRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));  // DeleteAll
+            btnRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 0));    // End pad
+            btnRow.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
-            // Category combo
-            var catPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 2, 6, 2) };
+            // Category
+            var catWrap = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 4, 6, 4) };
             cboCategory = new ComboBox
             {
                 Dock = DockStyle.Fill,
-                Font = new Font("Microsoft YaHei UI", 9.5F),
+                Font = new Font("Microsoft YaHei UI", 10F),
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 DropDownWidth = 260
             };
             cboCategory.Items.AddRange(new object[]
             {
-                "knowledge \u2014 \u77e5\u8bc6",
-                "preference \u2014 \u8bbe\u7f6e",
-                "alloy_system \u2014 \u5408\u91d1\u4f53\u7cfb",
-                "calculation \u2014 \u8ba1\u7b97\u7ecf\u9a8c",
-                "general \u2014 \u5176\u4ed6"
+                "knowledge — 知识",
+                "preference — 设置",
+                "alloy_system — 合金体系",
+                "calculation — 计算经验",
+                "general — 其他"
             });
             cboCategory.SelectedIndex = 0;
-            catPanel.Controls.Add(cboCategory);
-            bottomRow.Controls.Add(catPanel, 0, 0);
+            catWrap.Controls.Add(cboCategory);
+            btnRow.Controls.Add(catWrap, 0, 0);
 
             // Add button
-            var addPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 2, 6, 2) };
-            btnAdd = new Button
-            {
-                Text = "\u6dfb\u52a0",
-                Dock = DockStyle.Fill,
-                FlatStyle = FlatStyle.Flat,
-                FlatAppearance = { BorderSize = 0 },
-                BackColor = Color.FromArgb(39, 174, 96),
-                ForeColor = Color.White,
-                Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
+            btnAdd = CreateButton("添加", Color.FromArgb(39, 174, 96), Color.White);
             btnAdd.Click += (s, e) => AddMemory();
-            addPanel.Controls.Add(btnAdd);
-            bottomRow.Controls.Add(addPanel, 1, 0);
+            btnRow.Controls.Add(WrapBtn(btnAdd, 0, 4, 4, 4), 1, 0);
+
+            // Import button
+            btnImport = CreateButton("导入文献", Color.FromArgb(41, 128, 185), Color.White);
+            btnImport.Click += (s, e) => ImportFile();
+            btnRow.Controls.Add(WrapBtn(btnImport, 0, 4, 4, 4), 2, 0);
 
             // Spacer
-            bottomRow.Controls.Add(new Panel { Dock = DockStyle.Fill }, 2, 0);
+            btnRow.Controls.Add(new Panel { Dock = DockStyle.Fill }, 3, 0);
 
             // Delete selected
-            var delPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 2, 4, 2) };
-            btnDelete = new Button
-            {
-                Text = "\u5220\u9664\u9009\u4e2d",
-                Dock = DockStyle.Fill,
-                FlatStyle = FlatStyle.Flat,
-                FlatAppearance = { BorderSize = 0 },
-                BackColor = Color.FromArgb(231, 76, 60),
-                ForeColor = Color.White,
-                Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold),
-                Cursor = Cursors.Hand
-            };
+            btnDelete = CreateButton("删除选中", Color.FromArgb(231, 76, 60), Color.White);
             btnDelete.Click += (s, e) => DeleteSelected();
-            delPanel.Controls.Add(btnDelete);
-            bottomRow.Controls.Add(delPanel, 3, 0);
+            btnRow.Controls.Add(WrapBtn(btnDelete, 0, 4, 4, 4), 4, 0);
 
             // Delete all
-            var delAllPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 2, 0, 2) };
             btnDeleteAll = new Button
             {
-                Text = "\u6e05\u7a7a\u5168\u90e8",
+                Text = "清空全部",
                 Dock = DockStyle.Fill,
                 FlatStyle = FlatStyle.Flat,
                 FlatAppearance = { BorderSize = 1, BorderColor = Color.FromArgb(231, 76, 60) },
                 BackColor = Color.White,
                 ForeColor = Color.FromArgb(231, 76, 60),
-                Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold),
+                Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold),
                 Cursor = Cursors.Hand
             };
             btnDeleteAll.Click += (s, e) => DeleteAll();
-            delAllPanel.Controls.Add(btnDeleteAll);
-            bottomRow.Controls.Add(delAllPanel, 4, 0);
+            btnRow.Controls.Add(WrapBtn(btnDeleteAll, 0, 4, 0, 4), 5, 0);
 
-            formLayout.Controls.Add(bottomRow, 0, 2);
-
+            formLayout.Controls.Add(btnRow, 0, 2);
             formPanel.Controls.Add(formLayout);
             mainLayout.Controls.Add(formPanel, 0, 2);
 
             Controls.Add(mainLayout);
+        }
+
+        private static Button CreateButton(string text, Color bg, Color fg) => new Button
+        {
+            Text = text,
+            Dock = DockStyle.Fill,
+            FlatStyle = FlatStyle.Flat,
+            FlatAppearance = { BorderSize = 0 },
+            BackColor = bg,
+            ForeColor = fg,
+            Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold),
+            Cursor = Cursors.Hand
+        };
+
+        private static Panel WrapBtn(Button btn, int left, int top, int right, int bottom)
+        {
+            var p = new Panel { Dock = DockStyle.Fill, Padding = new Padding(left, top, right, bottom) };
+            p.Controls.Add(btn);
+            return p;
         }
 
         #endregion
@@ -284,15 +297,16 @@ namespace AlloyAct_Pro.Controls
 
         private static readonly Dictionary<string, string> CategoryLabels = new()
         {
-            ["preference"] = "\u8bbe\u7f6e",
-            ["alloy_system"] = "\u5408\u91d1\u4f53\u7cfb",
-            ["calculation"] = "\u8ba1\u7b97\u7ecf\u9a8c",
-            ["knowledge"] = "\u77e5\u8bc6",
-            ["general"] = "\u5176\u4ed6"
+            ["preference"] = "设置",
+            ["alloy_system"] = "合金体系",
+            ["calculation"] = "计算经验",
+            ["knowledge"] = "知识",
+            ["general"] = "其他"
         };
 
         private void LoadData()
         {
+            _lastSelectedRowIndex = -1;
             var json = _memory.RecallMemories();
             PopulateGrid(json);
         }
@@ -312,7 +326,7 @@ namespace AlloyAct_Pro.Controls
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
                 var count = root.GetProperty("count").GetInt32();
-                lblStats.Text = $"\u5171 {count} \u6761\u77e5\u8bc6";
+                lblStats.Text = $"共 {count} 条知识";
 
                 if (root.TryGetProperty("memories", out var memories) && memories.ValueKind == JsonValueKind.Array)
                 {
@@ -328,8 +342,14 @@ namespace AlloyAct_Pro.Controls
             }
             catch
             {
-                lblStats.Text = "\u5171 0 \u6761\u77e5\u8bc6";
+                lblStats.Text = "共 0 条知识";
             }
+        }
+
+        private string GetSelectedCategory()
+        {
+            var text = cboCategory.SelectedItem?.ToString() ?? "";
+            return text.Split('—')[0].Trim().Split(' ')[0].Trim();
         }
 
         private void AddMemory()
@@ -337,31 +357,121 @@ namespace AlloyAct_Pro.Controls
             var content = txtContent.Text.Trim();
             if (string.IsNullOrEmpty(content))
             {
-                MessageBox.Show("\u8bf7\u8f93\u5165\u77e5\u8bc6\u5185\u5bb9\u3002", "\u63d0\u793a", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("请输入知识内容。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var categoryText = cboCategory.SelectedItem?.ToString() ?? "";
-            var category = categoryText.Split('\u2014')[0].Trim().Split(' ')[0].Trim();
-
-            _memory.SaveMemory(content, category);
+            _memory.SaveMemory(content, GetSelectedCategory());
             txtContent.Clear();
             LoadData();
         }
 
+        private void ImportFile()
+        {
+            using var ofd = new OpenFileDialog
+            {
+                Title = "导入文献 / 知识文件",
+                Filter = "文本文件|*.txt;*.md;*.csv|所有文件|*.*",
+                Multiselect = false
+            };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            try
+            {
+                var text = File.ReadAllText(ofd.FileName).Trim();
+                if (string.IsNullOrEmpty(text))
+                {
+                    MessageBox.Show("文件内容为空。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Split into paragraphs (double newline or single newline with content)
+                var paragraphs = SplitIntoParagraphs(text);
+                var category = GetSelectedCategory();
+
+                var preview = $"文件: {Path.GetFileName(ofd.FileName)}\n" +
+                              $"大小: {new FileInfo(ofd.FileName).Length / 1024.0:F1} KB\n" +
+                              $"将导入 {paragraphs.Count} 条知识，分类: {CategoryLabels.GetValueOrDefault(category, category)}\n\n" +
+                              $"前3条预览:\n";
+                for (int i = 0; i < Math.Min(3, paragraphs.Count); i++)
+                {
+                    var p = paragraphs[i];
+                    preview += $"  {i + 1}. {(p.Length > 60 ? p[..60] + "..." : p)}\n";
+                }
+
+                var result = MessageBox.Show(preview + "\n确定导入？", "导入确认",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result != DialogResult.Yes) return;
+
+                int count = 0;
+                foreach (var para in paragraphs)
+                {
+                    _memory.SaveMemory(para, category);
+                    count++;
+                }
+
+                LoadData();
+                MessageBox.Show($"成功导入 {count} 条知识。", "导入完成",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"导入失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Split text into meaningful paragraphs, skipping empty lines.
+        /// Paragraphs shorter than 10 chars are merged with the next one.
+        /// </summary>
+        private static List<string> SplitIntoParagraphs(string text)
+        {
+            var lines = text.Split('\n')
+                .Select(l => l.TrimEnd('\r').Trim())
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+                .ToList();
+
+            var result = new List<string>();
+            var buffer = "";
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrEmpty(buffer))
+                {
+                    buffer = line;
+                }
+                else if (buffer.Length < 10)
+                {
+                    // Short fragment — merge
+                    buffer += " " + line;
+                }
+                else
+                {
+                    result.Add(buffer);
+                    buffer = line;
+                }
+            }
+            if (!string.IsNullOrEmpty(buffer))
+                result.Add(buffer);
+
+            return result;
+        }
+
         private void DeleteSelected()
         {
-            if (dgvMemories.SelectedRows.Count == 0)
+            if (_lastSelectedRowIndex < 0 || _lastSelectedRowIndex >= dgvMemories.Rows.Count)
             {
-                MessageBox.Show("\u8bf7\u5148\u9009\u62e9\u8981\u5220\u9664\u7684\u77e5\u8bc6\u6761\u76ee\u3002", "\u63d0\u793a", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("请先在表格中点击选择要删除的知识条目。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var content = dgvMemories.SelectedRows[0].Cells["colContent"].Value?.ToString() ?? "";
+            var row = dgvMemories.Rows[_lastSelectedRowIndex];
+            var content = row.Cells["colContent"].Value?.ToString() ?? "";
             if (string.IsNullOrEmpty(content)) return;
 
-            var result = MessageBox.Show($"\u786e\u5b9a\u5220\u9664\u8fd9\u6761\u77e5\u8bc6\uff1f\n\n\"{(content.Length > 80 ? content[..80] + "..." : content)}\"",
-                "\u786e\u8ba4\u5220\u9664", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var brief = content.Length > 80 ? content[..80] + "..." : content;
+            var result = MessageBox.Show($"确定删除这条知识？\n\n\"{brief}\"",
+                "确认删除", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result != DialogResult.Yes) return;
 
             _memory.DeleteMemory(content);
@@ -372,8 +482,8 @@ namespace AlloyAct_Pro.Controls
         {
             if (dgvMemories.Rows.Count == 0) return;
 
-            var result = MessageBox.Show("\u786e\u5b9a\u6e05\u7a7a\u5168\u90e8\u77e5\u8bc6\u6761\u76ee\uff1f\u6b64\u64cd\u4f5c\u4e0d\u53ef\u64a4\u9500\u3002",
-                "\u786e\u8ba4\u6e05\u7a7a", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            var result = MessageBox.Show("确定清空全部知识条目？此操作不可撤销。",
+                "确认清空", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result != DialogResult.Yes) return;
 
             for (int i = dgvMemories.Rows.Count - 1; i >= 0; i--)
@@ -393,7 +503,7 @@ namespace AlloyAct_Pro.Controls
         {
             if (dgvMemories.Rows.Count == 0)
             {
-                MessageBox.Show("\u6ca1\u6709\u6570\u636e\u53ef\u5bfc\u51fa\u3002", "\u63d0\u793a", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("没有数据可导出。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -407,7 +517,7 @@ namespace AlloyAct_Pro.Controls
             try
             {
                 using var writer = new StreamWriter(sfd.FileName, false, System.Text.Encoding.UTF8);
-                writer.WriteLine("\u5206\u7c7b,\u77e5\u8bc6\u5185\u5bb9,\u66f4\u65b0\u65f6\u95f4");
+                writer.WriteLine("分类,知识内容,更新时间");
                 foreach (DataGridViewRow row in dgvMemories.Rows)
                 {
                     var cat = Escape(row.Cells[0].Value?.ToString() ?? "");
@@ -415,11 +525,11 @@ namespace AlloyAct_Pro.Controls
                     var updated = Escape(row.Cells[2].Value?.ToString() ?? "");
                     writer.WriteLine($"{cat},{content},{updated}");
                 }
-                MessageBox.Show($"\u5df2\u5bfc\u51fa\u5230: {sfd.FileName}", "\u5bfc\u51fa\u6210\u529f", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"已导出到: {sfd.FileName}", "导出成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"\u5bfc\u51fa\u5931\u8d25: {ex.Message}", "\u9519\u8bef", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"导出失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

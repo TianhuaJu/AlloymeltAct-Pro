@@ -8,10 +8,17 @@ namespace AlloyAct_Pro.LLM
 {
     #region Data Models
 
+    public class MessageImage
+    {
+        public byte[] Data { get; set; } = Array.Empty<byte>();
+        public string MimeType { get; set; } = "image/png";
+    }
+
     public class ChatMessage
     {
         public string Role { get; set; } = "";
         public string Content { get; set; } = "";
+        public List<MessageImage>? Images { get; set; }
         public List<ToolCall>? ToolCalls { get; set; }
         public string? ToolCallId { get; set; }
     }
@@ -184,6 +191,11 @@ namespace AlloyAct_Pro.LLM
 
     public abstract class LlmBackend
     {
+        /// <summary>
+        /// 当前已连接的 LLM 后端实例（由 ChatPanel 在连接时设置）
+        /// </summary>
+        public static LlmBackend? Current { get; set; }
+
         protected string ApiKey;
         protected string Model;
         protected static readonly HttpClient SharedHttpClient = new() { Timeout = TimeSpan.FromSeconds(600) };
@@ -331,6 +343,21 @@ namespace AlloyAct_Pro.LLM
             var apiMessages = new List<object>();
             foreach (var msg in messages)
             {
+                // Multimodal: images + text as content array
+                if (msg.Images != null && msg.Images.Count > 0 && msg.Role == "user")
+                {
+                    var parts = new List<object>();
+                    if (!string.IsNullOrEmpty(msg.Content))
+                        parts.Add(new { type = "text", text = msg.Content });
+                    foreach (var img in msg.Images)
+                    {
+                        var b64 = Convert.ToBase64String(img.Data);
+                        parts.Add(new { type = "image_url", image_url = new { url = $"data:{img.MimeType};base64,{b64}" } });
+                    }
+                    apiMessages.Add(new Dictionary<string, object> { ["role"] = msg.Role, ["content"] = parts });
+                    continue;
+                }
+
                 var m = new Dictionary<string, object> { ["role"] = msg.Role, ["content"] = msg.Content ?? "" };
                 if (msg.ToolCallId != null) m["tool_call_id"] = msg.ToolCallId;
                 if (msg.ToolCalls != null && msg.ToolCalls.Count > 0)
@@ -601,13 +628,36 @@ namespace AlloyAct_Pro.LLM
                     continue;
                 }
 
+                // Multimodal: images + text as content blocks
+                if (msg.Images != null && msg.Images.Count > 0 && msg.Role == "user")
+                {
+                    var blocks = new List<object>();
+                    foreach (var img in msg.Images)
+                    {
+                        blocks.Add(new
+                        {
+                            type = "image",
+                            source = new
+                            {
+                                type = "base64",
+                                media_type = img.MimeType,
+                                data = Convert.ToBase64String(img.Data)
+                            }
+                        });
+                    }
+                    if (!string.IsNullOrEmpty(msg.Content))
+                        blocks.Add(new { type = "text", text = msg.Content });
+                    apiMessages.Add(new { role = msg.Role, content = blocks });
+                    continue;
+                }
+
                 apiMessages.Add(new { role = msg.Role, content = msg.Content ?? "" });
             }
 
             var body = new Dictionary<string, object>
             {
                 ["model"] = Model,
-                ["max_tokens"] = 4096,
+                ["max_tokens"] = 8192,
                 ["messages"] = apiMessages
             };
             if (!string.IsNullOrEmpty(systemMsg))
@@ -715,7 +765,7 @@ namespace AlloyAct_Pro.LLM
             var body = new Dictionary<string, object>
             {
                 ["model"] = Model,
-                ["max_tokens"] = 4096,
+                ["max_tokens"] = 8192,
                 ["messages"] = apiMessages,
                 ["stream"] = true
             };
@@ -895,6 +945,19 @@ namespace AlloyAct_Pro.LLM
             {
                 if (msg.Role == "system") continue;
                 var role = msg.Role == "assistant" ? "model" : "user";
+
+                // Multimodal: images + text as parts
+                if (msg.Images != null && msg.Images.Count > 0)
+                {
+                    var parts = new List<object>();
+                    foreach (var img in msg.Images)
+                        parts.Add(new { inline_data = new { mime_type = img.MimeType, data = Convert.ToBase64String(img.Data) } });
+                    if (!string.IsNullOrEmpty(msg.Content))
+                        parts.Add(new { text = msg.Content });
+                    contents.Add(new { role, parts });
+                    continue;
+                }
+
                 contents.Add(new { role, parts = new[] { new { text = msg.Content ?? "" } } });
             }
 

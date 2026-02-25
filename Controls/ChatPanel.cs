@@ -1759,6 +1759,7 @@ namespace AlloyAct_Pro.Controls
             try
             {
                 _agent = new ChatAgent(provider, apiKey, model, baseUrl);
+                LlmBackend.Current = LlmBackend.Create(provider, apiKey, model, baseUrl);
 
                 _agent.OnToolCall = (name, args) =>
                 {

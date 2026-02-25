@@ -161,28 +161,27 @@ namespace AlloyAct_Pro
 
             if (activePanel is ActivityPanel)
             {
-                helpImage = Properties.Resources.活度;
+                helpImage = Properties.Resources.\u6d3b\u5ea6;
                 helpTitle = "Activity Calculation - Help";
             }
             else if (activePanel is ActivityCoefficientPanel)
             {
-                helpImage = Properties.Resources.活度系数;
+                helpImage = Properties.Resources.\u6d3b\u5ea6\u7cfb\u6570;
                 helpTitle = "Activity Coefficient - Help";
             }
             else if (activePanel is InteractionCoefficientPanel)
             {
-                helpImage = Properties.Resources.活度相互作用系数;
+                helpImage = Properties.Resources.\u6d3b\u5ea6\u76f8\u4e92\u4f5c\u7528\u7cfb\u6570;
                 helpTitle = "Interaction Coefficient - Help";
             }
             else if (activePanel is InfiniteDilutionPanel)
             {
-                helpImage = Properties.Resources.无限稀活度系数;
+                helpImage = Properties.Resources.\u65e0\u9650\u7a00\u6d3b\u5ea6\u7cfb\u6570;
                 helpTitle = "Infinite Dilution - Help";
             }
             else if (activePanel is SecondOrderPanel)
             {
-                // No dedicated help image for second-order; show interaction help
-                helpImage = Properties.Resources.活度相互作用系数;
+                helpImage = Properties.Resources.\u6d3b\u5ea6\u76f8\u4e92\u4f5c\u7528\u7cfb\u6570;
                 helpTitle = "Second-Order Interaction - Help";
             }
 
@@ -193,72 +192,120 @@ namespace AlloyAct_Pro
             else if (activePanel is LiquidusPanel)
             {
                 MessageBox.Show(
-                    "Liquidus Temperature Prediction:\n\n" +
-                    "Predicts the liquidus temperature of an alloy melt based on the\n" +
-                    "Schr\u00f6der-van Laar equation combined with activity interaction models.\n\n" +
-                    "\u2022  Select the matrix (solvent) element\n" +
-                    "\u2022  Enter alloy composition in mole fraction (e.g., Mn0.02Si0.01)\n" +
-                    "\u2022  Reference temperature is used for initial activity estimation\n\n" +
-                    "Output: T_liquidus from Wagner, Darken and Elliot models,\n" +
-                    "freezing point depression (\u0394T), and solvent activity.\n\n" +
-                    "Theory: ln(a_solvent) = (\u0394Hf/R) \u00d7 (1/Tm \u2212 1/T)",
-                    "Liquidus Temperature - Help",
+                    "\u6db2\u76f8\u7ebf\u6e29\u5ea6\u9884\u6d4b (Liquidus Temperature)\n\n" +
+                    "\u57fa\u4e8e Schr\u00f6der-van Laar \u65b9\u7a0b\u7ed3\u5408\u6d3b\u5ea6\u4ea4\u4e92\u4f5c\u7528\u6a21\u578b\uff0c\u9884\u6d4b\u5408\u91d1\u7194\u4f53\u7684\u6db2\u76f8\u7ebf\u6e29\u5ea6\u3002\n\n" +
+                    "\u64cd\u4f5c\u6b65\u9aa4\uff1a\n" +
+                    "\u2022  \u9009\u62e9\u57fa\u4f53\u5143\u7d20\uff08\u6eb6\u5242\uff09\n" +
+                    "\u2022  \u8f93\u5165\u5408\u91d1\u6210\u5206\uff08\u6469\u5c14\u5206\u6570\uff09\uff0c\u683c\u5f0f\u5982 Mn0.02Si0.01C0.005\n" +
+                    "\u2022  \u53c2\u8003\u6e29\u5ea6\u7528\u4e8e\u521d\u59cb\u6d3b\u5ea6\u4f30\u7b97\n\n" +
+                    "\u8f93\u51fa\u7ed3\u679c\uff1a\n" +
+                    "\u2022  T_liquidus \u2014 \u5206\u522b\u57fa\u4e8e Wagner/Darken/Elliot \u6a21\u578b\u7684\u6db2\u76f8\u7ebf\u6e29\u5ea6\n" +
+                    "\u2022  \u0394T \u2014 \u51dd\u56fa\u70b9\u964d\u4f4e\u503c\n" +
+                    "\u2022  a_solvent \u2014 \u6eb6\u5242\u6d3b\u5ea6\n\n" +
+                    "\u7406\u8bba\u57fa\u7840\uff1a ln(a_solvent) = (\u0394Hf/R) \u00d7 (1/Tm \u2212 1/T)",
+                    "\u6db2\u76f8\u7ebf\u6e29\u5ea6 - \u5e2e\u52a9",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             else if (activePanel is DatabasePanel)
             {
                 MessageBox.Show(
-                    "Database Management:\n\n" +
-                    "View and edit the underlying Miedema model parameters and experimental values.\n\n" +
-                    "\u2022  Miedema Parameters \u2014 Element properties (\u03C6, nws, V, u, etc.)\n" +
-                    "\u2022  Interaction Coeff. \u2014 1st-order experimental values (\u03B5\u1D62\u02B2 / e\u1D62\u02B2)\n" +
-                    "\u2022  Infinite Dilution \u2014 Activity coefficients at infinite dilution (ln\u03B3\u1D62\u2070)\n\n" +
-                    "Use Filter to search by element symbol.\n" +
-                    "Click Save Changes to write edits back to the database.",
-                    "Database Management - Help",
+                    "\u6570\u636e\u5e93\u7ba1\u7406 (Database Management)\n\n" +
+                    "\u67e5\u770b\u548c\u7f16\u8f91 Miedema \u6a21\u578b\u53c2\u6570\u53ca\u5b9e\u9a8c\u503c\u3002\n\n" +
+                    "\u4e09\u4e2a\u5b50\u9875\u9762\uff1a\n" +
+                    "\u2022  Miedema\u53c2\u6570 \u2014 \u5143\u7d20\u5c5e\u6027 (\u03c6, nws, V, u, \u03b1_\u03b2, \u6742\u5316\u503c, Tm, Tb \u7b49)\n" +
+                    "\u2022  \u4ea4\u4e92\u4f5c\u7528\u7cfb\u6570 \u2014 \u4e00\u9636\u5b9e\u9a8c\u503c (\u03b5\u1d62\u02b2 / e\u1d62\u02b2)\n" +
+                    "\u2022  \u65e0\u9650\u7a00\u6d3b\u5ea6\u7cfb\u6570 \u2014 \u65e0\u9650\u7a00\u91ca\u6d3b\u5ea6\u7cfb\u6570 (ln\u03b3\u1d62\u2070)\n\n" +
+                    "\u64cd\u4f5c\u8bf4\u660e\uff1a\n" +
+                    "\u2022  \u8f93\u5165\u5bc6\u7801\u540e\u8fdb\u5165\u7f16\u8f91\u6a21\u5f0f\n" +
+                    "\u2022  \u4f7f\u7528\u7b5b\u9009\u6846\u6309\u5143\u7d20\u7b26\u53f7\u641c\u7d22\n" +
+                    "\u2022  \u76f4\u63a5\u5728\u8868\u683c\u4e2d\u4fee\u6539\u6570\u503c\n" +
+                    "\u2022  \u70b9\u51fb\u300c\u4fdd\u5b58\u4fee\u6539\u300d\u5199\u56de\u6570\u636e\u5e93",
+                    "\u6570\u636e\u5e93\u7ba1\u7406 - \u5e2e\u52a9",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             else if (activePanel is ChatPanel)
             {
                 MessageBox.Show(
-                    "AI Assistant:\n\n" +
-                    "Use natural language to perform thermodynamic calculations.\n\n" +
-                    "\u2022  Select LLM provider and model\n" +
-                    "\u2022  Enter API key (not needed for local Ollama)\n" +
-                    "\u2022  Click Connect to initialize\n" +
-                    "\u2022  Type your question and press Ctrl+Enter or click Send\n\n" +
-                    "Supported: Activity, activity coefficient, interaction coefficient,\n" +
-                    "infinite dilution, liquidus temperature, unit conversion, and chart plotting.",
-                    "AI Assistant - Help",
+                    "AI \u52a9\u624b (AI Assistant)\n\n" +
+                    "\u7528\u81ea\u7136\u8bed\u8a00\u4e0eAI\u5bf9\u8bdd\uff0c\u6267\u884c\u70ed\u529b\u5b66\u8ba1\u7b97\u548c\u5408\u91d1\u5206\u6790\u3002\n\n" +
+                    "\u8fde\u63a5\u8bbe\u7f6e\uff1a\n" +
+                    "\u2022  \u9009\u62e9LLM\u63d0\u4f9b\u5546\uff08OpenAI/Claude/Gemini/DeepSeek/Kimi/Ollama\u7b49\uff09\n" +
+                    "\u2022  \u9009\u62e9\u6a21\u578b\uff0c\u70b9\u51fb\u5237\u65b0\u6309\u94ae\u83b7\u53d6\u53ef\u7528\u6a21\u578b\u5217\u8868\n" +
+                    "\u2022  \u586b\u5165API Key\uff08\u672c\u5730Ollama\u65e0\u9700\u586b\u5199\uff09\n" +
+                    "\u2022  \u70b9\u51fb\u300c\u8fde\u63a5\u300d\u521d\u59cb\u5316AI\u52a9\u624b\n\n" +
+                    "\u4f7f\u7528\u65b9\u6cd5\uff1a\n" +
+                    "\u2022  \u5728\u8f93\u5165\u6846\u8f93\u5165\u95ee\u9898\uff0cCtrl+Enter \u6216\u70b9\u51fb\u300c\u53d1\u9001\u300d\n" +
+                    "\u2022  AI\u5c06\u81ea\u52a8\u8c03\u7528\u8ba1\u7b97\u5de5\u5177\u5e76\u8fd4\u56de\u7ed3\u679c\n" +
+                    "\u2022  \u652f\u6301\u591a\u8f6e\u5bf9\u8bdd\uff0c\u70b9\u51fb\u300c\u6e05\u7a7a\u300d\u91cd\u7f6e\u5bf9\u8bdd\n\n" +
+                    "\u652f\u6301\u7684\u8ba1\u7b97\uff1a\n" +
+                    "\u2022  \u6d3b\u5ea6\u3001\u6d3b\u5ea6\u7cfb\u6570\u3001\u4ea4\u4e92\u4f5c\u7528\u7cfb\u6570\uff081\u9636+2\u9636\uff09\n" +
+                    "\u2022  \u65e0\u9650\u7a00\u6d3b\u5ea6\u7cfb\u6570\u3001\u6db2\u76f8\u7ebf\u6e29\u5ea6\u3001\u5355\u4f4d\u6362\u7b97\n" +
+                    "\u2022  \u56fe\u8868\u7ed8\u5236\uff08\u6d3b\u5ea6\u968f\u6210\u5206/\u6e29\u5ea6\u53d8\u5316\u66f2\u7ebf\uff09",
+                    "AI\u52a9\u624b - \u5e2e\u52a9",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             else if (activePanel is KnowledgePanel)
             {
                 MessageBox.Show(
-                    "Knowledge Base:\n\n" +
-                    "Manage the AI assistant's knowledge and preferences.\n" +
-                    "Knowledge entries are automatically injected into the AI's system prompt.\n\n" +
-                    "\u2022  preference \u2014 Default calculation settings (e.g., temperature, model)\n" +
-                    "\u2022  alloy_system \u2014 Frequently used alloy systems\n" +
-                    "\u2022  calculation \u2014 Calculation rules and experience\n" +
-                    "\u2022  general \u2014 Other knowledge\n\n" +
-                    "Stored at: ~/.alloyact/memories.json",
-                    "Knowledge Base - Help",
+                    "\u77e5\u8bc6\u5e93 (Knowledge Base)\n\n" +
+                    "\u7ba1\u7406AI\u52a9\u624b\u7684\u77e5\u8bc6\u548c\u8bb0\u5fc6\uff0c\u77e5\u8bc6\u6761\u76ee\u4f1a\u81ea\u52a8\u6ce8\u5165AI\u7684\u7cfb\u7edf\u63d0\u793a\u8bcd\u3002\n\n" +
+                    "\u77e5\u8bc6\u5206\u7c7b\uff1a\n" +
+                    "\u2022  knowledge \u2014 \u51b6\u91d1/\u6750\u6599\u79d1\u5b66\u77e5\u8bc6\uff08\u70ed\u529b\u5b66\u6570\u636e\u3001\u516c\u5f0f\u3001\u76f8\u56fe\u7b49\uff09\n" +
+                    "\u2022  preference \u2014 \u9ed8\u8ba4\u8ba1\u7b97\u8bbe\u7f6e\uff08\u6e29\u5ea6\u3001\u6a21\u578b\u504f\u597d\uff09\n" +
+                    "\u2022  alloy_system \u2014 \u5e38\u7528\u5408\u91d1\u4f53\u7cfb\n" +
+                    "\u2022  calculation \u2014 \u8ba1\u7b97\u89c4\u5219\u548c\u7ecf\u9a8c\n" +
+                    "\u2022  general \u2014 \u5176\u4ed6\u77e5\u8bc6\n\n" +
+                    "\u6587\u732e\u5bfc\u5165\u4e0eAI\u5b66\u4e60\uff1a\n" +
+                    "\u2022  \u300c\u5bfc\u5165\u6587\u732e\u300d\u652f\u6301 PDF\u3001Word(.docx)\u3001TXT\u3001MD\u3001CSV\n" +
+                    "\u2022  \u626b\u63cf\u7248PDF\u81ea\u52a8\u63d0\u53d6\u56fe\u7247\uff0c\u7528AI\u89c6\u89c9\u8bc6\u522b\n" +
+                    "\u2022  \u300c AI\u5b66\u4e60\u300d\u5f39\u51fa\u5b66\u4e60\u91cd\u70b9\u8bbe\u7f6e\uff0c\u53ef\u6307\u5b9a\u63d0\u53d6\u65b9\u5411\n" +
+                    "\u2022  \u5173\u952e\u8bcd\u81ea\u52a8\u5b9a\u4f4d\u76f8\u5173\u6bb5\u843d\uff0c\u63d0\u9ad8\u5b66\u4e60\u6548\u7387\n" +
+                    "\u2022  \u540c\u4e00\u6587\u6863\u53ef\u591a\u6b21\u5b66\u4e60\u4e0d\u540c\u77e5\u8bc6\u70b9\n\n" +
+                    "\u5b58\u50a8\u4f4d\u7f6e\uff1a ~/.alloyact/memories.json",
+                    "\u77e5\u8bc6\u5e93 - \u5e2e\u52a9",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            else if (activePanel is DftPanel)
+            {
+                MessageBox.Show(
+                    "DFT\u6570\u636e\u5bfc\u5165 (DFT Data Import)\n\n" +
+                    "\u5bfc\u5165\u5bc6\u5ea6\u6cdb\u51fd\u7406\u8bba (DFT) \u8ba1\u7b97\u7ed3\u679c\uff0c\u7528\u4e8e\u4e0e Miedema \u6a21\u578b\u53c2\u6570\u5bf9\u6bd4\u3002\n\n" +
+                    "\u64cd\u4f5c\u65b9\u5f0f\uff1a\n" +
+                    "\u2022  \u300c\u5bfc\u5165\u6587\u4ef6\u300d\u2014 \u5bfc\u5165\u5355\u4e2aDFT\u8f93\u51fa\u6587\u4ef6\n" +
+                    "\u2022  \u300c\u5bfc\u5165\u6587\u4ef6\u5939\u300d\u2014 \u6279\u91cf\u5bfc\u5165\u6574\u4e2a\u76ee\u5f55\u7684DFT\u6587\u4ef6\n" +
+                    "\u2022  \u300c\u6e05\u7a7a\u300d\u2014 \u5220\u9664\u6240\u6709\u5df2\u5bfc\u5165\u6570\u636e\n\n" +
+                    "\u652f\u6301\u591a\u79cdDFT\u8f6f\u4ef6\u7684\u8f93\u51fa\u683c\u5f0f\u3002\n" +
+                    "\u5bfc\u5165\u540e\u53ef\u5728\u8868\u683c\u4e2d\u67e5\u770b\u7ed3\u679c\u8be6\u60c5\uff0c\u5e76\u652f\u6301\u5bfc\u51fa\u5230Excel\u3002",
+                    "DFT\u6570\u636e\u5bfc\u5165 - \u5e2e\u52a9",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            else if (activePanel is UnitConvertPanel)
+            {
+                MessageBox.Show(
+                    "\u5355\u4f4d\u6362\u7b97 (Unit Conversion)\n\n" +
+                    "\u5728\u8d28\u91cf\u767e\u5206\u6bd4 (wt%) \u548c\u539f\u5b50\u5206\u6570 (\u6469\u5c14\u5206\u6570) \u4e4b\u95f4\u4e92\u76f8\u8f6c\u6362\u3002\n\n" +
+                    "\u64cd\u4f5c\u6b65\u9aa4\uff1a\n" +
+                    "\u2022  \u9009\u62e9\u57fa\u4f53\u5143\u7d20\uff08\u6eb6\u5242\uff09\u548c\u6eb6\u8d28\u5143\u7d20\n" +
+                    "\u2022  \u9009\u62e9\u8f6c\u6362\u65b9\u5411\uff1a wt% \u2192 \u6469\u5c14\u5206\u6570 \u6216 \u6469\u5c14\u5206\u6570 \u2192 wt%\n" +
+                    "\u2022  \u8f93\u5165\u6570\u503c\u5e76\u70b9\u51fb\u300c\u8f6c\u6362\u300d\n\n" +
+                    "\u516c\u5f0f\uff1a\n" +
+                    "\u2022  x_i = (w_i/M_i) / \u03a3(w_j/M_j)   [wt% \u2192 \u6469\u5c14\u5206\u6570]\n" +
+                    "\u2022  w_i = (x_i\u00d7M_i) / \u03a3(x_j\u00d7M_j) \u00d7 100%   [\u6469\u5c14\u5206\u6570 \u2192 wt%]",
+                    "\u5355\u4f4d\u6362\u7b97 - \u5e2e\u52a9",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             else
             {
                 MessageBox.Show(
-                    "Unit Conversion:\n\n" +
-                    "Convert between weight percentage (wt%) and atom fraction (mole fraction).\n\n" +
-                    "\u2022  Select matrix and solute elements\n" +
-                    "\u2022  Choose conversion direction\n" +
-                    "\u2022  Enter value and click Convert",
-                    "Unit Conversion - Help",
+                    "AlloyAct Pro \u5e2e\u52a9\n\n" +
+                    "\u8bf7\u5207\u6362\u5230\u5177\u4f53\u529f\u80fd\u9875\u9762\u540e\u70b9\u51fb\u5e2e\u52a9\u6309\u94ae\uff0c\u67e5\u770b\u8be5\u529f\u80fd\u7684\u8be6\u7ec6\u8bf4\u660e\u3002",
+                    "AlloyAct Pro - \u5e2e\u52a9",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }

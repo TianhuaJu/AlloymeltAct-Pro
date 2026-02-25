@@ -33,6 +33,7 @@ namespace AlloyAct_Pro
             btnDft = AppTheme.CreateNavButton("  DFT Import");
             lblAISection = new Label();
             btnChat = AppTheme.CreateNavButton("  AI Assistant");
+            btnKnowledge = AppTheme.CreateNavButton("  Knowledge");
 
             headerPanel = new Panel();
             lblPageTitle = new Label();
@@ -98,6 +99,7 @@ namespace AlloyAct_Pro
             btnLiquidus.Click += BtnLiquidus_Click;
             btnDft.Click += BtnDft_Click;
             btnChat.Click += BtnChat_Click;
+            btnKnowledge.Click += BtnKnowledge_Click;
 
             // AI section label
             lblAISection.Text = "  AI";
@@ -112,7 +114,8 @@ namespace AlloyAct_Pro
             // Add in REVERSE order because Dock=Top stacks top-down
             // Visual order: CALCULATIONS → ADVANCED → TOOLS
 
-            // AI section (bottom-most): AI Assistant
+            // AI section (bottom-most): AI Assistant, Knowledge
+            sidebarPanel.Controls.Add(btnKnowledge);
             sidebarPanel.Controls.Add(btnChat);
             sidebarPanel.Controls.Add(lblAISection);
             // TOOLS section: Database, Unit Conversion
@@ -245,6 +248,7 @@ namespace AlloyAct_Pro
         private Button btnAbout;
         private Label lblAISection;
         private Button btnChat;
+        private Button btnKnowledge;
         private Button btnDft;
     }
 }

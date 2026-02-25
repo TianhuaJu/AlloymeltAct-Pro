@@ -14,6 +14,7 @@ namespace AlloyAct_Pro
         private readonly LiquidusPanel liquidusPanel = new LiquidusPanel();
         private readonly DatabasePanel databasePanel = new DatabasePanel();
         private readonly ChatPanel chatPanel = new ChatPanel();
+        private readonly KnowledgePanel knowledgePanel = new KnowledgePanel();
         private readonly DftPanel dftPanel = new DftPanel();
 
         private UserControl activePanel;
@@ -32,7 +33,7 @@ namespace AlloyAct_Pro
             UserControl[] panels = { activityPanel, coefficientPanel, interactionPanel,
                                      infiniteDilutionPanel, secondOrderPanel,
                                      liquidusPanel, unitConvertPanel, databasePanel,
-                                     dftPanel, chatPanel };
+                                     dftPanel, chatPanel, knowledgePanel };
             foreach (var p in panels)
             {
                 p.Dock = DockStyle.Fill;
@@ -75,6 +76,7 @@ namespace AlloyAct_Pro
                 UnitConvertPanel p => p.PageTitle,
                 DatabasePanel p => p.PageTitle,
                 ChatPanel p => p.PageTitle,
+                KnowledgePanel p => p.PageTitle,
                 DftPanel p => p.PageTitle,
                 _ => "AlloyAct Pro"
             };
@@ -126,6 +128,11 @@ namespace AlloyAct_Pro
             NavigateTo(chatPanel, btnChat);
         }
 
+        private void BtnKnowledge_Click(object sender, EventArgs e)
+        {
+            NavigateTo(knowledgePanel, btnKnowledge);
+        }
+
         private void BtnDft_Click(object sender, EventArgs e)
         {
             NavigateTo(dftPanel, btnDft);
@@ -143,6 +150,7 @@ namespace AlloyAct_Pro
             else if (activePanel is DatabasePanel dbp) dbp.ExportToExcel();
             else if (activePanel is DftPanel dp) dp.ExportToExcel();
             else if (activePanel is ChatPanel cp) cp.ExportToExcel();
+            else if (activePanel is KnowledgePanel kp) kp.ExportToExcel();
         }
 
         private void BtnHelp_Click(object sender, EventArgs e)
@@ -224,6 +232,21 @@ namespace AlloyAct_Pro
                     "Supported: Activity, activity coefficient, interaction coefficient,\n" +
                     "infinite dilution, liquidus temperature, unit conversion, and chart plotting.",
                     "AI Assistant - Help",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            else if (activePanel is KnowledgePanel)
+            {
+                MessageBox.Show(
+                    "Knowledge Base:\n\n" +
+                    "Manage the AI assistant's knowledge and preferences.\n" +
+                    "Knowledge entries are automatically injected into the AI's system prompt.\n\n" +
+                    "\u2022  preference \u2014 Default calculation settings (e.g., temperature, model)\n" +
+                    "\u2022  alloy_system \u2014 Frequently used alloy systems\n" +
+                    "\u2022  calculation \u2014 Calculation rules and experience\n" +
+                    "\u2022  general \u2014 Other knowledge\n\n" +
+                    "Stored at: ~/.alloyact/memories.json",
+                    "Knowledge Base - Help",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }

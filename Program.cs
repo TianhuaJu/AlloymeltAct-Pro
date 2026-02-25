@@ -13,6 +13,26 @@ namespace AlloyAct_Pro
         {
             release_Resource();
             ApplicationConfiguration.Initialize();
+
+            // 全局异常处理：捕获未处理异常并记录详细堆栈
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += (s, e) =>
+            {
+                var logPath = Path.Combine(Application.StartupPath, "crash.log");
+                var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ThreadException:\n{e.Exception}\n\n";
+                File.AppendAllText(logPath, msg);
+                MessageBox.Show(
+                    $"发生异常（已记录到 crash.log）:\n{e.Exception.Message}\n\n{e.Exception.StackTrace}",
+                    "AlloyAct Pro 错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            };
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                var logPath = Path.Combine(Application.StartupPath, "crash.log");
+                var ex = e.ExceptionObject as Exception;
+                var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] UnhandledException:\n{ex}\n\n";
+                File.AppendAllText(logPath, msg);
+            };
+
             Application.Run(new Form1());
         }
 

@@ -111,13 +111,14 @@ namespace AlloyAct_Pro.LLM
             var sb = new System.Text.StringBuilder();
             sb.AppendLine("\n========== 用户记忆（你必须遵守的设置） ==========");
 
-            // 按优先级排列：preference > calculation > alloy_system > general
-            var groups = new[] { "preference", "calculation", "alloy_system", "general" };
+            // 按优先级排列：preference > calculation > alloy_system > knowledge > general
+            var groups = new[] { "preference", "calculation", "alloy_system", "knowledge", "general" };
             var labels = new Dictionary<string, string>
             {
                 ["preference"] = "默认计算设置",
                 ["calculation"] = "计算规则与经验",
                 ["alloy_system"] = "常用合金体系",
+                ["knowledge"] = "知识",
                 ["general"] = "其他"
             };
 
@@ -282,7 +283,7 @@ namespace AlloyAct_Pro.LLM
 
         private string ValidateCategory(string category)
         {
-            var valid = new HashSet<string> { "preference", "alloy_system", "calculation", "general" };
+            var valid = new HashSet<string> { "preference", "alloy_system", "calculation", "knowledge", "general" };
             return valid.Contains(category) ? category : "general";
         }
 

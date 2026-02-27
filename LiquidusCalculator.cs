@@ -117,29 +117,6 @@ namespace AlloyAct_Pro
         }
 
         /// <summary>
-        /// 参考态转换：将固相参考态的热力学量转换为液相参考态。
-        /// 当溶质的数据库提供的是固态形成能（如 Miedema 模型基于固态参考），
-        /// 而溶质实际溶于液态合金时，需要通过 Gibbs 熔化自由能进行修正。
-        ///
-        /// 线性近似: ΔG_fusion(T) ≈ ΔHf × (1 - T/Tm)
-        /// 其中 ΔHf 为纯组元的熔化焓（J/mol），Tm 为纯组元的熔点（K）。
-        ///
-        /// 对于 ln(γ) 的修正: Δ(lnγ) = ΔG_fusion / (R·T) = ΔHf/(R·T) × (1 - T/Tm)
-        /// </summary>
-        /// <param name="deltaHf_J">纯组元的熔化焓 (J/mol)</param>
-        /// <param name="Tm">纯组元的熔点 (K)</param>
-        /// <param name="T">当前温度 (K)</param>
-        /// <returns>ΔG_fusion(T) in J/mol（正值表示固态比液态更稳定，即 T < Tm）</returns>
-        public static double ConvertReferenceState(double deltaHf_J, double Tm, double T)
-        {
-            if (Tm <= 0 || double.IsNaN(deltaHf_J) || double.IsNaN(T) || T <= 0)
-                return 0;
-            // ΔG_{L→S}(T) = -ΔHf × (1 - T/Tm)
-            // 即 ΔG_fusion = ΔHf × (1 - T/Tm)（熔化方向，S→L）
-            return deltaHf_J * (1.0 - T / Tm);
-        }
-
-        /// <summary>
         /// 计算多组元合金的液相线温度
         /// </summary>
         /// <param name="solvent">溶剂/基体元素符号</param>
@@ -426,34 +403,26 @@ namespace AlloyAct_Pro
             return (Math.Round(T_best, 2), lnA_best);
         }
 
+        // ═══════ 通过 Activity_Coefficient 的 G-D 积分计算溶剂活度 ═══════
+        //
+        // 不使用硬编码公式，统一调用 Activity_Coefficient 中的数值 Gibbs-Duhem
+        // 积分方法，确保各标签/工具的计算逻辑完全一致。
+        //
+        // 返回: ln(a_solvent) = ln(x_solvent) + lnγ_solvent
+
         /// <summary>
-        /// 计算溶质 i 在液态溶体中的参考态修正项。
-        /// 当数据库提供的是固态参考数据，而溶质实际溶于液态合金时：
-        /// Δ(lnγ_i) = ΔG_fusion,i / (R·T) = ΔHf_i/(R·T) × (1 - T/Tm_i)
+        /// 将组成字典转为 "A0.05B0.03" 格式字符串（Activity_Coefficient 初始化需要）
         /// </summary>
-        private double ReferenceStateCorrection(Element solute_i, double T)
+        private static string CompDictToString(Dictionary<string, double> comp)
         {
-            double Tm_i = solute_i.Tm;
-            if (Tm_i <= 0 || T <= 0) return 0;
-
-            double deltaHf_kJ = GetFusionEnthalpy(solute_i.Name, Tm_i);
-            if (double.IsNaN(deltaHf_kJ) || deltaHf_kJ <= 0) return 0;
-
-            double deltaHf_J = deltaHf_kJ * 1000.0;
-            // ΔG_fusion = ΔHf × (1 - T/Tm), in J/mol
-            double dG = ConvertReferenceState(deltaHf_J, Tm_i, T);
-            return dG / (R * T);
+            var sb = new System.Text.StringBuilder();
+            foreach (var kvp in comp)
+                sb.Append($"{kvp.Key}{kvp.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+            return sb.ToString();
         }
 
         /// <summary>
-        /// 基于 Wagner 稀溶液模型计算溶剂的 ln(activity)
-        /// 通过 Gibbs-Duhem 关系:
-        /// ln(a_k) = ln(x_k) - Σᵢ(xᵢ·lnγᵢ⁰) - ½·ΣᵢΣⱼ(εⁱⱼ·xᵢ·xⱼ)
-        /// 其中 i,j 为溶质, k 为溶剂
-        ///
-        /// 液态参考态修正:
-        /// 当 phaseState="liquid" 时，对每个溶质 i 加入修正:
-        /// lnγᵢ⁰(liq) = lnγᵢ⁰ + ΔHf_i/(R·T)×(1 - T/Tm_i)
+        /// Wagner 模型 — 调用 Activity_Coefficient 的数值 G-D 积分计算溶剂 ln(activity)
         /// </summary>
         private double ComputeSolventLnActivity_Wagner(
             string solvent,
@@ -463,57 +432,16 @@ namespace AlloyAct_Pro
             Geo_Model geoModel,
             string geoModelName)
         {
-            Element solv = new Element(solvent);
             double xSolvent = comp_dict.ContainsKey(solvent) ? comp_dict[solvent] : 1.0;
-
-            Ternary_melts ternary = new Ternary_melts(T, phaseState);
-
-            // 溶质列表
-            var solutes = comp_dict.Where(kvp => kvp.Key != solvent).ToList();
-
-            // 项1: ln(x_k)
-            double lnXk = Math.Log(xSolvent);
-
-            // 项2: -Σᵢ(xᵢ·lnγᵢ⁰_eff)
-            // lnγᵢ⁰_eff = lnγᵢ⁰ + ΔG_fusion,i/(R·T) (液态修正)
-            double sumLnY0 = 0;
-            foreach (var (name, xi) in solutes)
-            {
-                Element soluteI = new Element(name);
-                double lnY0_i = ternary.lnY0(solv, soluteI);
-                if (!double.IsNaN(lnY0_i) && !double.IsInfinity(lnY0_i))
-                {
-                    // 参考态修正: 液态时加入 ΔG_fusion/(R·T)
-                    if (phaseState == "liquid")
-                        lnY0_i += ReferenceStateCorrection(soluteI, T);
-                    sumLnY0 += xi * lnY0_i;
-                }
-            }
-
-            // 项3: -½·ΣᵢΣⱼ(εⁱⱼ·xᵢ·xⱼ)
-            double sumEpsilon = 0;
-            foreach (var (nameI, xi) in solutes)
-            {
-                Element soluteI = new Element(nameI);
-                foreach (var (nameJ, xj) in solutes)
-                {
-                    Element soluteJ = new Element(nameJ);
-                    double epsilon_ij = ternary.Activity_Interact_Coefficient_1st(
-                        solv, soluteI, soluteJ, geoModel, geoModelName);
-                    if (!double.IsNaN(epsilon_ij) && !double.IsInfinity(epsilon_ij))
-                        sumEpsilon += epsilon_ij * xi * xj;
-                }
-            }
-
-            double lnA_solvent = lnXk - sumLnY0 - 0.5 * sumEpsilon;
-            return lnA_solvent;
+            var ac = new Activity_Coefficient();
+            ac.set_CompositionDict(CompDictToString(comp_dict));
+            var (lnGamma, _) = ac.solvent_activity_coefficient_Wagner(
+                comp_dict, solvent, T, geoModel, geoModelName, phaseState);
+            return Math.Log(xSolvent) + lnGamma;
         }
 
         /// <summary>
-        /// 基于 Pelton/Darken 模型计算溶剂的 ln(activity)
-        /// Pelton 修正: ln(a_k) = ln(x_k) - Σᵢ(xᵢ·lnγᵢ⁰) - ½·ΣᵢΣⱼ(εⁱⱼ·xᵢ·xⱼ)
-        ///                        + (1/2)·Σᵢ(xᵢ·ΣⱼΣₗ(εʲˡ·xⱼ·xₗ)/2)
-        /// 近似处理: 使用 Pelton 的二次项修正
+        /// Pelton/Darken 模型 — 调用 Activity_Coefficient 的数值 G-D 积分计算溶剂 ln(activity)
         /// </summary>
         private double ComputeSolventLnActivity_Pelton(
             string solvent,
@@ -523,58 +451,16 @@ namespace AlloyAct_Pro
             Geo_Model geoModel,
             string geoModelName)
         {
-            Element solv = new Element(solvent);
             double xSolvent = comp_dict.ContainsKey(solvent) ? comp_dict[solvent] : 1.0;
-
-            Ternary_melts ternary = new Ternary_melts(T, phaseState);
-
-            var solutes = comp_dict.Where(kvp => kvp.Key != solvent).ToList();
-
-            // 项1: ln(x_k)
-            double lnXk = Math.Log(xSolvent);
-
-            // 项2: -Σᵢ(xᵢ·lnγᵢ⁰_eff)
-            double sumLnY0 = 0;
-            foreach (var (name, xi) in solutes)
-            {
-                Element soluteI = new Element(name);
-                double lnY0_i = ternary.lnY0(solv, soluteI);
-                if (!double.IsNaN(lnY0_i) && !double.IsInfinity(lnY0_i))
-                {
-                    if (phaseState == "liquid")
-                        lnY0_i += ReferenceStateCorrection(soluteI, T);
-                    sumLnY0 += xi * lnY0_i;
-                }
-            }
-
-            // 项3: -½·ΣᵢΣⱼ(εⁱⱼ·xᵢ·xⱼ)
-            double sumEpsilon = 0;
-            foreach (var (nameI, xi) in solutes)
-            {
-                Element soluteI = new Element(nameI);
-                foreach (var (nameJ, xj) in solutes)
-                {
-                    Element soluteJ = new Element(nameJ);
-                    double epsilon_ij = ternary.Activity_Interact_Coefficient_1st(
-                        solv, soluteI, soluteJ, geoModel, geoModelName);
-                    if (!double.IsNaN(epsilon_ij) && !double.IsInfinity(epsilon_ij))
-                        sumEpsilon += epsilon_ij * xi * xj;
-                }
-            }
-
-            // Pelton 修正项: +(1/2)·ΣᵢΣⱼ(εⁱⱼ·xᵢ·xⱼ)·Σₗxₗ
-            // 在稀溶液中该修正项为高阶小量，主要贡献来自交叉项
-            double peltonCorrection = 0;
-            double sumX_solutes = solutes.Sum(s => s.Value);
-            peltonCorrection = 0.5 * sumEpsilon * sumX_solutes;
-
-            double lnA_solvent = lnXk - sumLnY0 - 0.5 * sumEpsilon + peltonCorrection;
-            return lnA_solvent;
+            var ac = new Activity_Coefficient();
+            ac.set_CompositionDict(CompDictToString(comp_dict));
+            var (lnGamma, _) = ac.solvent_activity_coefficient_Pelton(
+                comp_dict, solvent, T, geoModel, geoModelName, phaseState);
+            return Math.Log(xSolvent) + lnGamma;
         }
 
         /// <summary>
-        /// 基于 Elliot 模型计算溶剂的 ln(activity)
-        /// 在 Wagner 基础上增加二阶相互作用参数 ρ 的贡献
+        /// Elliott 模型 — 调用 Activity_Coefficient 的数值 G-D 积分计算溶剂 ln(activity)
         /// </summary>
         private double ComputeSolventLnActivity_Elliot(
             string solvent,
@@ -584,62 +470,12 @@ namespace AlloyAct_Pro
             Geo_Model geoModel,
             string geoModelName)
         {
-            Element solv = new Element(solvent);
             double xSolvent = comp_dict.ContainsKey(solvent) ? comp_dict[solvent] : 1.0;
-
-            Ternary_melts ternary = new Ternary_melts(T, phaseState);
-
-            var solutes = comp_dict.Where(kvp => kvp.Key != solvent).ToList();
-
-            // 项1: ln(x_k)
-            double lnXk = Math.Log(xSolvent);
-
-            // 项2: -Σᵢ(xᵢ·lnγᵢ⁰_eff)
-            double sumLnY0 = 0;
-            foreach (var (name, xi) in solutes)
-            {
-                Element soluteI = new Element(name);
-                double lnY0_i = ternary.lnY0(solv, soluteI);
-                if (!double.IsNaN(lnY0_i) && !double.IsInfinity(lnY0_i))
-                {
-                    if (phaseState == "liquid")
-                        lnY0_i += ReferenceStateCorrection(soluteI, T);
-                    sumLnY0 += xi * lnY0_i;
-                }
-            }
-
-            // 项3: -½·ΣᵢΣⱼ(εⁱⱼ·xᵢ·xⱼ)
-            double sumEpsilon = 0;
-            foreach (var (nameI, xi) in solutes)
-            {
-                Element soluteI = new Element(nameI);
-                foreach (var (nameJ, xj) in solutes)
-                {
-                    Element soluteJ = new Element(nameJ);
-                    double epsilon_ij = ternary.Activity_Interact_Coefficient_1st(
-                        solv, soluteI, soluteJ, geoModel, geoModelName);
-                    if (!double.IsNaN(epsilon_ij) && !double.IsInfinity(epsilon_ij))
-                        sumEpsilon += epsilon_ij * xi * xj;
-                }
-            }
-
-            // 项4: 二阶修正 -⅙·ΣᵢΣⱼΣₗ(ρⁱⱼₗ·xᵢ·xⱼ·xₗ)
-            // 在稀溶液中，三阶项的贡献通过 Gibbs-Duhem 积分得到
-            double sumRho = 0;
-            foreach (var (nameI, xi) in solutes)
-            {
-                Element soluteI = new Element(nameI);
-                foreach (var (nameJ, xj) in solutes)
-                {
-                    Element soluteJ = new Element(nameJ);
-                    double rho_ij = ternary.Roui_jj(solv, soluteI, soluteJ, geoModel, geoModelName);
-                    if (!double.IsNaN(rho_ij) && !double.IsInfinity(rho_ij))
-                        sumRho += rho_ij * xi * xj * xj;
-                }
-            }
-
-            double lnA_solvent = lnXk - sumLnY0 - 0.5 * sumEpsilon - (1.0 / 6.0) * sumRho;
-            return lnA_solvent;
+            var ac = new Activity_Coefficient();
+            ac.set_CompositionDict(CompDictToString(comp_dict));
+            var (lnGamma, _) = ac.solvent_activity_coefficient_Elliott(
+                comp_dict, solvent, T, geoModel, geoModelName, phaseState);
+            return Math.Log(xSolvent) + lnGamma;
         }
     }
 }

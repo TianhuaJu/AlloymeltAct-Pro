@@ -1234,8 +1234,8 @@ namespace AlloyAct_Pro.Controls
                 ReadOnly = true,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
-                AllowUserToResizeRows = false,
-                AllowUserToResizeColumns = false,
+                AllowUserToResizeRows = true,
+                AllowUserToResizeColumns = true,
                 RowHeadersVisible = false,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 ScrollBars = ScrollBars.None,
@@ -1266,7 +1266,7 @@ namespace AlloyAct_Pro.Controls
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft YaHei UI", 11F, FontStyle.Bold);
             dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 6, 8, 6);
             dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             dgv.ColumnHeadersHeight = 42;
 
             // 交替行颜色
@@ -1308,9 +1308,33 @@ namespace AlloyAct_Pro.Controls
             foreach (DataGridViewRow row in dgv.Rows)
                 totalHeight += row.Height;
             totalHeight += 4; // 边距
-            dgv.Height = Math.Min(totalHeight, 400);
+            dgv.Height = Math.Min(totalHeight, 800);
+
+            // 用户手动调整行高或表头高度后，自动重算表格和气泡高度
+            dgv.RowHeightChanged += (s, e) => RecalcTableAndBubbleHeight((DataGridView)s!);
+            dgv.ColumnHeadersHeightChanged += (s, e) => RecalcTableAndBubbleHeight((DataGridView)s!);
 
             return dgv;
+        }
+
+        /// <summary>
+        /// 用户拖拽调整行高/表头高后，重新计算 DataGridView 高度和所在气泡高度
+        /// </summary>
+        private void RecalcTableAndBubbleHeight(DataGridView dgv)
+        {
+            int newHeight = dgv.ColumnHeadersHeight;
+            foreach (DataGridViewRow row in dgv.Rows)
+                newHeight += row.Height;
+            newHeight += 4;
+            dgv.Height = Math.Min(newHeight, 800);
+
+            // 重新定位所有表格并更新气泡高度
+            if (dgv.Parent is Panel bubble)
+            {
+                var rtb = bubble.Controls.OfType<RichTextBox>().FirstOrDefault();
+                if (rtb != null)
+                    PositionEmbeddedTables(bubble, rtb);
+            }
         }
 
         /// <summary>

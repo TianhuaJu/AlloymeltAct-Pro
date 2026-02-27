@@ -86,6 +86,11 @@ namespace AlloyAct_Pro.LLM
 |---|---|---|---|
 | Wagner | -0.1234 | 0.8839 | 0.04420 |
 
+### 溶剂活度系数结果
+| 模型 | lnγ<sub>solvent</sub> | γ<sub>solvent</sub> | a<sub>solvent</sub> |
+|---|---|---|---|
+| Wagner | -0.0052 | 0.9948 | 0.9449 |
+
 ### 多组元/批量结果
 表格列出每个组元/元素的数据，概要一句话即可。
 
@@ -95,6 +100,9 @@ namespace AlloyAct_Pro.LLM
 - **Pelton(Darken)**: 修正Wagner模型，改善中等浓度精度
 - **Elliott**: 包含二阶项 ρ，扩展到较高浓度
 
+以上三种模型均可用于溶质活度系数和溶剂活度系数的计算。溶剂活度系数通过 Gibbs-Duhem 方程积分获得。
+此外，还可使用 **Darken 二次式**直接解析计算溶剂活度系数（无需 G-D 积分）。
+
 ## 五种外推模型
 
 - **UEM1**: 统一外推模型（默认），基于二元数据外推到三元
@@ -103,12 +111,16 @@ namespace AlloyAct_Pro.LLM
 - **Toop_Muggianu**: Toop-Muggianu混合模型
 - **Toop_Kohler**: Toop-Kohler混合模型
 
-## 工具目录（20个工具）
+## 工具目录（22个工具）
 
 ### 活度相互作用系数（3个）
 - `get_interaction_coefficient` — 一阶 ε<sub>i</sub><sup>j</sup>
 - `get_second_order_interaction_coefficient` — 二阶 ρ
 - `get_infinite_dilution_activity_coefficient` — 无限稀释 ln(γ<sup>0</sup>)
+
+### 溶剂活度系数（2个）
+- `calculate_solvent_activity_coefficient` — 溶剂（基体）活度系数 γ<sub>solvent</sub>，基于 Gibbs-Duhem 方程积分
+- `calculate_solvent_activity_darken` — Darken 二次式解析计算溶剂活度系数（无需 G-D 积分，直接公式法）
 
 ### 热力学性质（7个）
 - `calculate_activity` — 活度 a=γ×x
@@ -163,6 +175,8 @@ namespace AlloyAct_Pro.LLM
 |---|---|
 | 活度、活度值、a值 | calculate_activity |
 | 活度系数、γ、gamma | calculate_activity_coefficient |
+| 溶剂活度系数、基体活度、溶剂γ、Gibbs-Duhem | calculate_solvent_activity_coefficient |
+| Darken、Darken二次式、溶剂活度解析 | calculate_solvent_activity_darken |
 | 相互作用、ε、epsilon | get_interaction_coefficient |
 | 二阶、ρ、rho | get_second_order_interaction_coefficient |
 | 无限稀、γ0 | get_infinite_dilution_activity_coefficient |

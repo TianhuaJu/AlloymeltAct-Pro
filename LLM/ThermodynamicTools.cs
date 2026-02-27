@@ -116,6 +116,36 @@ namespace AlloyAct_Pro.LLM
                         ""required"": [""solvent"", ""solute"", ""temperature""]
                     }"),
 
+                // ===== 溶剂活度系数（2个） =====
+                MakeToolDef("calculate_solvent_activity_coefficient",
+                    "计算多组元合金熔体中溶剂（基体）的活度系数 lnγ_solvent。基于 Gibbs-Duhem 方程，由溶质的活度相互作用系数积分得到溶剂活度系数。支持 Wagner/Darken(Pelton)/Elliott 三种模型。同时返回溶剂活度 a_solvent = γ_solvent × x_solvent。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {
+                            ""solvent"": { ""type"": ""string"", ""description"": ""溶剂/基体元素符号，如 Fe, Al, Cu"" },
+                            ""composition"": { ""type"": ""object"", ""description"": ""合金成分（溶质部分），键为元素符号，值为摩尔分数。不需要包含溶剂，系统自动计算"" },
+                            ""temperature"": { ""type"": ""number"", ""description"": ""温度(K)"" },
+                            ""activity_model"": { ""type"": ""string"", ""enum"": [""Wagner"", ""Darken"", ""Elliott"", ""all""], ""description"": ""活度模型，默认all返回全部三种模型结果"" },
+                            ""phase"": { ""type"": ""string"", ""enum"": [""liquid"", ""solid""], ""description"": ""相态，默认liquid"" },
+                            ""extrapolation_model"": { ""type"": ""string"", ""enum"": [""UEM1"", ""UEM2"", ""Muggianu"", ""Toop_Muggianu"", ""Toop_Kohler""], ""description"": ""外推模型，默认UEM1"" }
+                        },
+                        ""required"": [""solvent"", ""composition"", ""temperature""]
+                    }"),
+
+                MakeToolDef("calculate_solvent_activity_darken",
+                    "Darken 二次式直接解析计算溶剂（基体）的活度系数 lnγ_solvent。无需 Gibbs-Duhem 积分，直接利用 Wagner 活度相互作用系数通过 Darken 二次式公式求解。公式: lnγ₁ = -½·Σᵢ εᵢⁱ·Xᵢ² - Σᵢ<ⱼ εᵢʲ·Xᵢ·Xⱼ。适用于稀溶液。",
+                    @"{
+                        ""type"": ""object"",
+                        ""properties"": {
+                            ""solvent"": { ""type"": ""string"", ""description"": ""溶剂/基体元素符号，如 Fe, Al, Cu"" },
+                            ""composition"": { ""type"": ""object"", ""description"": ""合金成分（溶质部分），键为元素符号，值为摩尔分数。不需要包含溶剂，系统自动计算"" },
+                            ""temperature"": { ""type"": ""number"", ""description"": ""温度(K)"" },
+                            ""phase"": { ""type"": ""string"", ""enum"": [""liquid"", ""solid""], ""description"": ""相态，默认liquid"" },
+                            ""extrapolation_model"": { ""type"": ""string"", ""enum"": [""UEM1"", ""UEM2"", ""Muggianu"", ""Toop_Muggianu"", ""Toop_Kohler""], ""description"": ""外推模型，默认UEM1"" }
+                        },
+                        ""required"": [""solvent"", ""composition"", ""temperature""]
+                    }"),
+
                 // ===== 热力学性质（7个） =====
                 MakeToolDef("calculate_activity",
                     "计算合金中指定组元的活度 a = γ × x，其中γ是活度系数，x是摩尔分数。支持Wagner/Pelton/Elliott三种活度模型。",
@@ -474,6 +504,10 @@ namespace AlloyAct_Pro.LLM
                     "get_second_order_interaction_coefficient" => CalcSecondOrder(args),
                     "get_infinite_dilution_activity_coefficient" => CalcInfiniteDilution(args),
 
+                    // 溶剂活度系数
+                    "calculate_solvent_activity_coefficient" => CalcSolventActivityCoefficient(args),
+                    "calculate_solvent_activity_darken" => CalcSolventActivityDarken(args),
+
                     // 热力学性质
                     "calculate_activity" => CalcActivity(args),
                     "calculate_activity_coefficient" => CalcActivityCoefficient(args),
@@ -727,6 +761,123 @@ namespace AlloyAct_Pro.LLM
                 phase,
                 lnGamma0 = lnY0,
                 gamma0 = double.IsNaN(lnY0) ? double.NaN : Math.Exp(lnY0)
+            });
+        }
+
+        // --- 溶剂活度系数 (Gibbs-Duhem) ---
+
+        private static string CalcSolventActivityCoefficient(JsonElement args)
+        {
+            var solvent = args.GetProperty("solvent").GetString()!;
+            var comp = ParseComposition(args.GetProperty("composition"));
+            var T = args.GetProperty("temperature").GetDouble();
+            var phase = GetString(args, "phase", "liquid");
+            var extModel = GetString(args, "extrapolation_model", "UEM1");
+            var activityModel = GetString(args, "activity_model", "all");
+
+            EnsureSolvent(comp, solvent);
+            NormalizeComposition(comp);
+
+            double xSolvent = comp.ContainsKey(solvent) ? comp[solvent] : 1.0;
+
+            var ac = new Activity_Coefficient();
+            ac.set_CompositionDict(CompDictToString(comp));
+
+            var bm = new Binary_model();
+            bm.setTemperature(T);
+            bm.setState(phase);
+            var geoModel = GetGeoModel(bm, extModel);
+
+            double lnGamma_w = double.NaN, gd_w = double.NaN;
+            double lnGamma_p = double.NaN, gd_p = double.NaN;
+            double lnGamma_e = double.NaN, gd_e = double.NaN;
+
+            if (activityModel == "all" || activityModel == "Wagner")
+                (lnGamma_w, gd_w) = ac.solvent_activity_coefficient_Wagner(comp, solvent, T, geoModel, extModel, phase);
+            if (activityModel == "all" || activityModel == "Darken")
+                (lnGamma_p, gd_p) = ac.solvent_activity_coefficient_Pelton(comp, solvent, T, geoModel, extModel, phase);
+            if (activityModel == "all" || activityModel == "Elliott")
+                (lnGamma_e, gd_e) = ac.solvent_activity_coefficient_Elliott(comp, solvent, T, geoModel, extModel, phase);
+
+            return JsonResult(new
+            {
+                status = "success",
+                solvent,
+                temperature_K = T,
+                temperature_C = T - 273.15,
+                solvent_mole_fraction = xSolvent,
+                composition = comp,
+                phase,
+                extrapolation_model = extModel,
+                method = "Numerical Gibbs-Duhem integration (dense mesh at dilute end)",
+                wagner = new
+                {
+                    lnGamma_solvent = lnGamma_w,
+                    gamma_solvent = double.IsNaN(lnGamma_w) ? double.NaN : Math.Exp(lnGamma_w),
+                    activity_solvent = double.IsNaN(lnGamma_w) ? double.NaN : xSolvent * Math.Exp(lnGamma_w),
+                    GD_residual = gd_w
+                },
+                pelton = new
+                {
+                    lnGamma_solvent = lnGamma_p,
+                    gamma_solvent = double.IsNaN(lnGamma_p) ? double.NaN : Math.Exp(lnGamma_p),
+                    activity_solvent = double.IsNaN(lnGamma_p) ? double.NaN : xSolvent * Math.Exp(lnGamma_p),
+                    GD_residual = gd_p
+                },
+                elliott = new
+                {
+                    lnGamma_solvent = lnGamma_e,
+                    gamma_solvent = double.IsNaN(lnGamma_e) ? double.NaN : Math.Exp(lnGamma_e),
+                    activity_solvent = double.IsNaN(lnGamma_e) ? double.NaN : xSolvent * Math.Exp(lnGamma_e),
+                    GD_residual = gd_e
+                }
+            });
+        }
+
+        /// <summary>
+        /// Darken 二次式解析计算溶剂活度系数
+        /// </summary>
+        private static string CalcSolventActivityDarken(JsonElement args)
+        {
+            var solvent = args.GetProperty("solvent").GetString()!;
+            var comp = ParseComposition(args.GetProperty("composition"));
+            var T = args.GetProperty("temperature").GetDouble();
+            var phase = GetString(args, "phase", "liquid");
+            var extModel = GetString(args, "extrapolation_model", "UEM1");
+
+            EnsureSolvent(comp, solvent);
+            NormalizeComposition(comp);
+
+            double xSolvent = comp.ContainsKey(solvent) ? comp[solvent] : 1.0;
+
+            var ac = new Activity_Coefficient();
+            ac.set_CompositionDict(CompDictToString(comp));
+
+            var bm = new Binary_model();
+            bm.setTemperature(T);
+            bm.setState(phase);
+            var geoModel = GetGeoModel(bm, extModel);
+
+            double lnGamma = ac.solvent_activity_coefficient_Darken(
+                comp, solvent, T, geoModel, extModel, phase);
+
+            double gamma = double.IsNaN(lnGamma) ? double.NaN : Math.Exp(lnGamma);
+            double activity = double.IsNaN(lnGamma) ? double.NaN : xSolvent * Math.Exp(lnGamma);
+
+            return JsonResult(new
+            {
+                status = "success",
+                solvent,
+                temperature_K = T,
+                temperature_C = T - 273.15,
+                solvent_mole_fraction = xSolvent,
+                composition = comp,
+                phase,
+                extrapolation_model = extModel,
+                method = "Darken quadratic formalism (analytical, no G-D integration)",
+                lnGamma_solvent = lnGamma,
+                gamma_solvent = gamma,
+                activity_solvent = activity
             });
         }
 
@@ -1453,6 +1604,8 @@ namespace AlloyAct_Pro.LLM
                     // 按工具类型分派格式化
                     var formatted = toolName switch
                     {
+                        "calculate_solvent_activity_coefficient" => FormatSolventActivityCoefficient(root),
+                        "calculate_solvent_activity_darken" => FormatSolventActivityDarken(root),
                         "calculate_liquidus_temperature" => FormatLiquidus(root),
                         "calculate_activity" => FormatActivity(root),
                         "calculate_activity_coefficient" => FormatActivityCoefficient(root),
@@ -1536,6 +1689,50 @@ namespace AlloyAct_Pro.LLM
                     sb.AppendLine($"| {label} | {Fmt(GetNum(m, "lnGamma"))} | {Fmt(GetNum(m, "gamma"))} |");
                 }
             }
+            return sb.ToString();
+        }
+
+        private static string FormatSolventActivityCoefficient(JsonElement r)
+        {
+            var solvent = GetStr(r, "solvent");
+            var T = GetNum(r, "temperature_K");
+            var xSolv = GetNum(r, "solvent_mole_fraction");
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"**{solvent}基合金中溶剂{solvent}的活度系数** (T = {Fmt(T)} K / {Fmt(T - 273.15)} °C, x<sub>{solvent}</sub> = {Fmt(xSolv)})\n");
+            sb.AppendLine("| 模型 | lnγ<sub>solvent</sub> | γ<sub>solvent</sub> | a<sub>solvent</sub> | G-D残差 |");
+            sb.AppendLine("|---|---|---|---|---|");
+            foreach (var model in new[] { "wagner", "pelton", "elliott" })
+            {
+                if (r.TryGetProperty(model, out var m) && m.ValueKind == JsonValueKind.Object)
+                {
+                    var label = model[0].ToString().ToUpper() + model.Substring(1);
+                    var gdr = GetNum(m, "GD_residual");
+                    string gdStr = double.IsNaN(gdr) ? "N/A" : gdr.ToString("E2", System.Globalization.CultureInfo.InvariantCulture);
+                    sb.AppendLine($"| {label} | {Fmt(GetNum(m, "lnGamma_solvent"))} | {Fmt(GetNum(m, "gamma_solvent"))} | {Fmt(GetNum(m, "activity_solvent"))} | {gdStr} |");
+                }
+            }
+            sb.AppendLine($"\n方法: 数值 Gibbs-Duhem 积分（稀溶液端加密网格）");
+            sb.AppendLine($"G-D残差: 越小表示结果越满足 Gibbs-Duhem 方程（理想值为 0）");
+            return sb.ToString();
+        }
+
+        private static string FormatSolventActivityDarken(JsonElement r)
+        {
+            var solvent = GetStr(r, "solvent");
+            var T = GetNum(r, "temperature_K");
+            var xSolv = GetNum(r, "solvent_mole_fraction");
+            var lnG = GetNum(r, "lnGamma_solvent");
+            var gamma = GetNum(r, "gamma_solvent");
+            var activity = GetNum(r, "activity_solvent");
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"**Darken 二次式 — {solvent}基合金中溶剂{solvent}的活度系数** (T = {Fmt(T)} K / {Fmt(T - 273.15)} °C, x<sub>{solvent}</sub> = {Fmt(xSolv)})\n");
+            sb.AppendLine("| 参数 | 数值 |");
+            sb.AppendLine("|---|---|");
+            sb.AppendLine($"| lnγ<sub>{solvent}</sub> | {Fmt(lnG)} |");
+            sb.AppendLine($"| γ<sub>{solvent}</sub> | {Fmt(gamma)} |");
+            sb.AppendLine($"| a<sub>{solvent}</sub> | {Fmt(activity)} |");
+            sb.AppendLine($"\n方法: Darken 二次式解析公式（lnγ₁ = -½·Σᵢ εᵢⁱ·Xᵢ² - Σᵢ<ⱼ εᵢʲ·Xᵢ·Xⱼ）");
             return sb.ToString();
         }
 

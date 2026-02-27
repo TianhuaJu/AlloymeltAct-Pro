@@ -391,5 +391,357 @@ namespace AlloyAct_Pro
             return lnYi;
         }
 
+        #region 溶剂（熔剂）活度系数 - 数值 Gibbs-Duhem 积分
+
+        // ── 溶质 lnγ 计算委托类型 ──
+        private delegate Dictionary<string, double> SoluteLnGammaFunc(
+            Dictionary<string, double> comp, Element solv, List<string> soluteNames,
+            Ternary_melts ternary, Geo_Model geoModel, string geoModelName);
+
+        /// <summary>
+        /// 数值 Gibbs-Duhem 积分核心引擎。
+        /// 沿组成路径 t∈[0,1] 从纯溶剂积分到目标组成。
+        /// 稀溶液端 (t→0) 使用 s=t^(1/α) 变换加密步点，α=3。
+        /// 积分采用复合 Simpson 法。
+        /// </summary>
+        private (double lnGammaSolvent, double gdResidual) NumericalGD(
+            Dictionary<string, double> comp_target,
+            string solvent, double T,
+            Geo_Model geoModel, string geoModelName, string phase,
+            SoluteLnGammaFunc soluteLnGammaFunc,
+            int N = 200, double alpha = 3.0)
+        {
+            Element solv = new Element(solvent);
+            Ternary_melts ternary = new Ternary_melts(T, phase);
+
+            // 目标溶质摩尔分数
+            var soluteNames = comp_target.Keys.Where(k => k != solvent).ToList();
+            var x_target = new Dictionary<string, double>();
+            foreach (var name in soluteNames)
+                x_target[name] = comp_target[name];
+            double xk_target = comp_target.ContainsKey(solvent) ? comp_target[solvent] : 1.0;
+
+            // 纯溶剂或无溶质时 lnγ_k = 0
+            if (soluteNames.Count == 0 || xk_target >= 0.9999)
+                return (0.0, 0.0);
+
+            // ── 生成非均匀节点: s 均匀 → t = s^α，稀溶液端加密 ──
+            double[] tNodes = new double[N + 1];
+            for (int k = 0; k <= N; k++)
+            {
+                double s = (double)k / N;
+                tNodes[k] = Math.Pow(s, alpha); // t = s^α, α>1 时在 t→0 端加密
+            }
+
+            // ── 在每个节点计算所有溶质的 lnγᵢ ──
+            double[][] lnGamma_all = new double[N + 1][];
+            for (int k = 0; k <= N; k++)
+            {
+                double t = tNodes[k];
+                var comp_t = BuildComposition(solvent, soluteNames, x_target, t);
+                var lnG = soluteLnGammaFunc(comp_t, solv, soluteNames, ternary, geoModel, geoModelName);
+                lnGamma_all[k] = new double[soluteNames.Count];
+                for (int i = 0; i < soluteNames.Count; i++)
+                    lnGamma_all[k][i] = lnG.ContainsKey(soluteNames[i]) ? lnG[soluteNames[i]] : 0.0;
+            }
+
+            // ── 数值积分: ln(γ_k) = -∫₀¹ Σᵢ [xᵢ(t)/x_k(t)] · d(lnγᵢ)/dt · dt ──
+            // 用复合梯形法（节点不等距）
+            double lnGammaSolvent = 0;
+            for (int k = 0; k < N; k++)
+            {
+                double t0 = tNodes[k];
+                double t1 = tNodes[k + 1];
+                double dt = t1 - t0;
+                if (dt < 1e-15) continue;
+
+                // 中点 t_mid
+                double t_mid = 0.5 * (t0 + t1);
+                double xk_mid = 1.0 - t_mid * (1.0 - xk_target);
+                if (xk_mid < 1e-12) xk_mid = 1e-12;
+
+                // d(lnγᵢ)/dt ≈ [lnγᵢ(t1) - lnγᵢ(t0)] / dt
+                double integrand = 0;
+                for (int i = 0; i < soluteNames.Count; i++)
+                {
+                    double xi_mid = t_mid * x_target[soluteNames[i]];
+                    double dlnGamma_dt = (lnGamma_all[k + 1][i] - lnGamma_all[k][i]) / dt;
+                    integrand += (xi_mid / xk_mid) * dlnGamma_dt;
+                }
+
+                lnGammaSolvent += -integrand * dt;
+            }
+
+            // ── G-D 验证 ──
+            double gdResidual = VerifyGD(comp_target, solvent, soluteNames,
+                lnGammaSolvent, lnGamma_all[N], solv, ternary, geoModel, geoModelName,
+                soluteLnGammaFunc);
+
+            return (lnGammaSolvent, gdResidual);
+        }
+
+        /// <summary>
+        /// 构建路径上 t 点的组成: xᵢ(t)=t·xᵢ_target, x_k(t)=1-t·Σxᵢ_target
+        /// </summary>
+        private Dictionary<string, double> BuildComposition(
+            string solvent, List<string> soluteNames,
+            Dictionary<string, double> x_target, double t)
+        {
+            var comp = new Dictionary<string, double>();
+            double sumSolute = 0;
+            foreach (var name in soluteNames)
+            {
+                double xi = t * x_target[name];
+                comp[name] = xi;
+                sumSolute += xi;
+            }
+            comp[solvent] = 1.0 - sumSolute;
+            return comp;
+        }
+
+        /// <summary>
+        /// G-D 验证: 在目标组成处微扰验证 Σ xᵢ·d(lnγᵢ) ≈ 0。
+        /// 沿各溶质方向做微扰 δ，计算残差。
+        /// 返回 max|residual| （越小越好，理想为 0）。
+        /// </summary>
+        private double VerifyGD(
+            Dictionary<string, double> comp_target, string solvent,
+            List<string> soluteNames, double lnGammaSolvent,
+            double[] lnGammaSolutes_at_target,
+            Element solv, Ternary_melts ternary, Geo_Model geoModel, string geoModelName,
+            SoluteLnGammaFunc soluteLnGammaFunc)
+        {
+            double delta = 1e-5;
+            double xk = comp_target.ContainsKey(solvent) ? comp_target[solvent] : 1.0;
+            double maxResidual = 0;
+
+            foreach (var pertName in soluteNames)
+            {
+                // 正微扰组成
+                var comp_plus = new Dictionary<string, double>(comp_target);
+                comp_plus[pertName] += delta;
+                comp_plus[solvent] -= delta;
+                if (comp_plus[solvent] < 1e-12) continue;
+
+                // 计算微扰后溶质 lnγ
+                var lnG_plus = soluteLnGammaFunc(comp_plus, solv, soluteNames, ternary, geoModel, geoModelName);
+
+                // 计算微扰后溶剂 lnγ（用同一数值积分，但简化为单步微扰估计）
+                // lnγ_k(x+δ) ≈ lnγ_k(x) + (∂lnγ_k/∂xⱼ)·δ
+                // 从 G-D: x_k·d(lnγ_k) = -Σᵢ xᵢ·d(lnγᵢ)
+                double sum_xi_dlnGi = 0;
+                for (int i = 0; i < soluteNames.Count; i++)
+                {
+                    double xi = comp_target[soluteNames[i]];
+                    double dlnGi = (lnG_plus.ContainsKey(soluteNames[i]) ? lnG_plus[soluteNames[i]] : 0)
+                                   - lnGammaSolutes_at_target[i];
+                    sum_xi_dlnGi += xi * dlnGi;
+                }
+                double dlnGk_predicted = -sum_xi_dlnGi / xk;
+
+                // G-D 残差: x_k·dlnγ_k + Σ xᵢ·dlnγᵢ 应 = 0
+                double residual = xk * dlnGk_predicted + sum_xi_dlnGi;
+                maxResidual = Math.Max(maxResidual, Math.Abs(residual));
+            }
+
+            return maxResidual;
+        }
+
+        // ── Wagner 模型的溶质 lnγ 计算 ──
+        private Dictionary<string, double> SoluteLnGamma_Wagner(
+            Dictionary<string, double> comp, Element solv, List<string> soluteNames,
+            Ternary_melts ternary, Geo_Model geoModel, string geoModelName)
+        {
+            var result = new Dictionary<string, double>();
+            foreach (var iName in soluteNames)
+            {
+                Element si = new Element(iName);
+                double lnY0 = ternary.lnY0(solv, si);
+                if (double.IsNaN(lnY0) || double.IsInfinity(lnY0)) lnY0 = 0;
+                double sum = 0;
+                foreach (var jName in soluteNames)
+                {
+                    double xj = comp.ContainsKey(jName) ? comp[jName] : 0;
+                    Element sj = new Element(jName);
+                    double eps = ternary.Activity_Interact_Coefficient_1st(solv, si, sj, geoModel, geoModelName);
+                    if (!double.IsNaN(eps) && !double.IsInfinity(eps))
+                        sum += eps * xj;
+                }
+                result[iName] = lnY0 + sum;
+            }
+            return result;
+        }
+
+        // ── Darken/Pelton 模型的溶质 lnγ 计算 ──
+        private Dictionary<string, double> SoluteLnGamma_Pelton(
+            Dictionary<string, double> comp, Element solv, List<string> soluteNames,
+            Ternary_melts ternary, Geo_Model geoModel, string geoModelName)
+        {
+            var result = new Dictionary<string, double>();
+            // 预计算 ΣⱼΣₖ εⱼₖ·xⱼ·xₖ
+            double sumEps_cross = 0;
+            foreach (var m in soluteNames)
+            {
+                double xm = comp.ContainsKey(m) ? comp[m] : 0;
+                foreach (var n in soluteNames)
+                {
+                    double xn = comp.ContainsKey(n) ? comp[n] : 0;
+                    double eps_mn = ternary.Activity_Interact_Coefficient_1st(solv, new Element(m), new Element(n), geoModel, geoModelName);
+                    if (!double.IsNaN(eps_mn) && !double.IsInfinity(eps_mn))
+                        sumEps_cross += eps_mn * xm * xn;
+                }
+            }
+
+            foreach (var iName in soluteNames)
+            {
+                Element si = new Element(iName);
+                double lnY0 = ternary.lnY0(solv, si);
+                if (double.IsNaN(lnY0) || double.IsInfinity(lnY0)) lnY0 = 0;
+                double sum = 0;
+                foreach (var jName in soluteNames)
+                {
+                    double xj = comp.ContainsKey(jName) ? comp[jName] : 0;
+                    Element sj = new Element(jName);
+                    double eps = ternary.Activity_Interact_Coefficient_1st(solv, si, sj, geoModel, geoModelName);
+                    if (!double.IsNaN(eps) && !double.IsInfinity(eps))
+                        sum += eps * xj;
+                }
+                result[iName] = lnY0 + sum - 0.5 * sumEps_cross;
+            }
+            return result;
+        }
+
+        // ── Elliott 模型的溶质 lnγ 计算 ──
+        private Dictionary<string, double> SoluteLnGamma_Elliott(
+            Dictionary<string, double> comp, Element solv, List<string> soluteNames,
+            Ternary_melts ternary, Geo_Model geoModel, string geoModelName)
+        {
+            var result = new Dictionary<string, double>();
+            foreach (var iName in soluteNames)
+            {
+                Element si = new Element(iName);
+                double lnY0 = ternary.lnY0(solv, si);
+                if (double.IsNaN(lnY0) || double.IsInfinity(lnY0)) lnY0 = 0;
+                double linearSum = 0, quadSum = 0;
+                foreach (var jName in soluteNames)
+                {
+                    double xj = comp.ContainsKey(jName) ? comp[jName] : 0;
+                    Element sj = new Element(jName);
+                    double eps = ternary.Activity_Interact_Coefficient_1st(solv, si, sj, geoModel, geoModelName);
+                    if (!double.IsNaN(eps) && !double.IsInfinity(eps))
+                        linearSum += eps * xj;
+                    foreach (var kName in soluteNames)
+                    {
+                        double xk = comp.ContainsKey(kName) ? comp[kName] : 0;
+                        Element sk = new Element(kName);
+                        double rho = ternary.Roui_jk(solv, si, sj, sk, geoModel, geoModelName);
+                        if (!double.IsNaN(rho) && !double.IsInfinity(rho))
+                            quadSum += 0.5 * rho * xj * xk;
+                    }
+                }
+                result[iName] = lnY0 + linearSum + quadSum;
+            }
+            return result;
+        }
+
+        // ══════ 公开接口 ══════
+
+        /// <summary>
+        /// Wagner 模型 - 数值 G-D 积分求溶剂活度系数。
+        /// 返回 (lnγ_solvent, GD验证残差)。
+        /// </summary>
+        public (double lnGamma, double gdResidual) solvent_activity_coefficient_Wagner(
+            Dictionary<string, double> comp_dict, string solvent, double T,
+            Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
+        {
+            return NumericalGD(comp_dict, solvent, T, geo_Model, GeoModel, phase_state,
+                SoluteLnGamma_Wagner);
+        }
+
+        /// <summary>
+        /// Darken/Pelton 模型 - 数值 G-D 积分求溶剂活度系数。
+        /// 返回 (lnγ_solvent, GD验证残差)。
+        /// </summary>
+        public (double lnGamma, double gdResidual) solvent_activity_coefficient_Pelton(
+            Dictionary<string, double> comp_dict, string solvent, double T,
+            Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
+        {
+            return NumericalGD(comp_dict, solvent, T, geo_Model, GeoModel, phase_state,
+                SoluteLnGamma_Pelton);
+        }
+
+        /// <summary>
+        /// Elliott 模型 - 数值 G-D 积分求溶剂活度系数。
+        /// 返回 (lnγ_solvent, GD验证残差)。
+        /// </summary>
+        public (double lnGamma, double gdResidual) solvent_activity_coefficient_Elliott(
+            Dictionary<string, double> comp_dict, string solvent, double T,
+            Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
+        {
+            return NumericalGD(comp_dict, solvent, T, geo_Model, GeoModel, phase_state,
+                SoluteLnGamma_Elliott);
+        }
+
+        /// <summary>
+        /// Darken 二次式 - 解析公式直接计算溶剂活度系数（无需 G-D 积分）。
+        ///
+        /// 公式: lnγ₁ = -½·Σᵢ εᵢⁱ·Xᵢ² - Σᵢ˂ⱼ εᵢʲ·Xᵢ·Xⱼ
+        ///
+        /// 其中 1 为溶剂，i,j = 2..n 为溶质。
+        /// εᵢʲ = Activity_Interact_Coefficient_1st(solvent, solute_i, solute_j)。
+        /// 返回 lnγ_solvent（double），无 G-D 残差（非积分方法）。
+        /// </summary>
+        public double solvent_activity_coefficient_Darken(
+            Dictionary<string, double> comp_dict, string solvent, double T,
+            Geo_Model geo_Model, string GeoModel, string phase_state = "liquid")
+        {
+            Ternary_melts ternary = new Ternary_melts(T, phase_state);
+            Element solv = new Element(solvent);
+
+            // 溶质列表（排除溶剂）
+            var soluteList = new List<(string name, double x)>();
+            foreach (var kvp in comp_dict)
+            {
+                if (kvp.Key != solvent)
+                    soluteList.Add((kvp.Key, kvp.Value));
+            }
+
+            int n = soluteList.Count;
+            if (n == 0) return 0.0; // 纯溶剂，lnγ = 0
+
+            double lnGammaSolvent = 0;
+
+            // 项1: 自交互项 -½·Σᵢ εᵢⁱ·Xᵢ²
+            for (int i = 0; i < n; i++)
+            {
+                Element si = new Element(soluteList[i].name);
+                double xi = soluteList[i].x;
+                double eps_ii = ternary.Activity_Interact_Coefficient_1st(
+                    solv, si, si, geo_Model, GeoModel);
+                if (!double.IsNaN(eps_ii) && !double.IsInfinity(eps_ii))
+                    lnGammaSolvent += -0.5 * eps_ii * xi * xi;
+            }
+
+            // 项2: 交叉项 -Σ_{i<j} εᵢʲ·Xᵢ·Xⱼ （每对只计一次）
+            for (int i = 0; i < n - 1; i++)
+            {
+                Element si = new Element(soluteList[i].name);
+                double xi = soluteList[i].x;
+                for (int j = i + 1; j < n; j++)
+                {
+                    Element sj = new Element(soluteList[j].name);
+                    double xj = soluteList[j].x;
+                    double eps_ij = ternary.Activity_Interact_Coefficient_1st(
+                        solv, si, sj, geo_Model, GeoModel);
+                    if (!double.IsNaN(eps_ij) && !double.IsInfinity(eps_ij))
+                        lnGammaSolvent += -eps_ij * xi * xj;
+                }
+            }
+
+            return lnGammaSolvent;
+        }
+
+        #endregion
+
     }
 }

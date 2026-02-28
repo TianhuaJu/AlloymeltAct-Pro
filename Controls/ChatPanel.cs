@@ -1,5 +1,6 @@
 using AlloyAct_Pro.LLM;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace AlloyAct_Pro.Controls
@@ -40,6 +41,22 @@ namespace AlloyAct_Pro.Controls
         private TextBox txtInput = null!;
         private Button btnSend = null!;
         private Button btnClear = null!;
+
+        // Win32 鼠标滚轮转发
+        [DllImport("user32.dll", EntryPoint = "SendMessage")]
+        private static extern IntPtr NativeSendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        private const int WM_MOUSEWHEEL = 0x020A;
+
+        /// <summary>
+        /// 将子控件的鼠标滚轮事件转发给 chatContainer，使聊天区域始终可滚动
+        /// </summary>
+        private void ForwardMouseWheel(object? sender, MouseEventArgs e)
+        {
+            if (chatContainer == null || chatContainer.IsDisposed) return;
+            if (e is HandledMouseEventArgs hme)
+                hme.Handled = true;
+            NativeSendMessage(chatContainer.Handle, WM_MOUSEWHEEL, (IntPtr)(e.Delta << 16), IntPtr.Zero);
+        }
 
         public ChatPanel()
         {
@@ -418,6 +435,8 @@ namespace AlloyAct_Pro.Controls
                 Height = 30
             };
 
+            _streamingRtb.MouseWheel += ForwardMouseWheel;
+
             _streamingBubble.Controls.Add(roleLabel);
             _streamingBubble.Controls.Add(_streamingRtb);
             messagesPanel.Controls.Add(_streamingBubble);
@@ -500,20 +519,73 @@ namespace AlloyAct_Pro.Controls
 
                 if (!string.IsNullOrEmpty(fullContent))
                 {
-                    // 清除之前可能存在的嵌入表格
-                    var oldTables = bubble.Controls.OfType<DataGridView>().ToList();
-                    foreach (var t in oldTables) { bubble.Controls.Remove(t); t.Dispose(); }
-
-                    // 有内容：重新渲染完整文本为富文本格式
+                    // 预处理并分割为内容块
                     var processedText = PreprocessText(fullContent);
-                    RenderMarkdownToRtb(rtb, processedText, Color.FromArgb(44, 62, 80));
+                    var blocks = SplitIntoContentBlocks(processedText);
+                    bool hasTable = blocks.Any(b => b.Type == ContentBlockType.Table);
 
-                    var contentHeight = GetRichTextBoxContentHeight(rtb);
-                    rtb.Height = contentHeight + 4;
-                    bubble.Height = rtb.Height + 42;
+                    if (!hasTable)
+                    {
+                        // 没有表格：直接用现有RTB渲染（优化路径，保持原行为）
+                        RenderMarkdownToRtb(rtb, processedText, Color.FromArgb(44, 62, 80));
+                        var contentHeight = GetRichTextBoxContentHeight(rtb);
+                        rtb.Height = contentHeight + 4;
+                        bubble.Height = rtb.Height + 42;
+                    }
+                    else
+                    {
+                        // 有表格：使用内容块架构
+                        // 移除现有的流式RTB
+                        bubble.Controls.Remove(rtb);
+                        rtb.Dispose();
 
-                    // 定位嵌入的 DataGridView 表格
-                    PositionEmbeddedTables(bubble, rtb);
+                        int contentWidth = bubble.Width - 30;
+                        int yOffset = 30; // role label 下方
+                        foreach (var block in blocks)
+                        {
+                            if (block.Type == ContentBlockType.Text)
+                            {
+                                var newRtb = new RichTextBox
+                                {
+                                    ReadOnly = true,
+                                    BorderStyle = BorderStyle.None,
+                                    BackColor = bubble.BackColor,
+                                    ForeColor = Color.FromArgb(44, 62, 80),
+                                    Font = new Font("Microsoft YaHei UI", 12F),
+                                    Width = contentWidth,
+                                    Location = new Point(12, yOffset),
+                                    ScrollBars = RichTextBoxScrollBars.None,
+                                    DetectUrls = false,
+                                    WordWrap = true,
+                                    TabStop = false
+                                };
+                                newRtb.SelectAll();
+                                newRtb.SelectionIndent = 0;
+                                newRtb.DeselectAll();
+
+                                RenderMarkdownToRtb(newRtb, block.TextContent, Color.FromArgb(44, 62, 80));
+
+                                var h = GetRichTextBoxContentHeight(newRtb);
+                                newRtb.Height = h + 4;
+                                newRtb.MouseWheel += ForwardMouseWheel;
+                                bubble.Controls.Add(newRtb);
+                                yOffset += newRtb.Height + 4;
+                            }
+                            else // Table
+                            {
+                                var tableFont = new Font("Microsoft YaHei UI", 11F);
+                                var dgv = CreateTableGridView(block.TableRows, tableFont);
+                                dgv.Location = new Point(12, yOffset);
+                                dgv.Width = contentWidth;
+                                dgv.Tag = "embedded_table";
+                                dgv.MouseWheel += ForwardMouseWheel;
+                                bubble.Controls.Add(dgv);
+                                yOffset += dgv.Height + 6;
+                            }
+                        }
+
+                        bubble.Height = yOffset + 12;
+                    }
                 }
                 else
                 {
@@ -652,6 +724,114 @@ namespace AlloyAct_Pro.Controls
         }
 
         /// <summary>
+        /// 内容块类型：文本或表格
+        /// </summary>
+        private enum ContentBlockType { Text, Table }
+
+        /// <summary>
+        /// 内容块：表示一段文本或一个表格
+        /// </summary>
+        private class ContentBlock
+        {
+            public ContentBlockType Type;
+            public string TextContent = "";
+            public List<string[]> TableRows = new();
+        }
+
+        /// <summary>
+        /// 将预处理后的文本拆分为交替的文本块和表格块
+        /// 使用与 RenderMarkdownToRtb 相同的表格检测逻辑
+        /// </summary>
+        private List<ContentBlock> SplitIntoContentBlocks(string text)
+        {
+            var blocks = new List<ContentBlock>();
+            var lines = text.Split('\n');
+            var currentTextLines = new List<string>();
+            bool inTable = false;
+            var tableRows = new List<string[]>();
+            bool inCodeBlock = false;
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+
+                // 代码块 ``` toggle
+                if (line.TrimStart().StartsWith("```"))
+                {
+                    inCodeBlock = !inCodeBlock;
+                    currentTextLines.Add(line);
+                    continue;
+                }
+
+                // 代码块内的行不检测表格
+                if (inCodeBlock)
+                {
+                    currentTextLines.Add(line);
+                    continue;
+                }
+
+                // 检测表格行（与 RenderMarkdownToRtb 相同的逻辑）
+                if (line.TrimStart().StartsWith("|") && line.TrimEnd().EndsWith("|"))
+                {
+                    var trimmed = line.Trim();
+                    // 分隔线
+                    if (Regex.IsMatch(trimmed, @"^\|[\s\-:|]+\|$"))
+                    {
+                        inTable = true;
+                        continue;
+                    }
+
+                    // 数据行
+                    var cells = trimmed.Split('|', StringSplitOptions.None)
+                        .Where(c => !string.IsNullOrEmpty(c.Trim()) || c.Contains(" "))
+                        .Select(c => c.Trim())
+                        .Where(c => c.Length > 0 || tableRows.Count > 0)
+                        .ToArray();
+                    if (cells.Length > 0)
+                    {
+                        // 从文本转为表格：先保存已积累的文本块
+                        if (!inTable && currentTextLines.Count > 0)
+                        {
+                            blocks.Add(new ContentBlock { Type = ContentBlockType.Text, TextContent = string.Join("\n", currentTextLines) });
+                            currentTextLines.Clear();
+                        }
+                        tableRows.Add(cells);
+                        inTable = true;
+                    }
+                    continue;
+                }
+
+                // 非表格行：如果之前在表格中，先保存表格块
+                if (inTable && tableRows.Count > 0)
+                {
+                    blocks.Add(new ContentBlock { Type = ContentBlockType.Table, TableRows = new List<string[]>(tableRows) });
+                    tableRows.Clear();
+                    inTable = false;
+                }
+
+                currentTextLines.Add(line);
+            }
+
+            // 处理末尾剩余数据
+            if (tableRows.Count > 0)
+            {
+                blocks.Add(new ContentBlock { Type = ContentBlockType.Table, TableRows = new List<string[]>(tableRows) });
+            }
+            if (currentTextLines.Count > 0)
+            {
+                blocks.Add(new ContentBlock { Type = ContentBlockType.Text, TextContent = string.Join("\n", currentTextLines) });
+            }
+
+            // 如果没有任何块，添加一个空文本块
+            if (blocks.Count == 0)
+            {
+                blocks.Add(new ContentBlock { Type = ContentBlockType.Text, TextContent = "" });
+            }
+
+            return blocks;
+        }
+
+        /// <summary>
         /// 创建支持富文本的消息气泡
         /// </summary>
         private Panel CreateRichBubble(string text, Color bgColor, Color textColor,
@@ -688,42 +868,59 @@ namespace AlloyAct_Pro.Controls
                 Location = new Point(12, 6),
                 BackColor = Color.Transparent
             };
+            bubble.Controls.Add(roleLabel);
 
             int contentWidth = panelWidth - 30;
 
-            var rtb = new RichTextBox
-            {
-                ReadOnly = true,
-                BorderStyle = BorderStyle.None,
-                BackColor = bgColor,
-                ForeColor = textColor,
-                Font = new Font("Microsoft YaHei UI", 12F),
-                Width = contentWidth,
-                Location = new Point(12, 30),
-                ScrollBars = RichTextBoxScrollBars.None,
-                DetectUrls = false,
-                WordWrap = true,
-                TabStop = false
-            };
-            rtb.SelectAll();
-            rtb.SelectionIndent = 0;
-            rtb.DeselectAll();
-
-            // 渲染管线：LaTeX → Unicode → 富文本
+            // 预处理文本并分割为内容块（文本/表格交替）
             var processedText = PreprocessText(text);
-            RenderMarkdownToRtb(rtb, processedText, textColor);
+            var blocks = SplitIntoContentBlocks(processedText);
 
-            // 自动计算内容高度
-            var contentHeight = GetRichTextBoxContentHeight(rtb);
-            rtb.Height = contentHeight + 4;
-            bubble.Height = rtb.Height + 42;
+            int yOffset = 30; // role label 下方
+            foreach (var block in blocks)
+            {
+                if (block.Type == ContentBlockType.Text)
+                {
+                    var rtb = new RichTextBox
+                    {
+                        ReadOnly = true,
+                        BorderStyle = BorderStyle.None,
+                        BackColor = bgColor,
+                        ForeColor = textColor,
+                        Font = new Font("Microsoft YaHei UI", 12F),
+                        Width = contentWidth,
+                        Location = new Point(12, yOffset),
+                        ScrollBars = RichTextBoxScrollBars.None,
+                        DetectUrls = false,
+                        WordWrap = true,
+                        TabStop = false
+                    };
+                    rtb.SelectAll();
+                    rtb.SelectionIndent = 0;
+                    rtb.DeselectAll();
 
-            bubble.Controls.Add(roleLabel);
-            bubble.Controls.Add(rtb);
+                    RenderMarkdownToRtb(rtb, block.TextContent, textColor);
 
-            // 定位嵌入的 DataGridView 表格
-            PositionEmbeddedTables(bubble, rtb);
+                    var contentHeight = GetRichTextBoxContentHeight(rtb);
+                    rtb.Height = contentHeight + 4;
+                    rtb.MouseWheel += ForwardMouseWheel;
+                    bubble.Controls.Add(rtb);
+                    yOffset += rtb.Height + 4;
+                }
+                else // Table
+                {
+                    var tableFont = new Font("Microsoft YaHei UI", 11F);
+                    var dgv = CreateTableGridView(block.TableRows, tableFont);
+                    dgv.Location = new Point(12, yOffset);
+                    dgv.Width = contentWidth;
+                    dgv.Tag = "embedded_table";
+                    dgv.MouseWheel += ForwardMouseWheel;
+                    bubble.Controls.Add(dgv);
+                    yOffset += dgv.Height + 6;
+                }
+            }
 
+            bubble.Height = yOffset + 12;
             return bubble;
         }
 
@@ -1328,13 +1525,45 @@ namespace AlloyAct_Pro.Controls
             newHeight += 4;
             dgv.Height = Math.Min(newHeight, 800);
 
-            // 重新定位所有表格并更新气泡高度
+            // 重新计算所有内容块的位置和气泡高度
             if (dgv.Parent is Panel bubble)
             {
-                var rtb = bubble.Controls.OfType<RichTextBox>().FirstOrDefault();
-                if (rtb != null)
-                    PositionEmbeddedTables(bubble, rtb);
+                RecalcBlockLayout(bubble);
             }
+        }
+
+        /// <summary>
+        /// 重新计算气泡中所有内容块（RTB + DGV）的位置和气泡高度
+        /// </summary>
+        private void RecalcBlockLayout(Panel bubble)
+        {
+            int contentWidth = bubble.Width - 30;
+
+            // 收集所有内容控件，按位置排序
+            var contentControls = new List<Control>();
+            foreach (Control child in bubble.Controls)
+            {
+                if (child is RichTextBox || (child is DataGridView d && d.Tag as string == "embedded_table"))
+                    contentControls.Add(child);
+            }
+            contentControls.Sort((a, b) => a.Top.CompareTo(b.Top));
+
+            int yOffset = 30; // role label 下方
+            foreach (var child in contentControls)
+            {
+                if (child is RichTextBox rtb)
+                {
+                    rtb.Location = new Point(12, yOffset);
+                    yOffset += rtb.Height + 4;
+                }
+                else if (child is DataGridView d)
+                {
+                    d.Location = new Point(12, yOffset);
+                    yOffset += d.Height + 6;
+                }
+            }
+
+            bubble.Height = yOffset + 12;
         }
 
         /// <summary>
@@ -1470,22 +1699,37 @@ namespace AlloyAct_Pro.Controls
                 if (ctrl is Panel bubble)
                 {
                     bubble.Width = targetWidth;
-                    RichTextBox? bubbleRtb = null;
-                    // 调整内部 RichTextBox 宽度并重算高度
+                    int contentWidth = targetWidth - 30;
+
+                    // 收集所有内容控件（RTB + DGV），按位置排序
+                    var contentControls = new List<Control>();
                     foreach (Control child in bubble.Controls)
+                    {
+                        if (child is RichTextBox || (child is DataGridView dgv && dgv.Tag as string == "embedded_table"))
+                            contentControls.Add(child);
+                    }
+                    contentControls.Sort((a, b) => a.Top.CompareTo(b.Top));
+
+                    int yOffset = 30; // role label 下方
+                    foreach (var child in contentControls)
                     {
                         if (child is RichTextBox rtb)
                         {
-                            rtb.Width = targetWidth - 30;
+                            rtb.Width = contentWidth;
+                            rtb.Location = new Point(12, yOffset);
                             var h = GetRichTextBoxContentHeight(rtb);
                             rtb.Height = h + 4;
-                            bubble.Height = rtb.Height + 42;
-                            bubbleRtb = rtb;
+                            yOffset += rtb.Height + 4;
+                        }
+                        else if (child is DataGridView dgv)
+                        {
+                            dgv.Width = contentWidth;
+                            dgv.Location = new Point(12, yOffset);
+                            yOffset += dgv.Height + 6;
                         }
                     }
-                    // 重新定位嵌入的 DataGridView 表格
-                    if (bubbleRtb != null)
-                        PositionEmbeddedTables(bubble, bubbleRtb);
+
+                    bubble.Height = yOffset + 12;
                     bubble.Invalidate(); // 重绘圆角边框
                 }
                 else if (ctrl is Label lbl)
@@ -1499,7 +1743,7 @@ namespace AlloyAct_Pro.Controls
                 }
             }
 
-            // 流式气泡
+            // 流式气泡（流式阶段只有单个RTB，无表格）
             if (_streamingBubble != null)
             {
                 _streamingBubble.Width = targetWidth;
@@ -1789,33 +2033,33 @@ namespace AlloyAct_Pro.Controls
                 {
                     if (IsDisposed) return;
                     if (InvokeRequired)
-                        BeginInvoke(() => ShowThinkingIndicator());
+                        BeginInvoke(() => { if (_isSending) ShowThinkingIndicator(); });
                     else
-                        ShowThinkingIndicator();
+                        if (_isSending) ShowThinkingIndicator();
                 };
                 _agent.OnChartRequested = (chartData) =>
                 {
                     if (IsDisposed) return;
                     if (InvokeRequired)
-                        BeginInvoke(() => AddChartBubble(chartData));
+                        BeginInvoke(() => { if (_isSending) AddChartBubble(chartData); });
                     else
-                        AddChartBubble(chartData);
+                        if (_isSending) AddChartBubble(chartData);
                 };
                 _agent.OnTextDelta = (delta) =>
                 {
                     if (IsDisposed) return;
                     if (InvokeRequired)
-                        BeginInvoke(() => AppendToStreamingBubble(delta));
+                        BeginInvoke(() => { if (_isSending) AppendToStreamingBubble(delta); });
                     else
-                        AppendToStreamingBubble(delta);
+                        if (_isSending) AppendToStreamingBubble(delta);
                 };
                 _agent.OnStreamComplete = (fullText) =>
                 {
                     if (IsDisposed) return;
                     if (InvokeRequired)
-                        BeginInvoke(() => FinalizeStreamingBubble(fullText));
+                        BeginInvoke(() => { if (_isSending) FinalizeStreamingBubble(fullText); });
                     else
-                        FinalizeStreamingBubble(fullText);
+                        if (_isSending) FinalizeStreamingBubble(fullText);
                 };
 
                 btnConnect.Text = "重连";
@@ -1845,8 +2089,30 @@ namespace AlloyAct_Pro.Controls
         {
             if (_isSending)
             {
-                // 当前正在发送 → 取消
+                // 当前正在发送 → 强制取消
                 _cts?.Cancel();
+
+                // 立即重置 UI 状态（不依赖异常传播）
+                _isSending = false;
+                btnSend.Text = "发送";
+                btnSend.BackColor = Color.FromArgb(39, 174, 96);
+
+                // 清理流式气泡和计算中提示
+                if (_streamingBubble != null && !_streamingBubble.IsDisposed)
+                {
+                    if (messagesPanel.Controls.Contains(_streamingBubble))
+                    {
+                        messagesPanel.Controls.Remove(_streamingBubble);
+                        _streamingBubble.Dispose();
+                    }
+                }
+                _streamingBubble = null;
+                _streamingRtb = null;
+                _streamCharCount = 0;
+                RemoveThinkingIndicator();
+                AddSystemMessage("对话已取消");
+
+                _cts = null;
                 return;
             }
             await SendMessage();

@@ -147,27 +147,30 @@ namespace AlloyAct_Pro.LLM
 - `get_contribution_coefficients` — 三元外推贡献系数（yeta参数）
 
 ### 记忆工具（3个）
-- `save_memory` — 保存用户偏好
-- `recall_memories` — 回忆
+- `save_memory` — 保存用户偏好、知识、设置
+- `recall_memories` — 回忆已保存内容
 - `delete_memory` — 删除记忆
 
 ## 记忆使用规则
 
-你具有持久记忆功能，能记住用户的偏好设置和常用参数。重启程序后记忆依然有效。
+你具有持久记忆功能，能记住用户的偏好设置、常用参数和专业知识。重启程序后记忆依然有效。
 
 ### 何时保存记忆（主动触发）
-- 用户说""以后默认用XX模型""、""我习惯用XX"" → 调用 save_memory(content, ""preference"")
+- 用户说""以后默认用XX模型""、""我习惯用XX"" → save_memory(content, ""preference"")
 - 用户表达温度偏好（如""以后温度都用摄氏度""） → save_memory(content, ""preference"")
 - 用户多次计算同一合金体系 → save_memory(""用户常用合金体系: XX"", ""alloy_system"")
 - 用户给出特定体系温度约定 → save_memory(content, ""calculation"")
+- 用户提供专业知识或领域经验（如""Fe-C体系中C的活度系数推荐用Wagner模型""） → save_memory(content, ""knowledge"")
+- 用户纠正计算方法或指出注意事项（如""液相线计算溶剂活度默认用Darken""） → save_memory(content, ""knowledge"")
+- 用户分享实验数据或文献结论 → save_memory(content, ""knowledge"")
 - 用户说""记住""、""保存""、""下次还用"" → 一定要调用 save_memory
 
 ### 何时回忆（自动触发）
 - 记忆已经在系统提示词中注入，你可以直接使用
-- 如果用户问""我之前设置了什么""，调用 recall_memories 展示
+- 如果用户问""我之前设置了什么""、""我保存了什么知识""，调用 recall_memories 展示
 
 ### 何时删除
-- 用户说""取消默认设置""、""忘记XX"" → 调用 delete_memory
+- 用户说""取消默认设置""、""忘记XX""、""删除这条知识"" → 调用 delete_memory
 
 ## 关键词→工具映射
 
@@ -441,10 +444,13 @@ namespace AlloyAct_Pro.LLM
 
             for (int i = 0; i < _maxToolIterations; i++)
             {
+                ct.ThrowIfCancellationRequested();
+
                 var contentBuilder = new StringBuilder();
                 var toolCalls = new List<ToolCall>();
                 string finishReason = "stop";
 
+                var llmSw = System.Diagnostics.Stopwatch.StartNew();
                 try
                 {
                     await foreach (var chunk in _backend.ChatStreamAsync(_history, tools, ct))
@@ -464,6 +470,8 @@ namespace AlloyAct_Pro.LLM
                                 break;
                         }
                     }
+                    llmSw.Stop();
+                    System.Diagnostics.Debug.WriteLine($"[LLM] 第{i+1}轮流式响应耗时: {llmSw.ElapsedMilliseconds} ms (工具数: {toolCalls.Count})");
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
@@ -484,6 +492,9 @@ namespace AlloyAct_Pro.LLM
                     OnStreamComplete?.Invoke(errMsg);
                     return errMsg;
                 }
+
+                // 双重保险：即使 SseReader 吞掉了取消异常，这里也能正确传播
+                ct.ThrowIfCancellationRequested();
 
                 string content = contentBuilder.ToString();
 
@@ -507,7 +518,10 @@ namespace AlloyAct_Pro.LLM
                         if (chartData != null)
                             OnChartRequested?.Invoke(chartData);
 
+                        var toolSw = System.Diagnostics.Stopwatch.StartNew();
                         var result = ThermodynamicTools.ExecuteTool(tc.Function.Name, tc.Function.Arguments);
+                        toolSw.Stop();
+                        System.Diagnostics.Debug.WriteLine($"[Tool] {tc.Function.Name} 执行耗时: {toolSw.ElapsedMilliseconds} ms");
                         toolResults.Add((tc.Function.Name, result));
 
                         _history.Add(new ChatMessage

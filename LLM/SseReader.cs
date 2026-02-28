@@ -29,7 +29,8 @@ namespace AlloyAct_Pro.LLM
                 }
                 catch (OperationCanceledException)
                 {
-                    yield break;
+                    // 不吞掉取消异常，让它正确传播给调用方
+                    throw;
                 }
 
                 if (line == null) break; // Stream ended

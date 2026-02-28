@@ -252,13 +252,15 @@ namespace AlloyAct_Pro.LLM
 
                 // ===== 相图与温度（3个） =====
                 MakeToolDef("calculate_liquidus_temperature",
-                    "计算合金的液相线温度（开始凝固温度）。基于修正的Schroder-van Laar方程，考虑溶质相互作用对溶剂活度的影响。",
+                    "计算合金的液相线温度（开始凝固温度）。基于修正的Schroder-van Laar方程，考虑溶质相互作用对溶剂活度的影响。默认使用Darken二次式计算溶剂活度系数（快速），仅在用户明确要求时使用G-D积分法。默认只计算Pelton模型，仅在用户明确要求时才计算其他模型。",
                     @"{
                         ""type"": ""object"",
                         ""properties"": {
                             ""solvent"": { ""type"": ""string"", ""description"": ""溶剂/基体元素符号，如 Fe, Al, Cu"" },
                             ""composition"": { ""type"": ""object"", ""description"": ""合金成分，键为元素符号，值为摩尔分数。不需要包含溶剂的值，系统会自动计算"" },
-                            ""phase"": { ""type"": ""string"", ""enum"": [""liquid"", ""solid""], ""description"": ""相态，默认liquid"" }
+                            ""phase"": { ""type"": ""string"", ""enum"": [""liquid"", ""solid""], ""description"": ""相态，默认liquid"" },
+                            ""model"": { ""type"": ""string"", ""enum"": [""Pelton"", ""Wagner"", ""Elliot"", ""all""], ""description"": ""溶质活度模型，默认Pelton。仅在用户明确要求时才选all或其他模型"" },
+                            ""use_gd"": { ""type"": ""boolean"", ""description"": ""是否用G-D积分法计算溶剂活度系数。默认false（用Darken二次式）。仅在用户明确要求G-D积分时设为true"" }
                         },
                         ""required"": [""solvent"", ""composition""]
                     }"),
@@ -355,12 +357,12 @@ namespace AlloyAct_Pro.LLM
 
                 // ===== 记忆工具（3个） =====
                 MakeToolDef("save_memory",
-                    "保存用户偏好或常用设置到记忆中。当用户表达偏好或常用参数时使用。",
+                    "保存用户偏好、常用设置或专业知识到记忆中。当用户表达偏好、常用参数、或提供专业知识时使用。",
                     @"{
                         ""type"": ""object"",
                         ""properties"": {
                             ""content"": { ""type"": ""string"", ""description"": ""要记忆的内容"" },
-                            ""category"": { ""type"": ""string"", ""enum"": [""preference"", ""alloy_system"", ""calculation"", ""general""], ""description"": ""记忆分类：preference(默认计算设置), alloy_system(常用合金体系), calculation(计算规则与经验), general(其他)"" }
+                            ""category"": { ""type"": ""string"", ""enum"": [""preference"", ""alloy_system"", ""calculation"", ""knowledge"", ""general""], ""description"": ""记忆分类：preference(默认计算设置), alloy_system(常用合金体系), calculation(计算规则与经验), knowledge(专业知识/领域知识), general(其他)"" }
                         },
                         ""required"": [""content"", ""category""]
                     }"),
@@ -1175,6 +1177,8 @@ namespace AlloyAct_Pro.LLM
             var solvent = args.GetProperty("solvent").GetString()!;
             var comp = ParseComposition(args.GetProperty("composition"));
             var phase = GetString(args, "phase", "liquid");
+            var model = GetString(args, "model", "Pelton");
+            var useGD = GetBool(args, "use_gd", false);
 
             EnsureSolvent(comp, solvent);
             NormalizeComposition(comp);
@@ -1183,8 +1187,12 @@ namespace AlloyAct_Pro.LLM
             bm.setTemperature(new Element(solvent).Tm);
             bm.setState(phase);
 
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var calc = new LiquidusCalculator();
-            var result = calc.CalculateLiquidus(solvent, comp, phase, bm.UEM1, "UEM1");
+            var result = calc.CalculateLiquidus(solvent, comp, phase, bm.UEM1, "UEM1",
+                userDeltaHf: double.NaN, model: model, useGD: useGD);
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine($"[Liquidus] 本地计算耗时: {sw.ElapsedMilliseconds} ms (模型:{model}, G-D:{useGD})");
 
             if (!result.Converged && result.ErrorMessage?.StartsWith("NEED_DELTAHF") == true)
             {
@@ -1195,28 +1203,62 @@ namespace AlloyAct_Pro.LLM
                 });
             }
 
-            return JsonResult(new
+            // 根据实际计算的模型构建结果
+            var resultObj = new Dictionary<string, object>
             {
-                status = result.Converged ? "success" : "partial",
-                solvent,
-                composition = result.Composition,
-                pure_melting_point_K = result.T_pure_melting,
-                pure_melting_point_C = result.T_pure_melting - 273.15,
-                delta_Hf_kJ_mol = result.DeltaHf,
-                liquidus_Wagner_K = result.T_liquidus_Wagner,
-                liquidus_Wagner_C = SafeDouble(result.T_liquidus_Wagner - 273.15),
-                liquidus_Pelton_K = result.T_liquidus_Pelton,
-                liquidus_Pelton_C = SafeDouble(result.T_liquidus_Pelton - 273.15),
-                liquidus_Elliot_K = result.T_liquidus_Elliot,
-                liquidus_Elliot_C = SafeDouble(result.T_liquidus_Elliot - 273.15),
-                depression_Wagner_K = result.DeltaT_Wagner,
-                depression_Pelton_K = result.DeltaT_Pelton,
-                depression_Elliot_K = result.DeltaT_Elliot,
-                activity_Wagner = result.SolventActivity_Wagner,
-                activity_Pelton = result.SolventActivity_Pelton,
-                activity_Elliot = result.SolventActivity_Elliot,
-                error = result.ErrorMessage
-            });
+                ["status"] = result.Converged ? "success" : "partial",
+                ["solvent"] = solvent,
+                ["composition"] = result.Composition,
+                ["pure_melting_point_K"] = result.T_pure_melting,
+                ["pure_melting_point_C"] = result.T_pure_melting - 273.15,
+                ["delta_Hf_kJ_mol"] = result.DeltaHf,
+                ["solvent_activity_method"] = result.SolventMethod,
+                ["models_computed"] = result.ModelsComputed
+            };
+
+            bool doWagner = model == "all" || model == "Wagner";
+            bool doPelton = model == "all" || model == "Pelton";
+            bool doElliot = model == "all" || model == "Elliot";
+
+            if (doWagner)
+            {
+                resultObj["liquidus_Wagner_K"] = result.T_liquidus_Wagner;
+                resultObj["liquidus_Wagner_C"] = SafeDouble(result.T_liquidus_Wagner - 273.15);
+                resultObj["depression_Wagner_K"] = result.DeltaT_Wagner;
+                resultObj["activity_Wagner"] = result.SolventActivity_Wagner;
+            }
+            if (doPelton)
+            {
+                resultObj["liquidus_Pelton_K"] = result.T_liquidus_Pelton;
+                resultObj["liquidus_Pelton_C"] = SafeDouble(result.T_liquidus_Pelton - 273.15);
+                resultObj["depression_Pelton_K"] = result.DeltaT_Pelton;
+                resultObj["activity_Pelton"] = result.SolventActivity_Pelton;
+            }
+            if (doElliot)
+            {
+                resultObj["liquidus_Elliot_K"] = result.T_liquidus_Elliot;
+                resultObj["liquidus_Elliot_C"] = SafeDouble(result.T_liquidus_Elliot - 273.15);
+                resultObj["depression_Elliot_K"] = result.DeltaT_Elliot;
+                resultObj["activity_Elliot"] = result.SolventActivity_Elliot;
+            }
+
+            if (!string.IsNullOrEmpty(result.ErrorMessage))
+                resultObj["error"] = result.ErrorMessage;
+
+            // 热力学一致性检验
+            if (!double.IsNaN(result.SolidPhaseActivity))
+            {
+                resultObj["consistency_check"] = new Dictionary<string, object>
+                {
+                    ["solvent_mole_fraction"] = SafeDouble(result.SolventMoleFraction),
+                    ["a_liquid"] = SafeDouble(result.LiquidPhaseActivity),
+                    ["a_solid_estimate"] = SafeDouble(result.SolidPhaseActivity),
+                    ["level"] = result.ConsistencyLevel,
+                    ["note"] = result.ConsistencyNote
+                };
+            }
+
+            return JsonResult(resultObj);
         }
 
         private static string CalcPrecipitationTemperature(JsonElement args)
@@ -1523,6 +1565,16 @@ namespace AlloyAct_Pro.LLM
                 ? val.GetString() ?? defaultValue : defaultValue;
         }
 
+        private static bool GetBool(JsonElement args, string name, bool defaultValue)
+        {
+            if (args.TryGetProperty(name, out var val))
+            {
+                if (val.ValueKind == JsonValueKind.True) return true;
+                if (val.ValueKind == JsonValueKind.False) return false;
+            }
+            return defaultValue;
+        }
+
         private static double SafeDouble(double val)
         {
             return double.IsNaN(val) ? double.NaN : val;
@@ -1640,14 +1692,53 @@ namespace AlloyAct_Pro.LLM
         {
             var solvent = GetStr(r, "solvent");
             var Tm = GetNum(r, "pure_melting_point_K");
+            var method = GetStr(r, "solvent_activity_method", "Darken二次式");
             var sb = new System.Text.StringBuilder();
             sb.AppendLine($"**{solvent}基合金液相线温度计算结果**\n");
-            sb.AppendLine($"{solvent}纯金属熔点: {Fmt(Tm)} K ({Fmt(Tm - 273.15)} °C)\n");
+            sb.AppendLine($"{solvent}纯金属熔点: {Fmt(Tm)} K ({Fmt(Tm - 273.15)} °C)");
+            sb.AppendLine($"溶剂活度系数方法: {method}\n");
             sb.AppendLine("| 模型 | 液相线温度 (K) | 液相线温度 (°C) | 熔点降低 (K) |");
             sb.AppendLine("|---|---|---|---|");
-            sb.AppendLine($"| Wagner | {Fmt(GetNum(r, "liquidus_Wagner_K"))} | {Fmt(GetNum(r, "liquidus_Wagner_C"))} | {Fmt(GetNum(r, "depression_Wagner_K"))} |");
-            sb.AppendLine($"| Pelton | {Fmt(GetNum(r, "liquidus_Pelton_K"))} | {Fmt(GetNum(r, "liquidus_Pelton_C"))} | {Fmt(GetNum(r, "depression_Pelton_K"))} |");
-            sb.AppendLine($"| Elliott | {Fmt(GetNum(r, "liquidus_Elliot_K"))} | {Fmt(GetNum(r, "liquidus_Elliot_C"))} | {Fmt(GetNum(r, "depression_Elliot_K"))} |");
+
+            // 动态输出实际计算的模型
+            var models = new[] {
+                ("Wagner", "liquidus_Wagner_K", "liquidus_Wagner_C", "depression_Wagner_K"),
+                ("Pelton", "liquidus_Pelton_K", "liquidus_Pelton_C", "depression_Pelton_K"),
+                ("Elliott", "liquidus_Elliot_K", "liquidus_Elliot_C", "depression_Elliot_K")
+            };
+            foreach (var (label, kK, kC, kD) in models)
+            {
+                if (r.TryGetProperty(kK, out var vK) && vK.ValueKind == JsonValueKind.Number)
+                {
+                    sb.AppendLine($"| {label} | {Fmt(GetNum(r, kK))} | {Fmt(GetNum(r, kC))} | {Fmt(GetNum(r, kD))} |");
+                }
+            }
+
+            // 热力学一致性检验
+            if (r.TryGetProperty("consistency_check", out var cc) && cc.ValueKind == JsonValueKind.Object)
+            {
+                var level = GetStr(cc, "level");
+                var note = GetStr(cc, "note");
+                var aLiq = GetNum(cc, "a_liquid");
+                var aSol = GetNum(cc, "a_solid_estimate");
+                var xSolv = GetNum(cc, "solvent_mole_fraction");
+
+                var icon = level switch
+                {
+                    "good" => "✅",
+                    "warning" => "⚠️",
+                    "caution" => "❗",
+                    _ => "ℹ️"
+                };
+
+                sb.AppendLine();
+                sb.AppendLine($"**{icon} 热力学一致性检验**（纯固体假设验证）");
+                sb.AppendLine($"- 溶剂摩尔分数 X = {Fmt(xSolv)}");
+                sb.AppendLine($"- 液相溶剂活度 a(liquid) = {Fmt(aLiq)}");
+                sb.AppendLine($"- 固相溶剂活度 a(solid, UEM估算) = {Fmt(aSol)}");
+                sb.AppendLine($"- 评估: {note}");
+            }
+
             return sb.ToString();
         }
 

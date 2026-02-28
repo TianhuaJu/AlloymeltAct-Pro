@@ -83,6 +83,23 @@ namespace AlloyAct_Pro.LLM
         }
 
         /// <summary>
+        /// 更新记忆内容（用于知识面板编辑）
+        /// </summary>
+        public bool UpdateMemory(string oldContent, string newContent, string? newCategory = null)
+        {
+            var item = _memories.FirstOrDefault(m =>
+                m.Content.Equals(oldContent, StringComparison.OrdinalIgnoreCase));
+            if (item == null) return false;
+
+            item.Content = newContent;
+            if (newCategory != null)
+                item.Category = ValidateCategory(newCategory);
+            item.UpdatedAt = DateTime.Now;
+            PersistMemories();
+            return true;
+        }
+
+        /// <summary>
         /// 删除记忆
         /// </summary>
         public string DeleteMemory(string content)

@@ -206,7 +206,7 @@ namespace AlloyAct_Pro
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = AppTheme.ContentBg;
-            ClientSize = new Size(1400, 860);
+            ClientSize = new Size(1470, 860);
             MinimumSize = new Size(1200, 750);
             Controls.Add(contentPanel);
             Controls.Add(headerPanel);

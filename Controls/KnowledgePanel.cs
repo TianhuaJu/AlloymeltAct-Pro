@@ -34,6 +34,13 @@ namespace AlloyAct_Pro.Controls
         private int _trackedRowIndex = -1;
         private bool _isRefreshing;
 
+        // Right-click context menu
+        private ContextMenuStrip ctxMenu = null!;
+
+        // Column sorting state
+        private int _sortColumnIndex = -1;
+        private SortOrder _sortOrder = SortOrder.None;
+
         // Imported text / images for AI learning
         private string _importedText = "";
         private string _importedFileName = "";
@@ -159,6 +166,32 @@ namespace AlloyAct_Pro.Controls
                 Width = 150,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
+
+            // Double-click to edit
+            dgvMemories.CellDoubleClick += DgvMemories_CellDoubleClick;
+
+            // Column header click to sort
+            dgvMemories.ColumnHeaderMouseClick += DgvMemories_ColumnHeaderMouseClick;
+
+            // Right-click context menu
+            ctxMenu = new ContextMenuStrip();
+            ctxMenu.Font = new Font("Microsoft YaHei UI", 9.5F);
+            ctxMenu.Items.Add("编辑", null, (s, e) => EditSelectedRow());
+            ctxMenu.Items.Add("复制内容", null, (s, e) => CopySelectedContent());
+            ctxMenu.Items.Add(new ToolStripSeparator());
+            ctxMenu.Items.Add("删除", null, (s, e) => DeleteSelected());
+            dgvMemories.ContextMenuStrip = ctxMenu;
+
+            // Show context menu on right-click with row selection
+            dgvMemories.CellMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
+                {
+                    dgvMemories.ClearSelection();
+                    dgvMemories.Rows[e.RowIndex].Selected = true;
+                    _trackedRowIndex = e.RowIndex;
+                }
+            };
 
             tablePanel.Controls.Add(dgvMemories);
             mainLayout.Controls.Add(tablePanel, 0, 1);
@@ -1252,6 +1285,232 @@ namespace AlloyAct_Pro.Controls
             }
             _trackedRowIndex = -1;
             LoadData();
+        }
+
+        #endregion
+
+        #region Edit & Context Menu
+
+        /// <summary>
+        /// 双击单元格 → 打开编辑对话框
+        /// </summary>
+        private void DgvMemories_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            _trackedRowIndex = e.RowIndex;
+            EditSelectedRow();
+        }
+
+        /// <summary>
+        /// 编辑选中行（弹出对话框）
+        /// </summary>
+        private void EditSelectedRow()
+        {
+            var row = FindSelectedRow();
+            if (row == null) return;
+
+            var oldContent = row.Cells["colContent"].Value?.ToString() ?? "";
+            var oldCatLabel = row.Cells["colCategory"].Value?.ToString() ?? "";
+
+            // Reverse-lookup category key from label
+            var oldCatKey = CategoryLabels.FirstOrDefault(kv => kv.Value == oldCatLabel).Key ?? "general";
+
+            using var dlg = new Form
+            {
+                Text = "编辑知识条目",
+                Size = new Size(600, 340),
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                Padding = new Padding(16)
+            };
+
+            var lblCat = new Label
+            {
+                Text = "分类：",
+                Dock = DockStyle.Top,
+                Height = 24,
+                Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold)
+            };
+
+            var cboEditCat = new ComboBox
+            {
+                Dock = DockStyle.Top,
+                Font = new Font("Microsoft YaHei UI", 10F),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Height = 28
+            };
+            foreach (var kv in CategoryLabels)
+                cboEditCat.Items.Add($"{kv.Key} — {kv.Value}");
+            // Select current category
+            for (int i = 0; i < cboEditCat.Items.Count; i++)
+            {
+                if (cboEditCat.Items[i]?.ToString()?.StartsWith(oldCatKey) == true)
+                {
+                    cboEditCat.SelectedIndex = i;
+                    break;
+                }
+            }
+            if (cboEditCat.SelectedIndex < 0) cboEditCat.SelectedIndex = 0;
+
+            var lblContent = new Label
+            {
+                Text = "内容：",
+                Dock = DockStyle.Top,
+                Height = 28,
+                Font = new Font("Microsoft YaHei UI", 9.5F, FontStyle.Bold),
+                Padding = new Padding(0, 8, 0, 0)
+            };
+
+            var txtEdit = new TextBox
+            {
+                Dock = DockStyle.Fill,
+                Multiline = true,
+                ScrollBars = ScrollBars.Vertical,
+                Font = new Font("Microsoft YaHei UI", 10F),
+                Text = oldContent
+            };
+
+            var btnPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 42,
+                FlowDirection = FlowDirection.RightToLeft
+            };
+
+            var btnCancel = new Button
+            {
+                Text = "取消",
+                Width = 80,
+                Height = 34,
+                DialogResult = DialogResult.Cancel
+            };
+            var btnSave = new Button
+            {
+                Text = "保存",
+                Width = 80,
+                Height = 34,
+                BackColor = Color.FromArgb(39, 174, 96),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                DialogResult = DialogResult.OK
+            };
+            btnSave.FlatAppearance.BorderSize = 0;
+
+            btnPanel.Controls.Add(btnCancel);
+            btnPanel.Controls.Add(btnSave);
+
+            dlg.Controls.Add(txtEdit);
+            dlg.Controls.Add(lblContent);
+            dlg.Controls.Add(cboEditCat);
+            dlg.Controls.Add(lblCat);
+            dlg.Controls.Add(btnPanel);
+            dlg.AcceptButton = btnSave;
+            dlg.CancelButton = btnCancel;
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                var newContent = txtEdit.Text.Trim();
+                if (string.IsNullOrEmpty(newContent)) return;
+
+                var newCatKey = cboEditCat.SelectedItem?.ToString()?.Split('—')[0].Trim().Split(' ')[0].Trim() ?? "general";
+
+                if (newContent != oldContent || newCatKey != oldCatKey)
+                {
+                    _memory.UpdateMemory(oldContent, newContent, newCatKey);
+                    LoadData();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 复制选中行的知识内容到剪贴板
+        /// </summary>
+        private void CopySelectedContent()
+        {
+            var row = FindSelectedRow();
+            if (row == null) return;
+
+            var content = row.Cells["colContent"].Value?.ToString() ?? "";
+            if (!string.IsNullOrEmpty(content))
+            {
+                Clipboard.SetText(content);
+            }
+        }
+
+        #endregion
+
+        #region Column Sorting
+
+        /// <summary>
+        /// 点击列标题排序
+        /// </summary>
+        private void DgvMemories_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (dgvMemories.Rows.Count == 0) return;
+
+            // Toggle sort order
+            if (_sortColumnIndex == e.ColumnIndex)
+            {
+                _sortOrder = _sortOrder == SortOrder.Ascending
+                    ? SortOrder.Descending
+                    : SortOrder.Ascending;
+            }
+            else
+            {
+                _sortColumnIndex = e.ColumnIndex;
+                _sortOrder = SortOrder.Ascending;
+            }
+
+            // Collect all rows data
+            var rows = new List<(string Cat, string Content, string Updated)>();
+            foreach (DataGridViewRow row in dgvMemories.Rows)
+            {
+                rows.Add((
+                    row.Cells["colCategory"].Value?.ToString() ?? "",
+                    row.Cells["colContent"].Value?.ToString() ?? "",
+                    row.Cells["colUpdated"].Value?.ToString() ?? ""
+                ));
+            }
+
+            // Sort
+            var colName = e.ColumnIndex switch
+            {
+                0 => "cat",
+                1 => "content",
+                2 => "updated",
+                _ => "content"
+            };
+
+            rows = colName switch
+            {
+                "cat" => _sortOrder == SortOrder.Ascending
+                    ? rows.OrderBy(r => r.Cat, StringComparer.OrdinalIgnoreCase).ToList()
+                    : rows.OrderByDescending(r => r.Cat, StringComparer.OrdinalIgnoreCase).ToList(),
+                "content" => _sortOrder == SortOrder.Ascending
+                    ? rows.OrderBy(r => r.Content, StringComparer.OrdinalIgnoreCase).ToList()
+                    : rows.OrderByDescending(r => r.Content, StringComparer.OrdinalIgnoreCase).ToList(),
+                "updated" => _sortOrder == SortOrder.Ascending
+                    ? rows.OrderBy(r => r.Updated).ToList()
+                    : rows.OrderByDescending(r => r.Updated).ToList(),
+                _ => rows
+            };
+
+            // Repopulate
+            _isRefreshing = true;
+            dgvMemories.Rows.Clear();
+            foreach (var r in rows)
+                dgvMemories.Rows.Add(r.Cat, r.Content, r.Updated);
+            _isRefreshing = false;
+
+            if (dgvMemories.Rows.Count > 0)
+                _trackedRowIndex = 0;
+
+            // Update column header sort glyph
+            foreach (DataGridViewColumn col in dgvMemories.Columns)
+                col.HeaderCell.SortGlyphDirection = SortOrder.None;
+            dgvMemories.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = _sortOrder;
         }
 
         #endregion

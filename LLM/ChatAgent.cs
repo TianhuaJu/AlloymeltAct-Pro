@@ -279,6 +279,12 @@ namespace AlloyAct_Pro.LLM
         public static bool IsToolUnsupportedModel(string modelName)
         {
             if (string.IsNullOrEmpty(modelName)) return false;
+
+            // 用户覆盖优先：若在 ModelOverrideStore 中已声明 SupportsTools，以用户设置为准
+            var userOverride = ModelOverrideStore.Instance.GetToolsSupportOverride(modelName);
+            if (userOverride.HasValue)
+                return !userOverride.Value;
+
             var name = modelName.ToLowerInvariant();
 
             // deepseek-r1 系列（推理模型，不支持工具调用）

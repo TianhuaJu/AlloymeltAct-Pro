@@ -124,10 +124,10 @@ namespace AlloyAct_Pro.LLM
             {
                 Name = "DeepSeek",
                 BaseUrl = "https://api.deepseek.com/v1",
-                DefaultModel = "deepseek-chat",
+                DefaultModel = "deepseek-v4-pro",
                 EnvKey = "DEEPSEEK_API_KEY",
                 ApiKeyHint = "sk-...",
-                ModelList = new[] { "deepseek-chat", "deepseek-reasoner" }
+                ModelList = new[] { "deepseek-v4-pro", "deepseek-v4-flash", "deepseek-chat", "deepseek-reasoner" }
             },
             ["kimichat"] = new ProviderConfig
             {
@@ -141,6 +141,26 @@ namespace AlloyAct_Pro.LLM
         };
 
         public static string[] GetProviderNames() => Providers.Keys.ToArray();
+
+        /// <summary>
+        /// 获取生效的模型列表：若用户在 UI 中覆盖了该提供商的模型，返回覆盖列表，否则返回内置列表
+        /// </summary>
+        public static string[] GetEffectiveModelList(string provider)
+        {
+            if (!Providers.TryGetValue(provider, out var config))
+                return Array.Empty<string>();
+            return ModelOverrideStore.Instance.GetEffectiveModelList(provider, config.ModelList);
+        }
+
+        /// <summary>
+        /// 获取生效的默认模型：若用户在 UI 中指定了默认模型，返回之，否则返回内置默认
+        /// </summary>
+        public static string GetEffectiveDefaultModel(string provider)
+        {
+            if (!Providers.TryGetValue(provider, out var config))
+                return "";
+            return ModelOverrideStore.Instance.GetEffectiveDefaultModel(provider, config.DefaultModel);
+        }
 
         /// <summary>
         /// 从 Ollama 服务器动态获取已安装的模型列表
@@ -337,6 +357,23 @@ namespace AlloyAct_Pro.LLM
             _baseUrl = baseUrl.TrimEnd('/');
         }
 
+        /// <summary>
+        /// 为特定厂商/模型注入额外的请求体字段
+        /// DeepSeek V4（deepseek-v4-*）默认启用 thinking 模式，该模式下多轮工具调用要求
+        /// 后续请求回传 reasoning_content，否则返回 400。此处显式关闭 thinking 让模型
+        /// 以普通聊天 + 工具调用方式工作。用户如需 thinking 可用 deepseek-reasoner。
+        /// </summary>
+        private void ApplyVendorExtras(Dictionary<string, object> body)
+        {
+            if (string.IsNullOrEmpty(Model)) return;
+            var name = Model.ToLowerInvariant();
+
+            if (name.StartsWith("deepseek-v4"))
+            {
+                body["thinking"] = new Dictionary<string, object> { ["type"] = "disabled" };
+            }
+        }
+
         public override async Task<LlmResponse> ChatAsync(
             List<ChatMessage> messages, List<ToolDefinition>? tools, CancellationToken ct)
         {
@@ -387,6 +424,8 @@ namespace AlloyAct_Pro.LLM
                 }).ToList();
                 body["tool_choice"] = "auto";
             }
+
+            ApplyVendorExtras(body);
 
             var json = JsonSerializer.Serialize(body);
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/chat/completions")
@@ -479,6 +518,8 @@ namespace AlloyAct_Pro.LLM
                 }).ToList();
                 body["tool_choice"] = "auto";
             }
+
+            ApplyVendorExtras(body);
 
             var json = JsonSerializer.Serialize(body);
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/chat/completions")

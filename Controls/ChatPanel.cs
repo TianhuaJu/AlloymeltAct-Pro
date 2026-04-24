@@ -19,6 +19,7 @@ namespace AlloyAct_Pro.Controls
         private Label lblUrl = null!;
         private TextBox txtBaseUrl = null!;
         private Button btnRefreshModels = null!;
+        private Button btnManageModels = null!;
         private Label lblKey = null!;
         private TextBox txtApiKey = null!;
         private Button btnConnect = null!;
@@ -196,22 +197,37 @@ namespace AlloyAct_Pro.Controls
             };
             txtBaseUrl.PlaceholderText = "http://100.91.243.106:11434/v1";
             txtBaseUrl.Text = "http://100.91.243.106:11434/v1";
-            txtBaseUrl.Leave += async (s, e) => await TryRefreshOllamaModels();
+            txtBaseUrl.Leave += async (s, e) => await TryRefreshModelsAsync();
 
-            // 刷新模型列表按钮（仅 Ollama 时显示）
+            // 刷新模型列表按钮（从远程 API 获取真实模型列表）
             btnRefreshModels = new Button
             {
                 Text = "🔄",
                 Font = new Font("Segoe UI Emoji", 9F),
                 Size = new Size(32, 28),
-                Margin = new Padding(0, 4, 8, 0),
+                Margin = new Padding(0, 4, 4, 0),
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
                 BackColor = Color.FromArgb(236, 240, 241)
             };
             btnRefreshModels.FlatAppearance.BorderSize = 1;
             btnRefreshModels.FlatAppearance.BorderColor = Color.FromArgb(189, 195, 199);
-            btnRefreshModels.Click += async (s, e) => await TryRefreshOllamaModels();
+            btnRefreshModels.Click += async (s, e) => await TryRefreshModelsAsync();
+
+            // 模型管理按钮（增删改模型条目，持久化到 %AppData%）
+            btnManageModels = new Button
+            {
+                Text = "⚙",
+                Font = new Font("Segoe UI Emoji", 10F),
+                Size = new Size(32, 28),
+                Margin = new Padding(0, 4, 8, 0),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                BackColor = Color.FromArgb(236, 240, 241)
+            };
+            btnManageModels.FlatAppearance.BorderSize = 1;
+            btnManageModels.FlatAppearance.BorderColor = Color.FromArgb(189, 195, 199);
+            btnManageModels.Click += BtnManageModels_Click;
 
             // API Key（仅非 Ollama 时显示，默认隐藏）
             lblKey = new Label
@@ -260,7 +276,7 @@ namespace AlloyAct_Pro.Controls
 
             flow.Controls.AddRange(new Control[] {
                 lblProvider, cboProvider, lblModel, cboModel,
-                lblUrl, txtBaseUrl, btnRefreshModels, lblKey, txtApiKey, btnConnect, lblStatus
+                lblUrl, txtBaseUrl, btnRefreshModels, btnManageModels, lblKey, txtApiKey, btnConnect, lblStatus
             });
 
             panel.Controls.Add(flow);
@@ -1935,9 +1951,15 @@ namespace AlloyAct_Pro.Controls
             var provider = cboProvider.SelectedItem?.ToString() ?? "ollama";
             if (ProviderRegistry.Providers.TryGetValue(provider, out var config))
             {
-                cboModel.Items.AddRange(config.ModelList);
-                if (cboModel.Items.Count > 0)
-                    cboModel.SelectedIndex = 0;
+                // 使用用户覆盖后的生效列表（若用户在 UI 中自定义过，优先用之）
+                var effectiveModels = ProviderRegistry.GetEffectiveModelList(provider);
+                cboModel.Items.AddRange(effectiveModels);
+
+                // 尽量选中生效的默认模型
+                var defaultModel = ProviderRegistry.GetEffectiveDefaultModel(provider);
+                var defIdx = cboModel.Items.IndexOf(defaultModel);
+                if (defIdx >= 0) cboModel.SelectedIndex = defIdx;
+                else if (cboModel.Items.Count > 0) cboModel.SelectedIndex = 0;
 
                 if (txtApiKey != null)
                     txtApiKey.PlaceholderText = config.ApiKeyHint;
@@ -1952,44 +1974,70 @@ namespace AlloyAct_Pro.Controls
 
             if (provider == "ollama")
             {
-                _ = TryRefreshOllamaModels();
+                _ = TryRefreshModelsAsync();
             }
         }
 
         /// <summary>
-        /// 根据提供商切换 UI：Ollama 显示服务器+刷新，其他显示 API Key
+        /// 根据提供商切换 UI
+        /// - Ollama：显示服务器地址 + 刷新 + 管理
+        /// - OpenAI 兼容（openai/deepseek/kimichat）：显示 API Key + 刷新 + 管理
+        /// - Claude/Gemini：仅显示 API Key + 管理（刷新按钮隐藏，这些服务无标准 /models 端点）
         /// </summary>
         private void UpdateProviderUI(string provider)
         {
             bool isOllama = provider == "ollama";
+            bool supportsRemoteFetch = provider is "ollama" or "openai" or "deepseek" or "kimichat";
 
-            // Ollama → 显示服务器地址 + 刷新按钮
             if (lblUrl != null) lblUrl.Visible = isOllama;
             if (txtBaseUrl != null) txtBaseUrl.Visible = isOllama;
-            if (btnRefreshModels != null) btnRefreshModels.Visible = isOllama;
+            if (btnRefreshModels != null) btnRefreshModels.Visible = supportsRemoteFetch;
 
-            // 非 Ollama → 显示 API Key
+            // 管理按钮始终可见
+            if (btnManageModels != null) btnManageModels.Visible = true;
+
+            // 非 Ollama 显示 API Key 输入框
             if (lblKey != null) lblKey.Visible = !isOllama;
             if (txtApiKey != null) txtApiKey.Visible = !isOllama;
         }
 
-        private async Task TryRefreshOllamaModels()
+        private void BtnManageModels_Click(object? sender, EventArgs e)
         {
             var provider = cboProvider.SelectedItem?.ToString() ?? "";
-            if (provider != "ollama") return;
+            var currentKey = txtApiKey?.Text ?? "";
+            var currentUrl = txtBaseUrl?.Text ?? "";
+            using var dlg = new ModelManagerDialog(provider, currentKey, currentUrl);
+            var result = dlg.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                UpdateModelList();
+                if (lblStatus != null)
+                {
+                    lblStatus.Text = "模型列表已更新";
+                    lblStatus.ForeColor = Color.FromArgb(39, 174, 96);
+                }
+            }
+        }
 
-            if (lblStatus == null || txtBaseUrl == null) return;
+        /// <summary>
+        /// 从远程 API 拉取模型列表并合并到下拉框
+        /// 支持 ollama / openai / deepseek / kimichat；claude、gemini 无标准 /models 端点，按钮已隐藏
+        /// </summary>
+        private async Task TryRefreshModelsAsync()
+        {
+            var provider = cboProvider.SelectedItem?.ToString() ?? "";
+            if (lblStatus == null) return;
 
-            var baseUrl = txtBaseUrl.Text.Trim();
-            if (string.IsNullOrEmpty(baseUrl)) return;
+            string baseUrl = provider == "ollama" ? (txtBaseUrl?.Text?.Trim() ?? "") : "";
+            string apiKey = provider == "ollama" ? "" : (txtApiKey?.Text?.Trim() ?? "");
 
             lblStatus.Text = "获取模型列表...";
             lblStatus.ForeColor = Color.FromArgb(52, 152, 219);
 
             try
             {
-                var models = await ProviderRegistry.FetchOllamaModelsAsync(baseUrl);
-                if (models.Length > 0)
+                var models = await LlmBackend.FetchModelsAsync(provider, baseUrl, apiKey);
+                if (models != null && models.Length > 0)
                 {
                     var currentModel = cboModel.Text;
                     cboModel.Items.Clear();

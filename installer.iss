@@ -2,7 +2,7 @@
 ; Generates a distributable installer for AlloyAct Pro
 
 #define MyAppName "AlloyAct Pro"
-#define MyAppVersion "2.1.0"
+#define MyAppVersion "2.1.2"
 #define MyAppPublisher "TianhuaJu"
 #define MyAppURL "https://github.com/TianhuaJu/AlloymeltAct-Pro/releases"
 #define MyAppExeName "AlloyAct Pro.exe"
